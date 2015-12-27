@@ -1,14 +1,17 @@
 package com.bookstore.main;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.View;
-import android.widget.FrameLayout;
+import android.view.ViewGroup;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Administrator on 2015/12/6.
@@ -16,7 +19,8 @@ import android.widget.FrameLayout;
 public class FloatButton extends View {
     private int mColor = -1;
     private final Paint pen = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private FrameLayout.LayoutParams layoutParams;
+    private List<Item> subFloatButtonItems;
+
     public FloatButton(Context context) {
         this(context, null);
     }
@@ -41,26 +45,58 @@ public class FloatButton extends View {
         pen.setShadowLayer(radius, dx, dy, shadowColor);
         a.recycle();
 
-        int size = context.getResources().getDimensionPixelSize(R.dimen.sub_float_button_size);
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(size, size, Gravity.TOP | Gravity.LEFT);
-        setLayoutParams(params);
+        subFloatButtonItems = new ArrayList<Item>();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         setLayerType(LAYER_TYPE_SOFTWARE, null);
-        canvas.drawCircle(getWidth()/2, getHeight()/2, (float)(getWidth()/2.6), pen);
+        canvas.drawCircle(getWidth() / 2, getHeight() / 2, (float) (getWidth() / 2.6), pen);
 
     }
 
-    public void setLayoutParams(FrameLayout.LayoutParams params)
-    {
-        this.layoutParams = params;
+    public View getActivityContentView() {
+        return ((Activity) getContext()).getWindow().getDecorView().findViewById(android.R.id.content);
     }
 
-    public FloatButton addSubFloatButton(View subFloatButton)
-    {
+    public void addSubFloatButtonViewToContainer(View view, ViewGroup.LayoutParams layoutParams) {
+        if (layoutParams != null) {
+            ((ViewGroup) getActivityContentView()).addView(view, layoutParams);
+        } else {
+            ((ViewGroup) getActivityContentView()).addView(view);
+        }
+    }
+
+    public static class Item {
+        public int x;
+        public int y;
+        public int width;
+        public int height;
+        public float alpha;
+        public View view;
+
+        public Item(View view, int width, int height) {
+            this.view = view;
+            this.width = width;
+            this.height = height;
+            alpha = view.getAlpha();
+            x = 0;
+            y = 0;
+        }
+    }
+
+    public FloatButton addSubFloatButton(View subFloatButton) {
+        subFloatButtonItems.add(new Item(subFloatButton, 0, 0));
         return this;
+    }
+
+    public void createFloatButtonMenu() {
+        for (final Item item : subFloatButtonItems) {
+            if (item.width == 0 || item.height == 0) {
+                addSubFloatButtonViewToContainer(item.view, null);
+                item.alpha = 0;
+            }
+        }
     }
 }

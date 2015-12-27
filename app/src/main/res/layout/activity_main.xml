@@ -12,10 +12,10 @@
 
     <com.bookstore.main.FloatButton
         android:id="@+id/FloatActionButton"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
+        android:layout_width="@dimen/main_float_button_size"
+        android:layout_height="@dimen/main_float_button_size"
         android:layout_gravity="bottom|left"
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
-        mine:drawable="@drawable/add"/>
+        mine:drawable="@drawable/main_floatbutton_add"/>
 </FrameLayout>
