@@ -1,7 +1,10 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme">
+    <style name="AppBaseTheme" parent="android:Theme.Light">
+
+    </style>
+    <style name="AppTheme" parent="AppBaseTheme">
         <!-- Customize your theme here. -->
         <!--
         <item name="colorPrimary">@color/colorPrimary</item>
