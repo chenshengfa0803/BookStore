@@ -87,15 +87,19 @@ public class FloatButton extends View {
     }
 
     public FloatButton addSubFloatButton(View subFloatButton) {
-        subFloatButtonItems.add(new Item(subFloatButton, 0, 0));
+        subFloatButtonItems.add(new Item(subFloatButton, subFloatButton.getWidth(), subFloatButton.getHeight()));
         return this;
     }
 
     public void createFloatButtonMenu() {
         for (final Item item : subFloatButtonItems) {
             if (item.width == 0 || item.height == 0) {
-                addSubFloatButtonViewToContainer(item.view, null);
-                item.alpha = 0;
+                int size = getContext().getResources().getDimensionPixelSize(R.dimen.sub_float_button_size);
+                ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(size, size);
+                params.setMargins(5, 5, 5, 5);
+                item.view.setLayoutParams(params);
+                addSubFloatButtonViewToContainer(item.view, params);
+                //item.alpha = 0;
             }
         }
     }

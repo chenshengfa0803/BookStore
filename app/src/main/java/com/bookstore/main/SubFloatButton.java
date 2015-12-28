@@ -43,9 +43,8 @@ public class SubFloatButton extends ViewGroup {
         pen.setShadowLayer(radius, dx, dy, shadowColor);
         a.recycle();
 
-        int size = context.getResources().getDimensionPixelSize(R.dimen.sub_float_button_size);
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(size, size);
-        setLayoutParams(params);
+        setWillNotDraw(false);//enable onDraw
+
     }
     public SubFloatButton(Context context, Drawable drawable, ViewGroup.LayoutParams params)
     {
