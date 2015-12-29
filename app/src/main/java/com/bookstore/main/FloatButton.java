@@ -3,9 +3,12 @@ package com.bookstore.main;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +20,10 @@ import java.util.List;
  * Created by Administrator on 2015/12/6.
  */
 public class FloatButton extends View {
-    private int mColor = -1;
     private final Paint pen = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private int mColor = -1;
     private List<Item> subFloatButtonItems;
+    private Bitmap mBitmap;
 
     public FloatButton(Context context) {
         this(context, null);
@@ -38,11 +42,16 @@ public class FloatButton extends View {
 
         float radius, dx, dy;
         int shadowColor;
+        Drawable drawable;
         radius = a.getFloat(R.styleable.FloatingActionButton_shadowRadius, 10.0f);
         dx = a.getFloat(R.styleable.FloatingActionButton_shadowDx, 0);
         dy = a.getFloat(R.styleable.FloatingActionButton_shadowDy, 0);
         shadowColor = a.getColor(R.styleable.FloatingActionButton_shadowColor, Color.argb(100, 0, 0, 0));
         pen.setShadowLayer(radius, dx, dy, shadowColor);
+        drawable = a.getDrawable(R.styleable.FloatingActionButton_drawable);
+        if (drawable != null) {
+            mBitmap = ((BitmapDrawable) drawable).getBitmap();
+        }
         a.recycle();
 
         subFloatButtonItems = new ArrayList<Item>();
@@ -53,7 +62,9 @@ public class FloatButton extends View {
         super.onDraw(canvas);
         setLayerType(LAYER_TYPE_SOFTWARE, null);
         canvas.drawCircle(getWidth() / 2, getHeight() / 2, (float) (getWidth() / 2.6), pen);
-
+        if (mBitmap != null) {
+            canvas.drawBitmap(mBitmap, (getWidth() - mBitmap.getWidth()) / 2, (getHeight() - mBitmap.getHeight()) / 2, pen);
+        }
     }
 
     public View getActivityContentView() {
@@ -65,24 +76,6 @@ public class FloatButton extends View {
             ((ViewGroup) getActivityContentView()).addView(view, layoutParams);
         } else {
             ((ViewGroup) getActivityContentView()).addView(view);
-        }
-    }
-
-    public static class Item {
-        public int x;
-        public int y;
-        public int width;
-        public int height;
-        public float alpha;
-        public View view;
-
-        public Item(View view, int width, int height) {
-            this.view = view;
-            this.width = width;
-            this.height = height;
-            alpha = view.getAlpha();
-            x = 0;
-            y = 0;
         }
     }
 
@@ -101,6 +94,24 @@ public class FloatButton extends View {
                 addSubFloatButtonViewToContainer(item.view, params);
                 //item.alpha = 0;
             }
+        }
+    }
+
+    public static class Item {
+        public int x;
+        public int y;
+        public int width;
+        public int height;
+        public float alpha;
+        public View view;
+
+        public Item(View view, int width, int height) {
+            this.view = view;
+            this.width = width;
+            this.height = height;
+            alpha = view.getAlpha();
+            x = 0;
+            y = 0;
         }
     }
 }
