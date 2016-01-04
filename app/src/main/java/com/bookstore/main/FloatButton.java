@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Administrator on 2015/12/6.
+ * Created by shfa.chen on 2015/12/6.
  */
 public class FloatButton extends ViewGroup {
     private final Paint pen = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -51,11 +51,9 @@ public class FloatButton extends ViewGroup {
 
         drawable = a.getDrawable(R.styleable.FloatingActionButton_drawable);
         floatButtonIcon = new ImageView(context);
-        //floatButtonIcon.setImageDrawable(drawable);
-        floatButtonIcon.setImageResource(R.drawable.main_floatbutton_add);
+        floatButtonIcon.setImageDrawable(drawable);
+        //floatButtonIcon.setImageResource(R.drawable.main_floatbutton_add);
 
-        int size = context.getResources().getDimensionPixelSize(R.dimen.main_float_button_icon_size);
-        ViewGroup.LayoutParams params = new ViewGroup.MarginLayoutParams(size, size);
         addView(floatButtonIcon);
 
         subFloatButtonItems = new ArrayList<Item>();
@@ -76,7 +74,10 @@ public class FloatButton extends ViewGroup {
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         for (int index = 0; index < getChildCount(); index++) {
             View v = getChildAt(index);
-            v.layout(0, 0, 144, 144);
+            int margin_left = getResources().getDimensionPixelSize(R.dimen.main_float_button_margin_left);
+            int margin_top = getResources().getDimensionPixelSize(R.dimen.main_float_button_margin_top);
+            int size = getResources().getDimensionPixelSize(R.dimen.main_float_button_icon_size);
+            v.layout(margin_left, margin_top, margin_left + size, margin_top + size);
         }
     }
 
@@ -85,9 +86,6 @@ public class FloatButton extends ViewGroup {
         super.onDraw(canvas);
         setLayerType(LAYER_TYPE_SOFTWARE, null);
         canvas.drawCircle(getWidth() / 2, getHeight() / 2, (float) (getWidth() / 2.6), pen);
-        //if (mBitmap != null) {
-        //    canvas.drawBitmap(mBitmap, (getWidth() - mBitmap.getWidth()) / 2, (getHeight() - mBitmap.getHeight()) / 2, pen);
-        //}
     }
 
     public void setContentView(View contentView, LayoutParams contentParams) {
