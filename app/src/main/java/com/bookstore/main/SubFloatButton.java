@@ -15,8 +15,8 @@ import android.view.ViewGroup;
  * Created by Administrator on 2015/12/24.
  */
 public class SubFloatButton extends ViewGroup {
-    private int mColor = -1;
     private final Paint pen = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private int mColor = -1;
     private Bitmap mBitmap;
 
     public SubFloatButton(Context context) {
@@ -46,12 +46,20 @@ public class SubFloatButton extends ViewGroup {
         setWillNotDraw(false);//enable onDraw
 
     }
+
     public SubFloatButton(Context context, Drawable drawable, ViewGroup.LayoutParams params)
     {
         this(context);
         if(drawable != null) {
             mBitmap = ((BitmapDrawable) drawable).getBitmap();
         }
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int size = getContext().getResources().getDimensionPixelSize(R.dimen.sub_float_button_size);
+        setMeasuredDimension(size, size);
     }
 
     @Override
@@ -66,7 +74,7 @@ public class SubFloatButton extends ViewGroup {
         canvas.drawCircle(getWidth()/2, getHeight()/2, (float)(getWidth()/2.6), pen);
 
         if(mBitmap != null) {
-            canvas.drawBitmap(mBitmap,(getWidth() - mBitmap.getWidth())/2, (getHeight() - mBitmap.getHeight())/2, pen);
+            //canvas.drawBitmap(mBitmap,(getWidth() - mBitmap.getWidth())/2, (getHeight() - mBitmap.getHeight())/2, pen);
         }
     }
 

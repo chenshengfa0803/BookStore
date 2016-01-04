@@ -3,15 +3,14 @@ package com.bookstore.main;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +18,11 @@ import java.util.List;
 /**
  * Created by Administrator on 2015/12/6.
  */
-public class FloatButton extends View {
+public class FloatButton extends ViewGroup {
     private final Paint pen = new Paint(Paint.ANTI_ALIAS_FLAG);
+    ImageView floatButtonIcon;
     private int mColor = -1;
     private List<Item> subFloatButtonItems;
-    private Bitmap mBitmap;
 
     public FloatButton(Context context) {
         this(context, null);
@@ -48,13 +47,37 @@ public class FloatButton extends View {
         dy = a.getFloat(R.styleable.FloatingActionButton_shadowDy, 0);
         shadowColor = a.getColor(R.styleable.FloatingActionButton_shadowColor, Color.argb(100, 0, 0, 0));
         pen.setShadowLayer(radius, dx, dy, shadowColor);
-        drawable = a.getDrawable(R.styleable.FloatingActionButton_drawable);
-        if (drawable != null) {
-            mBitmap = ((BitmapDrawable) drawable).getBitmap();
-        }
         a.recycle();
 
+        drawable = a.getDrawable(R.styleable.FloatingActionButton_drawable);
+        floatButtonIcon = new ImageView(context);
+        //floatButtonIcon.setImageDrawable(drawable);
+        floatButtonIcon.setImageResource(R.drawable.main_floatbutton_add);
+
+        int size = context.getResources().getDimensionPixelSize(R.dimen.main_float_button_icon_size);
+        ViewGroup.LayoutParams params = new ViewGroup.MarginLayoutParams(size, size);
+        addView(floatButtonIcon);
+
         subFloatButtonItems = new ArrayList<Item>();
+        setWillNotDraw(false);
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int width = MeasureSpec.getSize(widthMeasureSpec);
+        int size = getContext().getResources().getDimensionPixelSize(R.dimen.main_float_button_icon_size);
+        for (int index = 0; index < getChildCount(); index++) {
+            getChildAt(index).measure(MeasureSpec.makeMeasureSpec(size, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(size, MeasureSpec.AT_MOST));
+        }
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        for (int index = 0; index < getChildCount(); index++) {
+            View v = getChildAt(index);
+            v.layout(0, 0, 144, 144);
+        }
     }
 
     @Override
@@ -62,9 +85,22 @@ public class FloatButton extends View {
         super.onDraw(canvas);
         setLayerType(LAYER_TYPE_SOFTWARE, null);
         canvas.drawCircle(getWidth() / 2, getHeight() / 2, (float) (getWidth() / 2.6), pen);
-        if (mBitmap != null) {
-            canvas.drawBitmap(mBitmap, (getWidth() - mBitmap.getWidth()) / 2, (getHeight() - mBitmap.getHeight()) / 2, pen);
+        //if (mBitmap != null) {
+        //    canvas.drawBitmap(mBitmap, (getWidth() - mBitmap.getWidth()) / 2, (getHeight() - mBitmap.getHeight()) / 2, pen);
+        //}
+    }
+
+    public void setContentView(View contentView, LayoutParams contentParams) {
+        LayoutParams params;
+        if (contentParams == null) {
+            int size = getContext().getResources().getDimensionPixelSize(R.dimen.main_float_button_icon_size);
+            params = new LayoutParams(size, size);
+        } else {
+            params = contentParams;
         }
+        this.addView(contentView, params);
+        int width = contentView.getWidth();
+        int height = contentView.getHeight();
     }
 
     public View getActivityContentView() {
@@ -86,14 +122,14 @@ public class FloatButton extends View {
 
     public void createFloatButtonMenu() {
         for (final Item item : subFloatButtonItems) {
-            if (item.width == 0 || item.height == 0) {
-                int size = getContext().getResources().getDimensionPixelSize(R.dimen.sub_float_button_size);
-                ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(size, size);
-                params.setMargins(5, 5, 5, 5);
-                item.view.setLayoutParams(params);
-                addSubFloatButtonViewToContainer(item.view, params);
-                //item.alpha = 0;
-            }
+            //if (item.width == 0 || item.height == 0) {
+            //int size = getContext().getResources().getDimensionPixelSize(R.dimen.sub_float_button_size);
+            //ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(size, size);
+            //params.setMargins(5, 5, 5, 5);
+            //item.view.setLayoutParams(params);
+            addSubFloatButtonViewToContainer(item.view, null);
+            //item.alpha = 0;
+            // }
         }
     }
 
