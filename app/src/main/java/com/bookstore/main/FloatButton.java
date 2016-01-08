@@ -6,11 +6,21 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.PathMeasure;
+import android.graphics.Point;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+
+import com.bookstore.main.animation.FloatButtonAnimationHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +28,17 @@ import java.util.List;
 /**
  * Created by shfa.chen on 2015/12/6.
  */
-public class FloatButton extends ViewGroup {
+public class FloatButton extends ViewGroup implements View.OnClickListener {
     private final Paint pen = new Paint(Paint.ANTI_ALIAS_FLAG);
-    ImageView floatButtonIcon;
+    private ImageView floatButtonIcon = null;
     private int mColor = -1;
-    private List<Item> subFloatButtonItems;
+    private List<subItem> subFloatButtonItems;
+    private boolean menuOpened;
+    private int subItemStartAngle;
+    private int subItemEndAngle;
+    private int menu_radio;
+    private int menu_duration;
+    private FloatButtonAnimationHandler animationHandler;
 
     public FloatButton(Context context) {
         this(context, null);
@@ -55,8 +71,11 @@ public class FloatButton extends ViewGroup {
         //floatButtonIcon.setImageResource(R.drawable.main_floatbutton_add);
 
         addView(floatButtonIcon);
+        //setClickable(true);
+        setOnClickListener(this);
+        menuOpened = false;
 
-        subFloatButtonItems = new ArrayList<Item>();
+        subFloatButtonItems = new ArrayList<subItem>();
         setWillNotDraw(false);
     }
 
@@ -78,6 +97,7 @@ public class FloatButton extends ViewGroup {
             int margin_top = getResources().getDimensionPixelSize(R.dimen.main_float_button_margin_top);
             int size = getResources().getDimensionPixelSize(R.dimen.main_float_button_icon_size);
             v.layout(margin_left, margin_top, margin_left + size, margin_top + size);
+            //v.layout(margin_left, margin_top, 144, 144);
         }
     }
 
@@ -101,11 +121,19 @@ public class FloatButton extends ViewGroup {
         int height = contentView.getHeight();
     }
 
-    public View getActivityContentView() {
+    public int getDuration() {
+        return menu_duration;
+    }
+
+    public List<subItem> getSubFloatButtonItems() {
+        return subFloatButtonItems;
+    }
+
+    private View getActivityContentView() {
         return ((Activity) getContext()).getWindow().getDecorView().findViewById(android.R.id.content);
     }
 
-    public void addSubFloatButtonViewToContainer(View view, ViewGroup.LayoutParams layoutParams) {
+    public void addSubFloatButtonViewToContainer(View view, FrameLayout.LayoutParams layoutParams) {
         if (layoutParams != null) {
             ((ViewGroup) getActivityContentView()).addView(view, layoutParams);
         } else {
@@ -114,24 +142,91 @@ public class FloatButton extends ViewGroup {
     }
 
     public FloatButton addSubFloatButton(View subFloatButton) {
-        subFloatButtonItems.add(new Item(subFloatButton, subFloatButton.getWidth(), subFloatButton.getHeight()));
+        int size = getContext().getResources().getDimensionPixelSize(R.dimen.sub_float_button_size);
+        subFloatButtonItems.add(new subItem(subFloatButton, size, size));
         return this;
     }
 
-    public void createFloatButtonMenu() {
-        for (final Item item : subFloatButtonItems) {
-            //if (item.width == 0 || item.height == 0) {
-            //int size = getContext().getResources().getDimensionPixelSize(R.dimen.sub_float_button_size);
-            //ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(size, size);
-            //params.setMargins(5, 5, 5, 5);
-            //item.view.setLayoutParams(params);
-            addSubFloatButtonViewToContainer(item.view, null);
-            //item.alpha = 0;
-            // }
+    public void createFloatButtonMenu(int startAngle, int endAngle, int radio, int duration) {
+        this.subItemStartAngle = startAngle;
+        this.subItemEndAngle = endAngle;
+        this.menu_radio = radio;
+        this.animationHandler = new FloatButtonAnimationHandler(this);
+        this.menu_duration = duration;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (menuOpened) {
+            closeMenu();
+        } else {
+            openMenu();
         }
     }
 
-    public static class Item {
+    public void closeMenu() {
+        menuOpened = false;
+    }
+
+    public void openMenu() {
+        final Point center = calculateSubFloatButtonsPosition();
+        for (int i = 0; i < subFloatButtonItems.size(); i++) {
+            if (subFloatButtonItems.get(i).view.getParent() != null) {
+                throw new RuntimeException("view must has no parent before addView");
+            }
+            final FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(subFloatButtonItems.get(i).width, subFloatButtonItems.get(i).height, Gravity.TOP | Gravity.LEFT);
+            params.setMargins(center.x - subFloatButtonItems.get(i).width / 2, center.y - subFloatButtonItems.get(i).height / 2, 0, 0);
+            addSubFloatButtonViewToContainer(subFloatButtonItems.get(i).view, params);
+        }
+        animationHandler.animateMenuOpening(center);
+        menuOpened = true;
+    }
+
+    private Point getScreenSize() {
+        Point size = new Point();
+        WindowManager mWm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+        mWm.getDefaultDisplay().getSize(size);
+        return size;
+    }
+
+    private Point calculateMainFloatButtonCoordinates() {
+        int[] coords = new int[2];
+        this.getLocationOnScreen(coords);
+
+        Rect activityFrame = new Rect();
+        getActivityContentView().getWindowVisibleDisplayFrame(activityFrame);
+        coords[0] -= (getScreenSize().x - getActivityContentView().getMeasuredWidth());
+        coords[1] -= (activityFrame.height() + activityFrame.top - getActivityContentView().getMeasuredHeight());
+        return new Point(coords[0], coords[1]);
+    }
+
+    private Point calculateMainFloatButtonPosition() {
+        Point point = calculateMainFloatButtonCoordinates();
+        point.x += this.getMeasuredWidth() / 2;
+        point.y += this.getMeasuredHeight() / 2;
+        return point;
+    }
+
+    public Point calculateSubFloatButtonsPosition() {
+        final Point mainCenterPos = calculateMainFloatButtonPosition();
+        RectF area = new RectF(mainCenterPos.x - menu_radio, mainCenterPos.y - menu_radio, mainCenterPos.x + menu_radio, mainCenterPos.y + menu_radio);
+
+        Path orbit = new Path();
+        orbit.addArc(area, subItemStartAngle, subItemEndAngle - subItemStartAngle);
+
+        int divisor = subFloatButtonItems.size() - 1;
+
+        PathMeasure measure = new PathMeasure(orbit, false);
+        for (int i = 0; i < subFloatButtonItems.size(); i++) {
+            float[] coords = new float[]{0f, 0f};
+            measure.getPosTan(i * measure.getLength() / divisor, coords, null);
+            subFloatButtonItems.get(i).x = (int) coords[0] - subFloatButtonItems.get(i).width / 2;
+            subFloatButtonItems.get(i).y = (int) coords[1] - subFloatButtonItems.get(i).height / 2;
+        }
+        return mainCenterPos;
+    }
+
+    public static class subItem {
         public int x;
         public int y;
         public int width;
@@ -139,7 +234,7 @@ public class FloatButton extends ViewGroup {
         public float alpha;
         public View view;
 
-        public Item(View view, int width, int height) {
+        public subItem(View view, int width, int height) {
             this.view = view;
             this.width = width;
             this.height = height;

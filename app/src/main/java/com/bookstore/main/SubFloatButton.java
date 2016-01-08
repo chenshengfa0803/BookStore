@@ -2,22 +2,22 @@ package com.bookstore.main;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 /**
  * Created by Administrator on 2015/12/24.
  */
 public class SubFloatButton extends ViewGroup {
     private final Paint pen = new Paint(Paint.ANTI_ALIAS_FLAG);
+    ImageView subfloatButtonIcon = null;
     private int mColor = -1;
-    private Bitmap mBitmap;
 
     public SubFloatButton(Context context) {
         this(context,null);
@@ -51,7 +51,9 @@ public class SubFloatButton extends ViewGroup {
     {
         this(context);
         if(drawable != null) {
-            mBitmap = ((BitmapDrawable) drawable).getBitmap();
+            subfloatButtonIcon = new ImageView(context);
+            subfloatButtonIcon.setImageDrawable(drawable);
+            addView(subfloatButtonIcon);
         }
     }
 
@@ -64,7 +66,13 @@ public class SubFloatButton extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-
+        for (int i = 0; i < getChildCount(); i++) {
+            View v = getChildAt(i);
+            int margin_left = getResources().getDimensionPixelSize(R.dimen.sub_float_button_margin_left);
+            int margin_top = getResources().getDimensionPixelSize(R.dimen.sub_float_button_margin_top);
+            int size = getResources().getDimensionPixelSize(R.dimen.sub_float_button_icon_size);
+            v.layout(margin_left, margin_top, margin_left + size, margin_top + size);
+        }
     }
 
     @Override
@@ -73,15 +81,15 @@ public class SubFloatButton extends ViewGroup {
         setLayerType(LAYER_TYPE_SOFTWARE, null);
         canvas.drawCircle(getWidth()/2, getHeight()/2, (float)(getWidth()/2.6), pen);
 
-        if(mBitmap != null) {
-            //canvas.drawBitmap(mBitmap,(getWidth() - mBitmap.getWidth())/2, (getHeight() - mBitmap.getHeight())/2, pen);
-        }
+        //if(mBitmap != null) {
+        //    canvas.drawBitmap(mBitmap,(getWidth() - mBitmap.getWidth())/2, (getHeight() - mBitmap.getHeight())/2, pen);
+        //}
     }
 
     public void setContentView(final Drawable contentView) {
         //this.addView(contentView);
         if(contentView != null) {
-            mBitmap = ((BitmapDrawable) contentView).getBitmap();
+            //mBitmap = ((BitmapDrawable) contentView).getBitmap();
         }
         this.invalidate();
     }
