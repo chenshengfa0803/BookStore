@@ -39,6 +39,7 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
     private int menu_radio;
     private int menu_duration;
     private FloatButtonAnimationHandler animationHandler;
+    private MenuStateListener menuStateListener;
 
     public FloatButton(Context context) {
         this(context, null);
@@ -75,7 +76,7 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
         setOnClickListener(this);
         menuOpened = false;
 
-        subFloatButtonItems = new ArrayList<subItem>();
+        subFloatButtonItems = new ArrayList<>();
         setWillNotDraw(false);
     }
 
@@ -121,6 +122,10 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
         int height = contentView.getHeight();
     }
 
+    public View getContentView() {
+        return floatButtonIcon;
+    }
+
     public int getDuration() {
         return menu_duration;
     }
@@ -139,6 +144,10 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
         } else {
             ((ViewGroup) getActivityContentView()).addView(view);
         }
+    }
+
+    public void removeSubFloatButtonViewFromContainer(View view) {
+        ((ViewGroup) getActivityContentView()).removeView(view);
     }
 
     public FloatButton addSubFloatButton(View subFloatButton) {
@@ -165,10 +174,22 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
     }
 
     public void closeMenu() {
+        if (animationHandler.isAnimating()) {
+            return;//do not add view to container if animating
+        }
+        Point center = calculateMainFloatButtonPosition();
+        animationHandler.animateMenuClosing(center);
         menuOpened = false;
+
+        if (menuStateListener != null) {
+            menuStateListener.onMenuClosed(this);
+        }
     }
 
     public void openMenu() {
+        if (animationHandler.isAnimating()) {
+            return;//do not add view to container if animating
+        }
         final Point center = calculateSubFloatButtonsPosition();
         for (int i = 0; i < subFloatButtonItems.size(); i++) {
             if (subFloatButtonItems.get(i).view.getParent() != null) {
@@ -180,6 +201,10 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
         }
         animationHandler.animateMenuOpening(center);
         menuOpened = true;
+
+        if (menuStateListener != null) {
+            menuStateListener.onMenuOpened(this);
+        }
     }
 
     private Point getScreenSize() {
@@ -200,7 +225,7 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
         return new Point(coords[0], coords[1]);
     }
 
-    private Point calculateMainFloatButtonPosition() {
+    public Point calculateMainFloatButtonPosition() {
         Point point = calculateMainFloatButtonCoordinates();
         point.x += this.getMeasuredWidth() / 2;
         point.y += this.getMeasuredHeight() / 2;
@@ -224,6 +249,16 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
             subFloatButtonItems.get(i).y = (int) coords[1] - subFloatButtonItems.get(i).height / 2;
         }
         return mainCenterPos;
+    }
+
+    public void addMenuStateListener(MenuStateListener listener) {
+        this.menuStateListener = listener;
+    }
+
+    public interface MenuStateListener {
+        void onMenuOpened(FloatButton fb);
+
+        void onMenuClosed(FloatButton fb);
     }
 
     public static class subItem {

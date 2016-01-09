@@ -1,7 +1,10 @@
 package com.bookstore.main;
 
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
 
 public class MainActivity extends Activity {
     public FloatButton mainFloatButton;
@@ -27,5 +30,22 @@ public class MainActivity extends Activity {
                 .addSubFloatButton(subFab_chat)
                 .addSubFloatButton(subFab_location)
                 .createFloatButtonMenu(startAngle, endAngle, menu_radio, menu_duration);
+        mainFloatButton.addMenuStateListener(new FloatButton.MenuStateListener() {
+            @Override
+            public void onMenuOpened(FloatButton fb) {
+                fb.getContentView().setRotation(0);
+                PropertyValuesHolder rotation = PropertyValuesHolder.ofFloat(View.ROTATION, 45);
+                ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(fb.getContentView(), rotation);
+                animator.start();
+            }
+
+            @Override
+            public void onMenuClosed(FloatButton fb) {
+                fb.getContentView().setRotation(45);
+                PropertyValuesHolder rotation = PropertyValuesHolder.ofFloat(View.ROTATION, 0);
+                ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(fb.getContentView(), rotation);
+                animator.start();
+            }
+        });
     }
 }
