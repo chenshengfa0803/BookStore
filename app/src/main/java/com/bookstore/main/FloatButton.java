@@ -141,6 +141,10 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
         }
     }
 
+    public void removeSubFloatButtonViewFromContainer(View view) {
+        ((ViewGroup) getActivityContentView()).removeView(view);
+    }
+
     public FloatButton addSubFloatButton(View subFloatButton) {
         int size = getContext().getResources().getDimensionPixelSize(R.dimen.sub_float_button_size);
         subFloatButtonItems.add(new subItem(subFloatButton, size, size));
@@ -165,10 +169,18 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
     }
 
     public void closeMenu() {
+        if (animationHandler.isAnimating()) {
+            return;//do not add view to container if animating
+        }
+        Point center = calculateMainFloatButtonPosition();
+        animationHandler.animateMenuClosing(center);
         menuOpened = false;
     }
 
     public void openMenu() {
+        if (animationHandler.isAnimating()) {
+            return;//do not add view to container if animating
+        }
         final Point center = calculateSubFloatButtonsPosition();
         for (int i = 0; i < subFloatButtonItems.size(); i++) {
             if (subFloatButtonItems.get(i).view.getParent() != null) {
@@ -200,7 +212,7 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
         return new Point(coords[0], coords[1]);
     }
 
-    private Point calculateMainFloatButtonPosition() {
+    public Point calculateMainFloatButtonPosition() {
         Point point = calculateMainFloatButtonCoordinates();
         point.x += this.getMeasuredWidth() / 2;
         point.y += this.getMeasuredHeight() / 2;
