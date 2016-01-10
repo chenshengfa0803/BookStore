@@ -14,6 +14,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -162,6 +163,29 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
         this.menu_radio = radio;
         this.animationHandler = new FloatButtonAnimationHandler(this);
         this.menu_duration = duration;
+    }
+
+    public int makePressColor(int color) {
+        float[] hsv = new float[3];
+        Color.colorToHSV(color, hsv);
+        hsv[2] *= 0.8f;
+        return Color.HSVToColor(hsv);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        int color;
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            color = mColor;
+        } else {
+            color = makePressColor(mColor);
+        }
+        if (event.getAction() == MotionEvent.ACTION_MOVE) {
+
+        }
+        pen.setColor(color);
+        invalidate();
+        return super.onTouchEvent(event);
     }
 
     @Override
