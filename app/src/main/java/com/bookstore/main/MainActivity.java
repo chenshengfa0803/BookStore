@@ -3,10 +3,16 @@ package com.bookstore.main;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.bookstore.qr_codescan.ScanActivity;
+
 public class MainActivity extends Activity {
+    final public static int ID_CAMERA = View.generateViewId();
+    private final static int SCANNIN_GREQUEST_CODE = 1;
+
     public FloatButton mainFloatButton;
 
     @Override
@@ -20,6 +26,17 @@ public class MainActivity extends Activity {
         SubFloatButton subFab_camera = new SubFloatButton(this, getResources().getDrawable(R.drawable.sub_floatbutton_camera), null);
         SubFloatButton subFab_chat = new SubFloatButton(this, getResources().getDrawable(R.drawable.sub_floatbutton_chat), null);
         SubFloatButton subFab_location = new SubFloatButton(this, getResources().getDrawable(R.drawable.sub_floatbutton_location), null);
+        subFab_camera.setId(ID_CAMERA);
+        subFab_camera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setClass(MainActivity.this, ScanActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivityForResult(intent, SCANNIN_GREQUEST_CODE);
+                mainFloatButton.closeMenu();
+            }
+        });
         int startAngle = 270;//270 degree
         int endAngle = 360;//360 degree
         int menu_radio = getResources().getDimensionPixelSize(R.dimen.action_menu_radius);
