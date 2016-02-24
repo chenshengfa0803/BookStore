@@ -10,7 +10,6 @@ import android.view.View;
 import com.bookstore.qr_codescan.ScanActivity;
 
 public class MainActivity extends Activity {
-    final public static int ID_CAMERA = View.generateViewId();
     private final static int SCANNIN_GREQUEST_CODE = 1;
 
     public FloatButton mainFloatButton;
@@ -26,7 +25,6 @@ public class MainActivity extends Activity {
         SubFloatButton subFab_camera = new SubFloatButton(this, getResources().getDrawable(R.drawable.sub_floatbutton_camera), null);
         SubFloatButton subFab_chat = new SubFloatButton(this, getResources().getDrawable(R.drawable.sub_floatbutton_chat), null);
         SubFloatButton subFab_location = new SubFloatButton(this, getResources().getDrawable(R.drawable.sub_floatbutton_location), null);
-        subFab_camera.setId(ID_CAMERA);
         subFab_camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

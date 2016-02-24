@@ -77,7 +77,7 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
         setOnClickListener(this);
         menuOpened = false;
 
-        subFloatButtonItems = new ArrayList<>();
+        subFloatButtonItems = new ArrayList<subItem>();
         setWillNotDraw(false);
     }
 
