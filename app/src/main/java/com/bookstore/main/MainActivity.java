@@ -5,6 +5,7 @@ import android.animation.PropertyValuesHolder;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.bookstore.qr_codescan.ScanActivity;
@@ -19,6 +20,20 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         createFloatButtonMenu();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case SCANNIN_GREQUEST_CODE: {
+                if (resultCode == RESULT_OK) {
+                    Bundle bundle = data.getExtras();
+                    Log.d("QR code", bundle.getString("result"));
+                }
+            }
+            break;
+        }
     }
 
     public void createFloatButtonMenu() {
