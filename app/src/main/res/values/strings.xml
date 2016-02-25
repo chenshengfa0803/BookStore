@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">BookStore</string>
+    <string name="app_name">我的书架</string>
     <string name="scan_text">将二维码放入框内, 即可自动扫描</string>
 </resources>
