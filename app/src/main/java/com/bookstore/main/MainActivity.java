@@ -5,15 +5,23 @@ import android.animation.PropertyValuesHolder;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 
 import com.bookstore.qr_codescan.ScanActivity;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+
 public class MainActivity extends Activity {
     private final static int SCANNIN_GREQUEST_CODE = 1;
-
     public FloatButton mainFloatButton;
+    private MessageHandler handler = new MessageHandler(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +38,9 @@ public class MainActivity extends Activity {
                 if (resultCode == RESULT_OK) {
                     Bundle bundle = data.getExtras();
                     Log.d("QR code", bundle.getString("result"));
+                    String isbn = bundle.getString("result");
+                    String urlstr = "https://api.douban.com/v2/book/isbn/:" + isbn;
+                    getBookInfo(urlstr);
                 }
             }
             break;
@@ -77,5 +88,59 @@ public class MainActivity extends Activity {
                 animator.start();
             }
         });
+    }
+
+    public void getBookInfo(final String url) {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL realUrl = new URL(url);
+                    final URLConnection connection = realUrl.openConnection();
+
+                    String result = "";
+                    String line;
+                    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+                    while ((line = in.readLine()) != null) {
+                        result += line;
+                    }
+                    if (in != null) {
+                        in.close();
+                    }
+
+                    Message msg = new Message();
+                    Bundle data = new Bundle();
+                    data.putString("bookinfo", result);
+                    msg.what = MessageHandler.MSG_GET_BOOKINFO;
+                    msg.setData(data);
+                    handler.sendMessage(msg);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    class MessageHandler extends Handler {
+        private static final int MSG_GET_BOOKINFO = 1;
+        private MainActivity mainActivity;
+
+        public MessageHandler(MainActivity activity) {
+            mainActivity = activity;
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case MSG_GET_BOOKINFO: {
+                    String bookInfo = msg.getData().getString("bookinfo");
+                    EditText et = (EditText) findViewById(R.id.bookInfo);
+                    et.setText(bookInfo);
+                }
+                break;
+            }
+        }
     }
 }
