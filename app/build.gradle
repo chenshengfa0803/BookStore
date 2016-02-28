@@ -23,4 +23,5 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile files('src/main/libs/zxing.jar')
+    compile 'com.android.support:support-v4:23.2.0'
 }
