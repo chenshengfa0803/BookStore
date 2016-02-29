@@ -15,6 +15,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"></EditText>
 
+    <android.support.v4.view.ViewPager
+        android:id="@+id/bookListPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <ScrollView
         android:id="@+id/mainScrollView"
         android:layout_width="match_parent"
@@ -25,7 +30,7 @@
             android:layout_height="match_parent">
 
             <android.support.v4.view.ViewPager
-                android:id="@+id/bookListPager"
+                android:id="@+id/bookListPager1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </LinearLayout>

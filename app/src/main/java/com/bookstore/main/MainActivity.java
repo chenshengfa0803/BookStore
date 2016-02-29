@@ -8,11 +8,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 
+import com.bookstore.booklist.BookListViewPagerAdapter;
 import com.bookstore.qr_codescan.ScanActivity;
 
 import java.io.BufferedReader;
@@ -23,6 +25,8 @@ import java.net.URLConnection;
 public class MainActivity extends Activity {
     private final static int SCANNIN_GREQUEST_CODE = 1;
     public FloatButton mainFloatButton;
+    private ViewPager bookListViewPager;
+    private BookListViewPagerAdapter pagerAdapter;
     private MessageHandler handler = new MessageHandler(this);
 
     @Override
@@ -34,6 +38,15 @@ public class MainActivity extends Activity {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
         setContentView(R.layout.activity_main);
+
+        bookListViewPager = (ViewPager) findViewById(R.id.bookListPager);
+        pagerAdapter = new BookListViewPagerAdapter(this);
+        bookListViewPager.setAdapter(pagerAdapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         createFloatButtonMenu();
     }
 
