@@ -65,12 +65,12 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
         dy = a.getFloat(R.styleable.FloatingActionButton_shadowDy, 0);
         shadowColor = a.getColor(R.styleable.FloatingActionButton_shadowColor, Color.argb(100, 0, 0, 0));
         pen.setShadowLayer(radius, dx, dy, shadowColor);
-        a.recycle();
 
         drawable = a.getDrawable(R.styleable.FloatingActionButton_drawable);
         floatButtonIcon = new ImageView(context);
         floatButtonIcon.setImageDrawable(drawable);
         //floatButtonIcon.setImageResource(R.drawable.main_floatbutton_add);
+        a.recycle();
 
         addView(floatButtonIcon);
         //setClickable(true);
