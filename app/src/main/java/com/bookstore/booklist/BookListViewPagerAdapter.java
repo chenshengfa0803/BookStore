@@ -6,8 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bookstore.main.R;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,15 +14,12 @@ import java.util.List;
  */
 public class BookListViewPagerAdapter extends PagerAdapter {
 
-    private List<View> mViewList = new ArrayList<>();
+    private List<View> mViewList = new ArrayList<View>();
     private LayoutInflater mInflater;
 
-    public BookListViewPagerAdapter(Context context) {
-        mInflater = LayoutInflater.from(context);
-        View booklist_gridview = mInflater.inflate(R.layout.booklist_gridview, null);
-        View booklist_listview = mInflater.inflate(R.layout.booklist_listview, null);
-        mViewList.add(booklist_gridview);
-        mViewList.add(booklist_listview);
+    public BookListViewPagerAdapter(Context context, List<View> viewlist) {
+        mViewList = viewlist;
+
     }
 
     @Override

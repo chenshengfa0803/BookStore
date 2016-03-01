@@ -10,10 +10,13 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ListView;
 
+import com.bookstore.booklist.BookListGridListViewAdapter;
 import com.bookstore.booklist.BookListViewPagerAdapter;
 import com.bookstore.qr_codescan.ScanActivity;
 
@@ -21,6 +24,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends Activity {
     private final static int SCANNIN_GREQUEST_CODE = 1;
@@ -39,9 +44,19 @@ public class MainActivity extends Activity {
         }
         setContentView(R.layout.activity_main);
 
+        List<View> viewList = new ArrayList<View>();
+        View booklist_gridview = LayoutInflater.from(this).inflate(R.layout.booklist_gridview, null);
+        View booklist_listview = LayoutInflater.from(this).inflate(R.layout.booklist_listview, null);
+        viewList.add(booklist_gridview);
+        viewList.add(booklist_listview);
+
         bookListViewPager = (ViewPager) findViewById(R.id.bookListPager);
-        pagerAdapter = new BookListViewPagerAdapter(this);
+        pagerAdapter = new BookListViewPagerAdapter(this, viewList);
         bookListViewPager.setAdapter(pagerAdapter);
+
+        ListView gridListView = (ListView) booklist_gridview.findViewById(R.id.booklist_grid);
+        BookListGridListViewAdapter adapter = new BookListGridListViewAdapter(this);
+        gridListView.setAdapter(adapter);
     }
 
     @Override
