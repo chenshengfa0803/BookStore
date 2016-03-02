@@ -58,7 +58,7 @@ final public class BookData {
     }
 
 
-    BookData(int id) {
+    public BookData(int id) {
         this.id = id;
         this.rating = new Rating();
     }
