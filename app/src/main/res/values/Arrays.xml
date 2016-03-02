@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="color_list">
+        <item>#de5d88</item>
+        <!-- 01 -->
+        <item>#4cb5de</item>
+        <!-- 02 -->
+        <item>#ecad4c</item>
+        <!-- 03 -->
+        <item>#4cb7c5</item>
+        <!-- 04 -->
+        <item>#936bd9</item>
+        <!-- 05 -->
+        <item>#d0b400</item>
+        <!-- 06 -->
+        <item>#d75f64</item>
+        <!-- 07 -->
+        <item>#32c47a</item>
+        <!-- 08 -->
+        <item>#a1877e</item>
+        <!-- 09 -->
+        <item>#b4b74c</item>
+        <!-- 10 -->
+        <item>#5a8cdd</item>
+        <!-- 11 -->
+        <item>#bb5fcb</item>
+        <!-- 12 -->
+        <item>#66b965</item>
+        <!-- 13 -->
+        <item>#ec7b58</item>
+        <!-- 14 -->
+        <item>#6d7dd7</item>
+        <!-- 15 -->
+        <item>#5C6E84</item>
+        <!-- 16 -->
+        <item>#8fa3ad</item>
+        <!-- 17 -->
+        <item>#4cb5ab</item>
+        <!-- 18 -->
+        <item>#a1a1a1</item>
+        <!-- 19 -->
+        <item>#AB8655</item>
+        <!-- 20 -->
+    </array>
+</resources>

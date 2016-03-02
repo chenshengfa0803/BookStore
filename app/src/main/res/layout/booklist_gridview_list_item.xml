@@ -17,13 +17,39 @@
 
             <View
                 android:id="@+id/color_view"
-                android:layout_width="5dip"
-                android:layout_height="20dip"
-                android:layout_marginRight="10dip" />
+                android:layout_width="5dp"
+                android:layout_height="25dp"
+                android:layout_gravity="bottom"
+                android:layout_marginRight="10dp" />
 
             <TextView
+                android:id="@+id/category_name"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1.0"
+                android:text="分类" />
+
+            <LinearLayout
+                android:id="@+id/MoreBooks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:orientation="horizontal">"
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
+                    android:text="更多" />
+
+                <ImageView
+                    android:id="@+id/more_btn"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:src="@drawable/more_btn" />"
+            </LinearLayout>
         </LinearLayout>
 
         <View
@@ -41,21 +67,39 @@
 
         <ImageView
             android:id="@+id/cover1"
-            android:layout_width="35dp"
-            android:layout_height="50dp"
-            android:src="@drawable/main_floatbutton_add" />
+            android:layout_width="100dp"
+            android:layout_height="150dp"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginBottom="@dimen/cover1_marginBottom"
+            android:layout_marginLeft="@dimen/cover1_marginLeft"
+            android:layout_marginRight="@dimen/cover1_marginRight"
+            android:layout_marginTop="@dimen/cover1_marginTop"
+            android:layout_weight="1.0"
+            android:src="@drawable/cover1" />
 
         <ImageView
             android:id="@+id/cover2"
-            android:layout_width="35dp"
-            android:layout_height="50dp"
-            android:src="@drawable/sub_floatbutton_camera" />
+            android:layout_width="100dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_marginBottom="@dimen/cover2_marginBottom"
+            android:layout_marginLeft="@dimen/cover2_marginLeft"
+            android:layout_marginRight="@dimen/cover2_marginRight"
+            android:layout_marginTop="@dimen/cover2_marginTop"
+            android:layout_weight="1.0"
+            android:src="@drawable/cover2" />
 
         <ImageView
             android:id="@+id/cover3"
-            android:layout_width="35dp"
-            android:layout_height="50dp"
-            android:src="@drawable/sub_floatbutton_chat" />
+            android:layout_width="100dp"
+            android:layout_height="150dp"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginBottom="@dimen/cover3_marginBottom"
+            android:layout_marginLeft="@dimen/cover3_marginLeft"
+            android:layout_marginRight="@dimen/cover3_marginRight"
+            android:layout_marginTop="@dimen/cover3_marginTop"
+            android:layout_weight="1.0"
+            android:src="@drawable/cover3" />
     </LinearLayout>
 
 </LinearLayout>

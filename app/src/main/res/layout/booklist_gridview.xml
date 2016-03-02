@@ -7,5 +7,7 @@
     <com.bookstore.booklist.BookListGridListView
         android:id="@+id/booklist_grid"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:divider="@null"
+        android:listSelector="#00000000" />
 </LinearLayout>

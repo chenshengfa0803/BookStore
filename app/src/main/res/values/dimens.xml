@@ -11,4 +11,16 @@
     <dimen name="sub_float_button_margin_left">9dp</dimen>
     <dimen name="sub_float_button_margin_top">9dp</dimen>
     <dimen name="action_menu_radius">96dp</dimen>
+    <dimen name="cover1_marginTop">5dp</dimen>
+    <dimen name="cover1_marginBottom">5dp</dimen>
+    <dimen name="cover1_marginRight">5dp</dimen>
+    <dimen name="cover1_marginLeft">5dp</dimen>
+    <dimen name="cover2_marginTop">5dp</dimen>
+    <dimen name="cover2_marginLeft">5dp</dimen>
+    <dimen name="cover2_marginRight">5dp</dimen>
+    <dimen name="cover2_marginBottom">5dp</dimen>
+    <dimen name="cover3_marginTop">5dp</dimen>
+    <dimen name="cover3_marginLeft">5dp</dimen>
+    <dimen name="cover3_marginBottom">5dp</dimen>
+    <dimen name="cover3_marginRight">5dp</dimen>
 </resources>

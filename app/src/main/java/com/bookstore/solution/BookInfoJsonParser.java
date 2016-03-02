@@ -1,7 +1,5 @@
 package com.bookstore.solution;
 
-import android.os.Bundle;
-
 import com.bookstore.util.BookData;
 
 import org.json.JSONException;
@@ -28,7 +26,7 @@ public class BookInfoJsonParser {
             try {
                 return new JSONObject(str);
             } catch (JSONException e) {
-
+                return null;
             }
         else
             throw new Exception("Can create Json Object from empty string");
