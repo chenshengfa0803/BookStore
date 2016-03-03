@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.ListView;
 
 import com.bookstore.booklist.BookListGridListViewAdapter;
@@ -171,8 +170,8 @@ public class MainActivity extends Activity {
             switch (msg.what) {
                 case MSG_GET_BOOKINFO: {
                     String bookInfo = msg.getData().getString("bookinfo");
-                    EditText et = (EditText) findViewById(R.id.bookInfo);
-                    et.setText(bookInfo);
+                    //EditText et = (EditText) findViewById(R.id.bookInfo);
+                    //et.setText(bookInfo);
                 }
                 break;
             }
