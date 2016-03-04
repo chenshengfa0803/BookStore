@@ -13,10 +13,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ListView;
 
+import com.bookstore.booklist.BookListGridListView;
 import com.bookstore.booklist.BookListGridListViewAdapter;
 import com.bookstore.booklist.BookListViewPagerAdapter;
+import com.bookstore.booklist.ListViewListener;
 import com.bookstore.qr_codescan.ScanActivity;
 
 import java.io.BufferedReader;
@@ -53,9 +54,20 @@ public class MainActivity extends Activity {
         pagerAdapter = new BookListViewPagerAdapter(this, viewList);
         bookListViewPager.setAdapter(pagerAdapter);
 
-        ListView gridListView = (ListView) booklist_gridview.findViewById(R.id.booklist_grid);
+        BookListGridListView gridListView = (BookListGridListView) booklist_gridview.findViewById(R.id.booklist_grid);
         BookListGridListViewAdapter adapter = new BookListGridListViewAdapter(this);
         gridListView.setAdapter(adapter);
+        gridListView.setListViewListener(new ListViewListener() {
+            @Override
+            public void onRefresh() {
+                //Execute a syncTask to Refresh
+            }
+
+            @Override
+            public void onLoadMore() {
+
+            }
+        });
     }
 
     @Override

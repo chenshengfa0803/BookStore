@@ -11,10 +11,11 @@ import android.widget.Scroller;
 /**
  * Created by Administrator on 2016/3/1.
  */
-public class BookListGridListView extends ListView implements AbsListView.OnScrollListener {
+public class BookListGridListView extends ListView implements AbsListView.OnScrollListener, ListViewHeader.IStateChangedListener {
     private final static float OFFSET_RADIO = 1.8f;
     private final static int SCROLL_DURATION = 400; // scroll back duration
     private ListView mGridList;
+    private ListViewListener mListViewListener;
     private float mLastY = -1;
     private ListViewHeader mHeaderView;
     private Scroller mScroller;
@@ -41,6 +42,13 @@ public class BookListGridListView extends ListView implements AbsListView.OnScro
 
     private void updateHeaderViewHeight(int height) {
         mHeaderView.setVisibleHeight(height);
+        if (mHeaderView.getCurrentState() == ListViewHeader.STATE.NORMAL_STATE && height >= mHeaderView.getStretchHeight()) {
+            mHeaderView.updataState(ListViewHeader.STATE.STRETCH_STATE);
+        } else if (mHeaderView.getCurrentState() == ListViewHeader.STATE.STRETCH_STATE && height >= mHeaderView.getReadyHeight()) {
+            mHeaderView.updataState(ListViewHeader.STATE.READY_STATE);
+        } else if (mHeaderView.getCurrentState() == ListViewHeader.STATE.END_STATE && height < 2) {
+            mHeaderView.updataState(ListViewHeader.STATE.NORMAL_STATE);
+        }
     }
 
     private void resetHeaderViewHeight() {
@@ -89,6 +97,7 @@ public class BookListGridListView extends ListView implements AbsListView.OnScro
     public void initGridView(Context context) {
         mScroller = new Scroller(context, new DecelerateInterpolator());
         mHeaderView = new ListViewHeader(context);
+        mHeaderView.setStateChangedListener(this);
         addHeaderView(mHeaderView);
     }
 
@@ -104,5 +113,18 @@ public class BookListGridListView extends ListView implements AbsListView.OnScro
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
+    }
+
+    @Override
+    public void notifyStateChanged(ListViewHeader.STATE oldState, ListViewHeader.STATE newState) {
+        if (newState == ListViewHeader.STATE.REFRESHING_STATE) {
+            if (mListViewListener != null) {
+                mListViewListener.onRefresh();
+            }
+        }
+    }
+
+    public void setListViewListener(ListViewListener listener) {
+        mListViewListener = listener;
     }
 }
