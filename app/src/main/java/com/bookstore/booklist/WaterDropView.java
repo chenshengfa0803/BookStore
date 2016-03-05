@@ -12,6 +12,7 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 
@@ -50,6 +51,7 @@ public class WaterDropView extends View {
     private void init(Context context, AttributeSet attrs) {
         mPaint.setColor(Color.GRAY);
         mPaint.setAntiAlias(true);
+        //mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         mPaint.setStrokeWidth(STROKE_WIDTH);
         Drawable drawable = getResources().getDrawable(R.drawable.refresh_arrow);
@@ -92,26 +94,27 @@ public class WaterDropView extends View {
     }
 
     public Animator createAnimator() {
-        final ValueAnimator valueAnimator = ValueAnimator.ofFloat(1, 0).setDuration(BACK_ANIM_DURATION);
+        ValueAnimator valueAnimator = ValueAnimator.ofFloat(1, 0).setDuration(BACK_ANIM_DURATION);
         valueAnimator.setInterpolator(new DecelerateInterpolator());
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                updateCompleteState((float) valueAnimator.getAnimatedValue());
+                updateCompleteState((float) animation.getAnimatedValue());
             }
         });
         return valueAnimator;
     }
 
     public void updateCompleteState(float percent) {
+        Log.i("csf", "updateCompleteState " + percent);
         if (percent < 0 || percent > 1) {
             throw new IllegalStateException("completion percent should between 0 ~ 1");
         }
-        float top_r = (float) (mMaxCircleRadius - 0.25 * percent * mMaxCircleRadius);
-        float bottom_r = (mMinCircleRaidus - mMaxCircleRadius) * percent + mMaxCircleRadius;
-        float bottomCricleOffset = 2 * percent * mMaxCircleRadius;
-        topCircle.setRadius(top_r);
-        bottomCircle.setRadius(bottom_r);
+        float top_radius = (float) (mMaxCircleRadius - 0.25 * percent * mMaxCircleRadius);
+        float bottom_radius = (mMinCircleRaidus - mMaxCircleRadius) * percent + mMaxCircleRadius;
+        float bottomCricleOffset = (float) 2.8 * percent * mMaxCircleRadius;
+        topCircle.setRadius(top_radius);
+        bottomCircle.setRadius(bottom_radius);
         bottomCircle.setY(topCircle.getY() + bottomCricleOffset);
         requestLayout();
         postInvalidate();
@@ -133,7 +136,6 @@ public class WaterDropView extends View {
         canvas.drawCircle(bottomCircle.getX(), bottomCircle.getY(), bottomCircle.getRadius(), mPaint);
         RectF bitmapArea = new RectF(topCircle.getX() - 0.5f * topCircle.getRadius(), topCircle.getY() - 0.5f * topCircle.getRadius(), topCircle.getX() + 0.5f * topCircle.getRadius(), topCircle.getY() + 0.5f * topCircle.getRadius());
         canvas.drawBitmap(arrowBitmap, null, bitmapArea, mPaint);
-        super.onDraw(canvas);
         super.onDraw(canvas);
     }
 

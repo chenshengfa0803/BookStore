@@ -8,3 +8,4 @@ public interface ListViewListener {
 
     void onLoadMore();
 }
+

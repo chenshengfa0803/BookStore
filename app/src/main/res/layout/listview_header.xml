@@ -10,13 +10,12 @@
         android:id="@+id/listheader_waterdrop"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        mine:bottomcircle_x="20dp"
-        mine:bottomcircle_y="20dp"
-        mine:max_circle_radius="20dp"
+        mine:bottomcircle_x="15dp"
+        mine:bottomcircle_y="15dp"
+        mine:max_circle_radius="15dp"
         mine:min_circle_radius="5dp"
-        mine:topcircle_x="20dp"
-        mine:topcircle_y="20dp"
-        mine:waterdrop_color="#9ba2ab" />
+        mine:topcircle_x="15dp"
+        mine:topcircle_y="15dp" />
 
     <ProgressBar
         android:id="@+id/listheader_progressbar"

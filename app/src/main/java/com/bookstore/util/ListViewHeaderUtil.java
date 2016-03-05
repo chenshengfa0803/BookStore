@@ -11,16 +11,7 @@ import android.view.ViewGroup;
  * Created by Administrator on 2016/3/5.
  */
 public class ListViewHeaderUtil {
-    /**
-     * Map a value within a given range to another range.
-     *
-     * @param value    the value to map
-     * @param fromLow  the low end of the range the value is within
-     * @param fromHigh the high end of the range the value is within
-     * @param toLow    the low end of the range to map to
-     * @param toHigh   the high end of the range to map to
-     * @return the mapped value
-     */
+
     public static double mapValueFromRangeToRange(
             double value,
             double fromLow,
@@ -33,15 +24,6 @@ public class ListViewHeaderUtil {
         return toLow + (valueScale * toRangeSize);
     }
 
-    /**
-     * set margins of the specific view
-     *
-     * @param target
-     * @param l
-     * @param t
-     * @param r
-     * @param b
-     */
     public static void setMargin(View target, int l, int t, int r, int b) {
         if (target.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
             ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) target.getLayoutParams();
@@ -50,12 +32,6 @@ public class ListViewHeaderUtil {
         }
     }
 
-    /**
-     * convert drawable to bitmap
-     *
-     * @param drawable
-     * @return
-     */
     public static Bitmap drawableToBitmap(Drawable drawable) {
         int width = drawable.getIntrinsicWidth();
         int height = drawable.getIntrinsicHeight();

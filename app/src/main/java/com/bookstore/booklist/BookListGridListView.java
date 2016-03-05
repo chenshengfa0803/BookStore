@@ -1,6 +1,7 @@
 package com.bookstore.booklist;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.animation.DecelerateInterpolator;
@@ -19,6 +20,7 @@ public class BookListGridListView extends ListView implements AbsListView.OnScro
     private float mLastY = -1;
     private ListViewHeader mHeaderView;
     private Scroller mScroller;
+    private boolean isTouchingScreen = false;
 
     public BookListGridListView(Context context) {
         super(context);
@@ -35,20 +37,29 @@ public class BookListGridListView extends ListView implements AbsListView.OnScro
         initGridView(context);
     }
 
+    public void initGridView(Context context) {
+        mScroller = new Scroller(context, new DecelerateInterpolator());
+        mHeaderView = new ListViewHeader(context);
+        mHeaderView.setStateChangedListener(this);
+        addHeaderView(mHeaderView);
+    }
+
     private void updateHeaderViewHeight(float delta) {
         int newHeight = (int) delta + mHeaderView.getVisibleHeight();
         updateHeaderViewHeight(newHeight);
     }
 
     private void updateHeaderViewHeight(int height) {
-        mHeaderView.setVisibleHeight(height);
         if (mHeaderView.getCurrentState() == ListViewHeader.STATE.NORMAL_STATE && height >= mHeaderView.getStretchHeight()) {
-            mHeaderView.updataState(ListViewHeader.STATE.STRETCH_STATE);
+            mHeaderView.updateState(ListViewHeader.STATE.STRETCH_STATE);
         } else if (mHeaderView.getCurrentState() == ListViewHeader.STATE.STRETCH_STATE && height >= mHeaderView.getReadyHeight()) {
-            mHeaderView.updataState(ListViewHeader.STATE.READY_STATE);
+            mHeaderView.updateState(ListViewHeader.STATE.READY_STATE);
+        } else if (mHeaderView.getCurrentState() == ListViewHeader.STATE.STRETCH_STATE && height < mHeaderView.getStretchHeight()) {
+            mHeaderView.updateState(ListViewHeader.STATE.NORMAL_STATE);
         } else if (mHeaderView.getCurrentState() == ListViewHeader.STATE.END_STATE && height < 2) {
-            mHeaderView.updataState(ListViewHeader.STATE.NORMAL_STATE);
+            mHeaderView.updateState(ListViewHeader.STATE.NORMAL_STATE);
         }
+        mHeaderView.setVisibleHeight(height);
     }
 
     private void resetHeaderViewHeight() {
@@ -57,6 +68,10 @@ public class BookListGridListView extends ListView implements AbsListView.OnScro
             return;
         }
         int finalHeight = 0;
+        if ((mHeaderView.getCurrentState() == ListViewHeader.STATE.REFRESHING_STATE || mHeaderView.getCurrentState() == ListViewHeader.STATE.READY_STATE)
+                && height > mHeaderView.getStretchHeight()) {
+            finalHeight = mHeaderView.getStretchHeight();
+        }
         mScroller.startScroll(0, height, 0, finalHeight - height, SCROLL_DURATION);
         invalidate();
     }
@@ -69,18 +84,23 @@ public class BookListGridListView extends ListView implements AbsListView.OnScro
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mLastY = ev.getRawY();
+                isTouchingScreen = true;
                 break;
             case MotionEvent.ACTION_MOVE:
                 final float deltaY = ev.getRawY() - mLastY;
                 mLastY = ev.getRawY();
                 if (getFirstVisiblePosition() == 0 && (mHeaderView.getVisibleHeight() > 0 || deltaY > 0)) {
+                    //此处多点触控会造成FC，以后再修改
                     updateHeaderViewHeight(deltaY / OFFSET_RADIO);
                 }
                 break;
             case MotionEvent.ACTION_UP:
+                mLastY = -1;
+                isTouchingScreen = false;
                 if (getFirstVisiblePosition() == 0) {
                     resetHeaderViewHeight();
                 }
+                break;
         }
         return super.onTouchEvent(ev);
     }
@@ -94,12 +114,7 @@ public class BookListGridListView extends ListView implements AbsListView.OnScro
         super.computeScroll();
     }
 
-    public void initGridView(Context context) {
-        mScroller = new Scroller(context, new DecelerateInterpolator());
-        mHeaderView = new ListViewHeader(context);
-        mHeaderView.setStateChangedListener(this);
-        addHeaderView(mHeaderView);
-    }
+
 
     public ListView getGridList() {
         return mGridList;
@@ -120,7 +135,26 @@ public class BookListGridListView extends ListView implements AbsListView.OnScro
         if (newState == ListViewHeader.STATE.REFRESHING_STATE) {
             if (mListViewListener != null) {
                 mListViewListener.onRefresh();
+
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        stopRefreshAnimation();
+                    }
+                }, 2000);
             }
+        }
+    }
+
+    public void stopRefreshAnimation() {
+        if (mHeaderView.getCurrentState() == ListViewHeader.STATE.REFRESHING_STATE) {
+            mHeaderView.updateState(ListViewHeader.STATE.END_STATE);
+            if (!isTouchingScreen) {
+                resetHeaderViewHeight();
+            }
+        } else {
+            throw new IllegalStateException("can not stop refresh while it is not refreshing!");
         }
     }
 

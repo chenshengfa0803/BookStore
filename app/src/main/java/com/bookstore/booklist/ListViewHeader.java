@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.ViewTreeObserver;
@@ -13,12 +14,13 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.bookstore.main.R;
+import com.bookstore.util.ListViewHeaderUtil;
 
 /**
  * Created by Administrator on 2016/3/3.
  */
 public class ListViewHeader extends FrameLayout {
-    private static final int DISTANCE_BETWEEN_STRETCH_READY = 250;
+    private static final int DISTANCE_BETWEEN_STRETCH_READY = 100;
     private LinearLayout mContainer;
     private int stretchHeight;
     private int readyHeight;
@@ -74,19 +76,29 @@ public class ListViewHeader extends FrameLayout {
     }
 
     public void setVisibleHeight(int height) {
+        Log.i("csf", "setVisibleHeight " + height);
         if (height < 0) {
             height = 0;
         }
         LayoutParams lp = (LayoutParams) mContainer.getLayoutParams();
         lp.height = height;
         mContainer.setLayoutParams(lp);
+        if (mHeaderViewState == STATE.STRETCH_STATE) {
+            float pullOffset = (float) ListViewHeaderUtil.mapValueFromRangeToRange(height, stretchHeight, readyHeight, 0, 1);
+            if (pullOffset < 0 || pullOffset > 1) {
+                throw new IllegalArgumentException("csf pullOffset should between 0 and 1!" + mHeaderViewState + " " + height + " " + stretchHeight + " " + readyHeight + " " + pullOffset);
+            }
+            Log.e("pullOffset", "pullOffset:" + pullOffset);
+            mWaterDropView.updateCompleteState(pullOffset);
+        }
     }
 
     public STATE getCurrentState() {
         return mHeaderViewState;
     }
 
-    public void updataState(STATE state) {
+    public void updateState(STATE state) {
+        Log.i("csf", "updateState " + state);
         if (state == mHeaderViewState) return;
         STATE oldstate = mHeaderViewState;
         mHeaderViewState = state;
@@ -134,7 +146,7 @@ public class ListViewHeader extends FrameLayout {
         shrinkAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                updataState(STATE.REFRESHING_STATE);
+                updateState(STATE.REFRESHING_STATE);
             }
         });
         shrinkAnimator.start();
