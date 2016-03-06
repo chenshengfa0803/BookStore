@@ -18,7 +18,11 @@ import com.bookstore.booklist.BookListGridListView;
 import com.bookstore.booklist.BookListGridListViewAdapter;
 import com.bookstore.booklist.BookListViewPagerAdapter;
 import com.bookstore.booklist.ListViewListener;
+import com.bookstore.bookparser.BookData;
+import com.bookstore.bookparser.BookInfoJsonParser;
 import com.bookstore.qr_codescan.ScanActivity;
+
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -184,6 +188,15 @@ public class MainActivity extends Activity {
                     String bookInfo = msg.getData().getString("bookinfo");
                     //EditText et = (EditText) findViewById(R.id.bookInfo);
                     //et.setText(bookInfo);
+                    try {
+                        BookInfoJsonParser jsonParser = BookInfoJsonParser.getInstance();
+                        JSONObject jsonObject = BookInfoJsonParser.getJsonObjFromString(bookInfo);
+                        BookData bookData = BookInfoJsonParser.getFullBookDataFromJson(jsonObject);
+                        Log.i("csf", "book id is ");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                 }
                 break;
             }

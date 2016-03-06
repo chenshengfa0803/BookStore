@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PixelFormat;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
@@ -17,7 +18,6 @@ import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 
 import com.bookstore.main.R;
-import com.bookstore.util.ListViewHeaderUtil;
 
 /**
  * Created by Administrator on 2016/3/4.
@@ -55,7 +55,7 @@ public class WaterDropView extends View {
         mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         mPaint.setStrokeWidth(STROKE_WIDTH);
         Drawable drawable = getResources().getDrawable(R.drawable.refresh_arrow);
-        arrowBitmap = ListViewHeaderUtil.drawableToBitmap(drawable);
+        arrowBitmap = drawableToBitmap(drawable);
         parseAttrs(context, attrs);
     }
 
@@ -179,6 +179,16 @@ public class WaterDropView extends View {
             throw new IllegalStateException("bottomCircle's radius must be less than the topCircle's");
         }
         return Math.asin((topCircle.getRadius() - bottomCircle.getRadius()) / (bottomCircle.getY() - topCircle.getY()));
+    }
+
+    public Bitmap drawableToBitmap(Drawable drawable) {
+        int width = drawable.getIntrinsicWidth();
+        int height = drawable.getIntrinsicHeight();
+        Bitmap bitmap = Bitmap.createBitmap(width, height, drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, width, height);
+        drawable.draw(canvas);
+        return bitmap;
     }
 
     public static class Circle {

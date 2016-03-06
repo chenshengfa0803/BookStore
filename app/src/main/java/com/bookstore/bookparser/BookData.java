@@ -1,4 +1,4 @@
-package com.bookstore.util;
+package com.bookstore.bookparser;
 
 import java.util.List;
 
@@ -7,7 +7,6 @@ import java.util.List;
  */
 final public class BookData {
 
-    private int id = -1;
     public int isbn10 = -1;
     public int isbn13 = -1;
     public String title = null;
@@ -33,7 +32,13 @@ final public class BookData {
     public int pages = -1;
     public Detail intro = null;
     public Ebook ebook = null;
+    private int id = -1;
 
+
+    public BookData(int id) {
+        this.id = id;
+        this.rating = new Rating();
+    }
 
     final public class Rating {
         public int max = -1;
@@ -55,12 +60,6 @@ final public class BookData {
     final public class Ebook {
         public String ebook_url = null;
         public String ebook_price = null;
-    }
-
-
-    public BookData(int id) {
-        this.id = id;
-        this.rating = new Rating();
     }
 
 }

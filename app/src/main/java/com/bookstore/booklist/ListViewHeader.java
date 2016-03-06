@@ -14,7 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.bookstore.main.R;
-import com.bookstore.util.ListViewHeaderUtil;
 
 /**
  * Created by Administrator on 2016/3/3.
@@ -84,13 +83,25 @@ public class ListViewHeader extends FrameLayout {
         lp.height = height;
         mContainer.setLayoutParams(lp);
         if (mHeaderViewState == STATE.STRETCH_STATE) {
-            float pullOffset = (float) ListViewHeaderUtil.mapValueFromRangeToRange(height, stretchHeight, readyHeight, 0, 1);
+            float pullOffset = (float) mapValueFromRangeToRange(height, stretchHeight, readyHeight, 0, 1);
             if (pullOffset < 0 || pullOffset > 1) {
                 throw new IllegalArgumentException("csf pullOffset should between 0 and 1!" + mHeaderViewState + " " + height + " " + stretchHeight + " " + readyHeight + " " + pullOffset);
             }
             Log.e("pullOffset", "pullOffset:" + pullOffset);
             mWaterDropView.updateCompleteState(pullOffset);
         }
+    }
+
+    public double mapValueFromRangeToRange(
+            double value,
+            double fromLow,
+            double fromHigh,
+            double toLow,
+            double toHigh) {
+        double fromRangeSize = fromHigh - fromLow;
+        double toRangeSize = toHigh - toLow;
+        double valueScale = (value - fromLow) / fromRangeSize;
+        return toLow + (valueScale * toRangeSize);
     }
 
     public STATE getCurrentState() {

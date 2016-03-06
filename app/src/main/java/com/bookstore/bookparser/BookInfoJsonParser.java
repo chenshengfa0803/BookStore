@@ -1,6 +1,4 @@
-package com.bookstore.solution;
-
-import com.bookstore.util.BookData;
+package com.bookstore.bookparser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,14 +30,14 @@ public class BookInfoJsonParser {
             throw new Exception("Can create Json Object from empty string");
     }
 
-    public static BookData getFullBookDataFromJson (JSONObject JsObj) {
+    public static BookData getFullBookDataFromJson(JSONObject JsObj) {
         BookData data = getSimpleBookDataFromJson(JsObj);
 
         //TODO:Detail parser
         return data;
     }
 
-    public static BookData getSimpleBookDataFromJson (JSONObject JsObj) {
+    public static BookData getSimpleBookDataFromJson(JSONObject JsObj) {
         BookData data = null;
         int id = -1;
         try {
