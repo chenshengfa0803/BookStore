@@ -22,8 +22,6 @@ import com.bookstore.bookparser.BookData;
 import com.bookstore.bookparser.BookInfoJsonParser;
 import com.bookstore.qr_codescan.ScanActivity;
 
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -90,6 +88,7 @@ public class MainActivity extends Activity {
                     Log.d("QR code", bundle.getString("result"));
                     String isbn = bundle.getString("result");
                     String urlstr = "https://api.douban.com/v2/book/isbn/:" + isbn;
+                    //String urlstr = "https://api.douban.com/v2/book/isbn/:" + "9787101063981";// for test
                     getBookInfo(urlstr);
                 }
             }
@@ -189,9 +188,7 @@ public class MainActivity extends Activity {
                     //EditText et = (EditText) findViewById(R.id.bookInfo);
                     //et.setText(bookInfo);
                     try {
-                        BookInfoJsonParser jsonParser = BookInfoJsonParser.getInstance();
-                        JSONObject jsonObject = BookInfoJsonParser.getJsonObjFromString(bookInfo);
-                        BookData bookData = BookInfoJsonParser.getFullBookDataFromJson(jsonObject);
+                        BookData bookData = BookInfoJsonParser.getInstance().getSimpleBookDataFromString(bookInfo);
                         Log.i("csf", "book id is ");
                     } catch (Exception e) {
                         e.printStackTrace();

@@ -1,5 +1,6 @@
 package com.bookstore.bookparser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -7,8 +8,8 @@ import java.util.List;
  */
 final public class BookData {
 
-    public int isbn10 = -1;
-    public int isbn13 = -1;
+    public String isbn10 = null;
+    public String isbn13 = null;
     public String title = null;
     public String origin_title = null;
     public String alt_title = null;
@@ -19,25 +20,29 @@ final public class BookData {
     public String images_small = null;
     public String images_large = null;
     public String images_medium = null;
-    public String author = null;
-    public String translator = null;
+    public List<String> authors = null;
+    public List<String> translator = null;
     public String publisher = null;
     public String pub_date = null;
     public Rating rating = null;
     public List<Tags> tag;
     public String binding = null;
-    public float price = -1;
+    public String price = null;
     public int series_id = -1;
     public String series_title = null;
     public int pages = -1;
     public Detail intro = null;
-    public Ebook ebook = null;
-    private int id = -1;
+    public EBook ebook = null;
+    public int id = -1;
 
 
-    public BookData(int id) {
-        this.id = id;
-        this.rating = new Rating();
+    public BookData() {
+        authors = new ArrayList<String>();
+        translator = new ArrayList<String>();
+        tag = new ArrayList<Tags>();
+        rating = new Rating();
+        intro = new Detail();
+        ebook = new EBook();
     }
 
     final public class Rating {
@@ -48,7 +53,8 @@ final public class BookData {
 
     final public class Tags {
         public int count = -1;
-        public String name = null;
+        public String name;
+        public String title;
     }
 
     final public class Detail {
@@ -57,7 +63,7 @@ final public class BookData {
         public String catalog = null;
     }
 
-    final public class Ebook {
+    final public class EBook {
         public String ebook_url = null;
         public String ebook_price = null;
     }
