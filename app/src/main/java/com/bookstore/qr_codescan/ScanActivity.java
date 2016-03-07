@@ -16,10 +16,10 @@ import android.view.SurfaceView;
 import android.widget.Toast;
 
 import com.bookstore.main.R;
-import com.bookstore.zxing.camera.CameraManager;
-import com.bookstore.zxing.decoding.CaptureActivityHandler;
-import com.bookstore.zxing.decoding.InactivityTimer;
-import com.bookstore.zxing.view.ViewfinderView;
+import com.bookstore.qr_codescan.zxing.camera.CameraManager;
+import com.bookstore.qr_codescan.zxing.decoding.CaptureActivityHandler;
+import com.bookstore.qr_codescan.zxing.decoding.InactivityTimer;
+import com.bookstore.qr_codescan.zxing.view.ViewfinderView;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 

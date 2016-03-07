@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.bookstore.zxing.view;
+package com.bookstore.qr_codescan.zxing.view;
 
 import com.google.zxing.ResultPoint;
 import com.google.zxing.ResultPointCallback;

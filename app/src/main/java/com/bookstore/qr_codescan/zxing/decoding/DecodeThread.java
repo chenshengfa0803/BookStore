@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.bookstore.zxing.decoding;
+package com.bookstore.qr_codescan.zxing.decoding;
 
 import android.os.Handler;
 import android.os.Looper;

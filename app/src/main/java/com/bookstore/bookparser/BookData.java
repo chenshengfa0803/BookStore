@@ -33,7 +33,7 @@ final public class BookData {
     public int pages = -1;
     public Detail intro = null;
     public EBook ebook = null;
-    public int id = -1;
+    public int book_id = -1;
 
 
     public BookData() {

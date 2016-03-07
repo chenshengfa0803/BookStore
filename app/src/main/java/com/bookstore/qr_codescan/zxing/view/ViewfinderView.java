@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.bookstore.zxing.view;
+package com.bookstore.qr_codescan.zxing.view;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -28,7 +28,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.bookstore.main.R;
-import com.bookstore.zxing.camera.CameraManager;
+import com.bookstore.qr_codescan.zxing.camera.CameraManager;
 import com.google.zxing.ResultPoint;
 
 import java.util.Collection;

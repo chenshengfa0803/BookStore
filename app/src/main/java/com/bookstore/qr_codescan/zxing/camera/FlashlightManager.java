@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.bookstore.zxing.camera;
+package com.bookstore.qr_codescan.zxing.camera;
 
 import android.os.IBinder;
 import android.util.Log;

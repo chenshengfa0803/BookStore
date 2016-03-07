@@ -62,7 +62,7 @@ public class BookInfoJsonParser {
 
     public void getBookId(BookData bookData, JSONObject json) throws JSONException {
         if (json.has("id")) {
-            bookData.id = json.getInt("id");
+            bookData.book_id = json.getInt("id");
         }
     }
 

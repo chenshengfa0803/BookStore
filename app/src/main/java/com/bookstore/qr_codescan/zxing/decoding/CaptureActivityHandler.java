@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.bookstore.zxing.decoding;
+package com.bookstore.qr_codescan.zxing.decoding;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -27,8 +27,8 @@ import android.util.Log;
 
 import com.bookstore.main.R;
 import com.bookstore.qr_codescan.ScanActivity;
-import com.bookstore.zxing.camera.CameraManager;
-import com.bookstore.zxing.view.ViewfinderResultPointCallback;
+import com.bookstore.qr_codescan.zxing.camera.CameraManager;
+import com.bookstore.qr_codescan.zxing.view.ViewfinderResultPointCallback;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 

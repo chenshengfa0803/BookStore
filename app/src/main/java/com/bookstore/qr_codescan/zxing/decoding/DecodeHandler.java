@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.bookstore.zxing.decoding;
+package com.bookstore.qr_codescan.zxing.decoding;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,8 +24,8 @@ import android.util.Log;
 
 import com.bookstore.main.R;
 import com.bookstore.qr_codescan.ScanActivity;
-import com.bookstore.zxing.camera.CameraManager;
-import com.bookstore.zxing.camera.PlanarYUVLuminanceSource;
+import com.bookstore.qr_codescan.zxing.camera.CameraManager;
+import com.bookstore.qr_codescan.zxing.camera.PlanarYUVLuminanceSource;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.MultiFormatReader;
