@@ -21,6 +21,11 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysHidden"></activity>
+
+        <provider
+            android:name="com.bookstore.provider.BookProvider"
+            android:authorities="com.bookstore.provider.BookProvider"
+            android:multiprocess="true"></provider>
     </application>
 
     <uses-permission android:name="android.permission.VIBRATE" />
