@@ -43,7 +43,7 @@ public class BookProvider extends ContentProvider {
         return mDatabase;
     }
 
-    public int findMatch(Uri uri) {
+    public synchronized int findMatch(Uri uri) {
         int match = sURIMatcher.match(uri);
         if (match == UriMatcher.NO_MATCH) {
             throw new IllegalArgumentException("Unknown or Invalid URI: " + uri);
