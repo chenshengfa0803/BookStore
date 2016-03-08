@@ -70,12 +70,13 @@ public class MainActivity extends Activity {
 
             }
         });
+
+        createFloatButtonMenu();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        createFloatButtonMenu();
     }
 
     @Override
