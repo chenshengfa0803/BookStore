@@ -11,8 +11,8 @@ import android.util.Log;
 public class BookSQLiteOpenHelper extends SQLiteOpenHelper {
     //version 1: Add database
     public static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "BookProvider.db";
-    private static final String BOOKINFO_TABLE_NAME = "BookInfo";
+    public static final String DATABASE_NAME = "BookProvider.db";
+    public static final String BOOKINFO_TABLE_NAME = "BookInfo";
     private static BookSQLiteOpenHelper singleton;
     private Context mContext;
 

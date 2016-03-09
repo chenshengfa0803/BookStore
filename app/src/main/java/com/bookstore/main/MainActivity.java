@@ -3,6 +3,7 @@ package com.bookstore.main;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +21,8 @@ import com.bookstore.booklist.BookListViewPagerAdapter;
 import com.bookstore.booklist.ListViewListener;
 import com.bookstore.bookparser.BookData;
 import com.bookstore.bookparser.BookInfoJsonParser;
+import com.bookstore.provider.BookProvider;
+import com.bookstore.provider.DB_Column;
 import com.bookstore.qr_codescan.ScanActivity;
 
 import java.io.BufferedReader;
@@ -191,6 +194,10 @@ public class MainActivity extends Activity {
                     try {
                         BookData bookData = BookInfoJsonParser.getInstance().getSimpleBookDataFromString(bookInfo);
                         Log.i("csf", "book id is ");
+                        ContentValues contentValues = new ContentValues();
+                        contentValues.put(DB_Column.TITLE, bookData.title);
+                        contentValues.put(DB_Column.AUTHOR, bookData.authors.get(0));
+                        getContentResolver().insert(BookProvider.CONTENT_URI, contentValues);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
