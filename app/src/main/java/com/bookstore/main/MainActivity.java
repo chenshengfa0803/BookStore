@@ -29,7 +29,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends Activity {
@@ -197,6 +199,20 @@ public class MainActivity extends Activity {
                         ContentValues contentValues = new ContentValues();
                         contentValues.put(DB_Column.TITLE, bookData.title);
                         contentValues.put(DB_Column.AUTHOR, bookData.authors.get(0));
+                        contentValues.put(DB_Column.TRANSLATOR, "HAHA");
+                        contentValues.put(DB_Column.PUB_DATE, bookData.pub_date);
+                        contentValues.put(DB_Column.PUBLISHER, bookData.publisher);
+                        contentValues.put(DB_Column.PRICE, bookData.price);
+                        contentValues.put(DB_Column.PAGES, bookData.pages);
+                        contentValues.put(DB_Column.BINGDING, bookData.binding);
+                        contentValues.put(DB_Column.IMG_SMALL, bookData.images_small);
+                        contentValues.put(DB_Column.IMG_MEDIUM, bookData.images_medium);
+                        contentValues.put(DB_Column.IMG_LARGE, bookData.images_large);
+                        contentValues.put(DB_Column.ISBN10, bookData.isbn10);
+                        //contentValues.put(DB_Column.ISBN13, bookData.isbn13);
+                        SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        String date = sDateFormat.format(new Date());
+                        contentValues.put(DB_Column.ADD_DATE, date);
                         getContentResolver().insert(BookProvider.CONTENT_URI, contentValues);
                     } catch (Exception e) {
                         e.printStackTrace();

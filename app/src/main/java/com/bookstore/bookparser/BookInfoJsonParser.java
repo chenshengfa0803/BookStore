@@ -45,6 +45,7 @@ public class BookInfoJsonParser {
         BookData bookData = new BookData();
         try {
             getBookId(bookData, JsObj);
+            getBookTitle(bookData, JsObj);
             getBookAuthors(bookData, JsObj);
             getBookTranslator(bookData, JsObj);
             getBookPubDate(bookData, JsObj);
@@ -63,6 +64,12 @@ public class BookInfoJsonParser {
     public void getBookId(BookData bookData, JSONObject json) throws JSONException {
         if (json.has("id")) {
             bookData.book_id = json.getInt("id");
+        }
+    }
+
+    public void getBookTitle(BookData bookData, JSONObject json) throws JSONException {
+        if (json.has("title")) {
+            bookData.title = json.getString("title");
         }
     }
 
