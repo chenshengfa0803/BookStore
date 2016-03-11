@@ -2,6 +2,7 @@ package com.bookstore.booklist;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.database.Cursor;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import com.bookstore.main.R;
 public class BookListGridListViewAdapter extends BaseAdapter {
     public Context mContext;
     private TypedArray mColor_list;
+    private Cursor mDataCursor = null;
 
     public BookListGridListViewAdapter(Context context) {
         mContext = context;
@@ -65,5 +67,15 @@ public class BookListGridListViewAdapter extends BaseAdapter {
 
     public int getColor(int position) {
         return mColor_list.getColor(position % mColor_list.length(), 0);
+    }
+
+    public void registerDataCursor(Cursor dataCursor) {
+        if (dataCursor == null) {
+            return;
+        }
+        if (mDataCursor != null) {
+            mDataCursor.close();
+        }
+        mDataCursor = dataCursor;
     }
 }
