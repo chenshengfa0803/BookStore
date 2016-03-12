@@ -19,6 +19,9 @@ public abstract class BookInfoRequestBase  {
         if (mRequest == null)
             return;
         String url = mRequest.getRequestUrl(type, param);
+        if (url == null || url.isEmpty()) {
+            requestPostExecute("");
+        }
         AsyncTask task = new AsyncTask<String, Integer, String>() {
 
 
