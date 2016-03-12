@@ -37,13 +37,13 @@ public abstract class BookInfoRequestBase  {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                PreExecute();
+                requestPreExecute();
             }
 
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
-                PostExecute(s);
+                requestPostExecute(s);
             }
         };
         task.execute(url);
@@ -53,7 +53,7 @@ public abstract class BookInfoRequestBase  {
     }
 
 
-    protected abstract void PreExecute();
+    protected abstract void requestPreExecute();
 
-    protected abstract void PostExecute(String s) ;
+    protected abstract void requestPostExecute(String s) ;
 }
