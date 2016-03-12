@@ -21,6 +21,7 @@ import com.bookstore.booklist.BookListGridListView;
 import com.bookstore.booklist.BookListGridListViewAdapter;
 import com.bookstore.booklist.BookListLoader;
 import com.bookstore.booklist.BookListViewPagerAdapter;
+import com.bookstore.booklist.DataBaseProjection;
 import com.bookstore.booklist.ListViewListener;
 import com.bookstore.bookparser.BookData;
 import com.bookstore.bookparser.BookInfoJsonParser;
@@ -194,8 +195,8 @@ public class MainActivity extends Activity {
 
     public void refreshBookList() {
         stopRefreshBookList();
-        final String[] projection = new String[]{DB_Column.TITLE, DB_Column.AUTHOR};
-        mBookListLoader = new BookListLoader(this, BookProvider.CONTENT_URI, projection, null, null, null);
+        //final String[] projection = new String[]{DB_Column.TITLE, DB_Column.AUTHOR};
+        mBookListLoader = new BookListLoader(this, BookProvider.CONTENT_URI, null, null, null, null);
         mLoadListener = new bookListLoadListener();
         mBookListLoader.registerListener(0, mLoadListener);
         mBookListLoader.startLoading();
@@ -233,7 +234,7 @@ public class MainActivity extends Activity {
                         contentValues.put(DB_Column.IMG_MEDIUM, bookData.images_medium);
                         contentValues.put(DB_Column.IMG_LARGE, bookData.images_large);
                         contentValues.put(DB_Column.ISBN10, bookData.isbn10);
-                        //contentValues.put(DB_Column.ISBN13, bookData.isbn13);
+                        contentValues.put(DB_Column.ISBN13, bookData.isbn13);
                         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                         String date = sDateFormat.format(new Date());
                         contentValues.put(DB_Column.ADD_DATE, date);
@@ -259,6 +260,11 @@ public class MainActivity extends Activity {
                 return;
             }
             mGridListViewAdapter.registerDataCursor(data);
+            data.moveToFirst();
+            String book_title = data.getString(DataBaseProjection.COLUMN_TITLE);
+            String book_author = data.getString(DataBaseProjection.COLUMN_AUTHOR);
+            int pages = data.getInt(DataBaseProjection.COLUMN_PAGES);
+            int p = pages;
         }
     }
 }
