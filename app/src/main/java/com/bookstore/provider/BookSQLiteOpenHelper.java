@@ -34,7 +34,7 @@ public class BookSQLiteOpenHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String create_database = "create table " + BOOKINFO_TABLE_NAME + " ("
                 + DB_Column.ID + " integer primary key autoincrement, "
-                + DB_Column.TITLE + " text not null, "
+                + DB_Column.TITLE + " text not null, "//if title is null, then it will fail to insert
                 + DB_Column.AUTHOR + " text, "
                 + DB_Column.TRANSLATOR + " text, "
                 + DB_Column.PUB_DATE + " text, "
