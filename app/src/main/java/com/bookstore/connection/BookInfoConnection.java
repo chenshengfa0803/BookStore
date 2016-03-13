@@ -27,7 +27,7 @@ public class BookInfoConnection {
         StringBuffer result = new StringBuffer();
         String tempLine = null;
 
-        if (url.startsWith(prefix_http)) {
+        if (url.startsWith(prefix_http) || url.startsWith(prefix_https)) {
             HttpURLConnection httpConnection = (HttpURLConnection) requestUrl.openConnection();
             httpConnection.setConnectTimeout(timeout);
             httpConnection.setReadTimeout(timeout);
@@ -73,7 +73,7 @@ public class BookInfoConnection {
         return null;
     }
 
-    public static String simpleCheckUrl(String urlString) {
+    public String simpleCheckUrl(String urlString) {
         if(urlString == null)
             return null;
         urlString = urlString.trim();

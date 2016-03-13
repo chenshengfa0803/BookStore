@@ -15,17 +15,15 @@ public abstract class BookInfoRequestBase  {
         mRequest = RequestBase;
     }
 
-    public void requestExcute(int type, Object... param) {
+    public void requestExcute(int type) {
         if (mRequest == null)
             return;
-        String url = mRequest.getRequestUrl(type, param);
+        String url = mRequest.getRequestUrl(type);
         if (url == null || url.isEmpty()) {
             requestPostExecute("");
+            return;
         }
-        AsyncTask task = new AsyncTask<String, Integer, String>() {
-
-
-
+        AsyncTask<String, Integer, String> task = new AsyncTask<String, Integer, String>() {
             @Override
             protected String doInBackground(String... params) {
                 BookInfoConnection connection = new BookInfoConnection();
@@ -44,9 +42,9 @@ public abstract class BookInfoRequestBase  {
             }
 
             @Override
-            protected void onPostExecute(String s) {
-                super.onPostExecute(s);
-                requestPostExecute(s);
+            protected void onPostExecute(String bookInfo) {
+                super.onPostExecute(bookInfo);
+                requestPostExecute(bookInfo);
             }
         };
         task.execute(url);
@@ -58,5 +56,5 @@ public abstract class BookInfoRequestBase  {
 
     protected abstract void requestPreExecute();
 
-    protected abstract void requestPostExecute(String s) ;
+    protected abstract void requestPostExecute(String bookInfo);
 }

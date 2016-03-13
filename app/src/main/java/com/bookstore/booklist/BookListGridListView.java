@@ -73,7 +73,7 @@ public class BookListGridListView extends ListView implements AbsListView.OnScro
             finalHeight = mHeaderView.getStretchHeight();
         }
         mScroller.startScroll(0, height, 0, finalHeight - height, SCROLL_DURATION);
-        invalidate();
+        invalidate();//will call computeScroll
     }
 
     @Override

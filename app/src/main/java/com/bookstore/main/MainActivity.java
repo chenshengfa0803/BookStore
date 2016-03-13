@@ -9,8 +9,6 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,26 +23,24 @@ import com.bookstore.booklist.DataBaseProjection;
 import com.bookstore.booklist.ListViewListener;
 import com.bookstore.bookparser.BookData;
 import com.bookstore.bookparser.BookInfoJsonParser;
+import com.bookstore.connection.BookInfoRequestBase;
+import com.bookstore.connection.BookInfoUrlBase;
+import com.bookstore.connection.douban.DoubanBookInfoUrl;
 import com.bookstore.provider.BookProvider;
 import com.bookstore.provider.DB_Column;
 import com.bookstore.qr_codescan.ScanActivity;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends Activity {
-    private final static int SCANNIN_GREQUEST_CODE = 1;
+    private final static int SCANNING_REQUEST_CODE = 1;
     public FloatButton mainFloatButton;
     BookListGridListViewAdapter mGridListViewAdapter;
     private ViewPager bookListViewPager;
     private BookListViewPagerAdapter pagerAdapter;
-    private MessageHandler handler = new MessageHandler(this);
     private BookListLoader mBookListLoader = null;
     private bookListLoadListener mLoadListener = null;
 
@@ -96,14 +92,11 @@ public class MainActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case SCANNIN_GREQUEST_CODE: {
+            case SCANNING_REQUEST_CODE: {
                 if (resultCode == RESULT_OK) {
                     Bundle bundle = data.getExtras();
-                    Log.d("QR code", bundle.getString("result"));
                     String isbn = bundle.getString("result");
-                    String urlstr = "https://api.douban.com/v2/book/isbn/:" + isbn;
-                    //String urlstr = "https://api.douban.com/v2/book/isbn/:" + "9787101063981";// for test
-                    getBookInfo(urlstr);
+                    getBookInfo(isbn);
                 }
             }
             break;
@@ -120,7 +113,7 @@ public class MainActivity extends Activity {
                 Intent intent = new Intent();
                 intent.setClass(MainActivity.this, ScanActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivityForResult(intent, SCANNIN_GREQUEST_CODE);
+                startActivityForResult(intent, SCANNING_REQUEST_CODE);
                 mainFloatButton.closeMenu();
             }
         });
@@ -153,36 +146,30 @@ public class MainActivity extends Activity {
         });
     }
 
-    public void getBookInfo(final String url) {
-
-        new Thread(new Runnable() {
+    public void getBookInfo(final String isbn) {
+        if (isbn == null) {
+            Log.i("BookStore", "isbn is null");
+            return;
+        }
+        Log.i("BookStore", "isbn is " + isbn);
+        DoubanBookInfoUrl doubanBookUrl = new DoubanBookInfoUrl(isbn);
+        BookInfoRequestBase bookRequest = new BookInfoRequestBase(doubanBookUrl) {
             @Override
-            public void run() {
+            protected void requestPreExecute() {
+
+            }
+
+            @Override
+            protected void requestPostExecute(String bookInfo) {
                 try {
-                    URL realUrl = new URL(url);
-                    final URLConnection connection = realUrl.openConnection();
-
-                    String result = "";
-                    String line;
-                    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
-                    while ((line = in.readLine()) != null) {
-                        result += line;
-                    }
-                    if (in != null) {
-                        in.close();
-                    }
-
-                    Message msg = new Message();
-                    Bundle data = new Bundle();
-                    data.putString("bookinfo", result);
-                    msg.what = MessageHandler.MSG_GET_BOOKINFO;
-                    msg.setData(data);
-                    handler.sendMessage(msg);
+                    BookData bookData = BookInfoJsonParser.getInstance().getSimpleBookDataFromString(bookInfo);
+                    insertBookDataToDB(bookData);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-        }).start();
+        };
+        bookRequest.requestExcute(BookInfoUrlBase.REQ_ISBN);
     }
 
     synchronized public void stopRefreshBookList() {
@@ -202,51 +189,34 @@ public class MainActivity extends Activity {
         mBookListLoader.startLoading();
     }
 
-    class MessageHandler extends Handler {
-        private static final int MSG_GET_BOOKINFO = 1;
-        private MainActivity mainActivity;
-
-        public MessageHandler(MainActivity activity) {
-            mainActivity = activity;
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case MSG_GET_BOOKINFO: {
-                    String bookInfo = msg.getData().getString("bookinfo");
-                    //EditText et = (EditText) findViewById(R.id.bookInfo);
-                    //et.setText(bookInfo);
-                    try {
-                        BookData bookData = BookInfoJsonParser.getInstance().getSimpleBookDataFromString(bookInfo);
-                        Log.i("csf", "book id is ");
-                        ContentValues contentValues = new ContentValues();
-                        contentValues.put(DB_Column.TITLE, bookData.title);
-                        contentValues.put(DB_Column.AUTHOR, bookData.authors.get(0));
-                        contentValues.put(DB_Column.TRANSLATOR, "HAHA");
-                        contentValues.put(DB_Column.PUB_DATE, bookData.pub_date);
-                        contentValues.put(DB_Column.PUBLISHER, bookData.publisher);
-                        contentValues.put(DB_Column.PRICE, bookData.price);
-                        contentValues.put(DB_Column.PAGES, bookData.pages);
-                        contentValues.put(DB_Column.BINGDING, bookData.binding);
-                        contentValues.put(DB_Column.IMG_SMALL, bookData.images_small);
-                        contentValues.put(DB_Column.IMG_MEDIUM, bookData.images_medium);
-                        contentValues.put(DB_Column.IMG_LARGE, bookData.images_large);
-                        contentValues.put(DB_Column.ISBN10, bookData.isbn10);
-                        contentValues.put(DB_Column.ISBN13, bookData.isbn13);
-                        SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                        String date = sDateFormat.format(new Date());
-                        contentValues.put(DB_Column.ADD_DATE, date);
-                        getContentResolver().insert(BookProvider.CONTENT_URI, contentValues);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
+    public void insertBookDataToDB(final BookData bookData) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(DB_Column.TITLE, bookData.title);
+                contentValues.put(DB_Column.AUTHOR, bookData.authors.get(0));
+                contentValues.put(DB_Column.TRANSLATOR, "HAHA");
+                contentValues.put(DB_Column.PUB_DATE, bookData.pub_date);
+                contentValues.put(DB_Column.PUBLISHER, bookData.publisher);
+                contentValues.put(DB_Column.PRICE, bookData.price);
+                contentValues.put(DB_Column.PAGES, bookData.pages);
+                contentValues.put(DB_Column.BINGDING, bookData.binding);
+                contentValues.put(DB_Column.IMG_SMALL, bookData.images_small);
+                contentValues.put(DB_Column.IMG_MEDIUM, bookData.images_medium);
+                contentValues.put(DB_Column.IMG_LARGE, bookData.images_large);
+                contentValues.put(DB_Column.ISBN10, bookData.isbn10);
+                contentValues.put(DB_Column.ISBN13, bookData.isbn13);
+                SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                String date = sDateFormat.format(new Date());
+                contentValues.put(DB_Column.ADD_DATE, date);
+                try {
+                    getContentResolver().insert(BookProvider.CONTENT_URI, contentValues);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                break;
             }
-        }
+        }).start();
     }
 
     public class bookListLoadListener implements Loader.OnLoadCompleteListener<Cursor> {

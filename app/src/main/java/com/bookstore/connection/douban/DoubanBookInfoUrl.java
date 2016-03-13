@@ -8,17 +8,20 @@ import com.bookstore.connection.BookInfoUrlBase;
 public class DoubanBookInfoUrl implements BookInfoUrlBase {
 
     private static final String ISBN_PREFIX = "https://api.douban.com/v2/book/isbn/:";
+    private String bookUrl = null;
+
+    public DoubanBookInfoUrl(String isbn) {
+        bookUrl = ISBN_PREFIX + isbn;
+    }
 
     @Override
-    public String getRequestUrl(int type, Object... args) {
+    public String getRequestUrl(int type) {
         switch (type) {
             case REQ_ISBN :
             {
-                if (args[0] instanceof Integer) {
-                    int isbn = (Integer) args[0];
-                    return ISBN_PREFIX + isbn;
-                } else
-                    return null;
+                if (bookUrl != null) {
+                    return bookUrl;
+                }
             }
         }
         return null;
