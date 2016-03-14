@@ -13,6 +13,7 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 
 import com.bookstore.booklist.BookListGridListView;
@@ -29,6 +30,7 @@ import com.bookstore.connection.douban.DoubanBookInfoUrl;
 import com.bookstore.provider.BookProvider;
 import com.bookstore.provider.DB_Column;
 import com.bookstore.qr_codescan.ScanActivity;
+import com.bookstore.util.SystemBarTintManager;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -47,10 +49,17 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //沉浸式状态栏
+
+        //沉浸式状态栏 Immersive ActionBar
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+
+            //SystemBarTintManager is openSource repository from github (https://github.com/jgilfelt/SystemBarTint)
+            SystemBarTintManager tintManager = new SystemBarTintManager(this);
+            tintManager.setStatusBarTintEnabled(true);
+            //tintManager.setStatusBarTintColor(getResources().getColor(android.R.color.background_light));
+            tintManager.setTintColor(getResources().getColor(android.R.color.darker_gray));
         }
         setContentView(R.layout.activity_main);
 
@@ -83,6 +92,17 @@ public class MainActivity extends Activity {
         createFloatButtonMenu();
     }
 
+    private void setTranslucentStatus(boolean on) {
+        Window win = getWindow();
+        WindowManager.LayoutParams winParams = win.getAttributes();
+        final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
+        if (on) {
+            winParams.flags |= bits;
+        } else {
+            winParams.flags &= ~bits;
+        }
+        win.setAttributes(winParams);
+    }
     @Override
     protected void onResume() {
         super.onResume();

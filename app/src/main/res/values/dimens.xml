@@ -23,4 +23,5 @@
     <dimen name="cover3_marginLeft">5dp</dimen>
     <dimen name="cover3_marginBottom">5dp</dimen>
     <dimen name="cover3_marginRight">5dp</dimen>
+    <dimen name="action_bar_height">30dp</dimen>
 </resources>
