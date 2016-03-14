@@ -41,6 +41,7 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
     private int menu_duration;
     private FloatButtonAnimationHandler animationHandler;
     private MenuStateListener menuStateListener;
+    private Context mContext;
 
     public FloatButton(Context context) {
         this(context, null);
@@ -52,6 +53,7 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
 
     public FloatButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        mContext = context;
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FloatingActionButton);
         mColor = a.getColor(R.styleable.FloatingActionButton_bgColor, Color.WHITE);
         pen.setStyle(Paint.Style.FILL);

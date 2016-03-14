@@ -7,14 +7,17 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 import com.bookstore.booklist.BookListGridListView;
 import com.bookstore.booklist.BookListGridListViewAdapter;
@@ -27,6 +30,8 @@ import com.bookstore.bookparser.BookInfoJsonParser;
 import com.bookstore.connection.BookInfoRequestBase;
 import com.bookstore.connection.BookInfoUrlBase;
 import com.bookstore.connection.douban.DoubanBookInfoUrl;
+import com.bookstore.main.animation.Blur;
+import com.bookstore.main.animation.ViewBlur;
 import com.bookstore.provider.BookProvider;
 import com.bookstore.provider.DB_Column;
 import com.bookstore.qr_codescan.ScanActivity;
@@ -92,17 +97,6 @@ public class MainActivity extends Activity {
         createFloatButtonMenu();
     }
 
-    private void setTranslucentStatus(boolean on) {
-        Window win = getWindow();
-        WindowManager.LayoutParams winParams = win.getAttributes();
-        final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
-        if (on) {
-            winParams.flags |= bits;
-        } else {
-            winParams.flags &= ~bits;
-        }
-        win.setAttributes(winParams);
-    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -150,6 +144,7 @@ public class MainActivity extends Activity {
         mainFloatButton.addMenuStateListener(new FloatButton.MenuStateListener() {
             @Override
             public void onMenuOpened(FloatButton fb) {
+                makeBlurWindow2();
                 fb.getContentView().setRotation(0);
                 PropertyValuesHolder rotation = PropertyValuesHolder.ofFloat(View.ROTATION, 45);
                 ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(fb.getContentView(), rotation);
@@ -164,6 +159,31 @@ public class MainActivity extends Activity {
                 animator.start();
             }
         });
+    }
+
+    public void makeBlurWindow1() {
+        ImageView blurView = new ImageView(this);
+        View fromView = findViewById(R.id.booklist_mainView);
+        fromView.buildDrawingCache();
+        Bitmap bitmapFromView = fromView.getDrawingCache();
+        blurView.setImageBitmap(Blur.fastblur(this, bitmapFromView, 12));
+        float alpha = 1.0f;
+        blurView.setAlpha(1.0F);
+        WindowManager mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        WindowManager.LayoutParams mLayoutParams = new WindowManager.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.TYPE_SYSTEM_ERROR, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                | WindowManager.LayoutParams.FLAG_FULLSCREEN
+                | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN, // 全屏显示特征
+                PixelFormat.TRANSPARENT);
+        mWindowManager.addView(blurView, mLayoutParams);
+        blurView.setVisibility(View.VISIBLE);
+    }
+
+    public void makeBlurWindow2() {
+        View fromView = findViewById(R.id.booklist_mainView);
+        ImageView toView = (ImageView) findViewById(R.id.blur_view);
+        ViewBlur.blur(fromView, toView, 2, 8);
     }
 
     public void getBookInfo(final String isbn) {
