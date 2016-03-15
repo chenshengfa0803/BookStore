@@ -7,15 +7,12 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
@@ -30,7 +27,6 @@ import com.bookstore.bookparser.BookInfoJsonParser;
 import com.bookstore.connection.BookInfoRequestBase;
 import com.bookstore.connection.BookInfoUrlBase;
 import com.bookstore.connection.douban.DoubanBookInfoUrl;
-import com.bookstore.main.animation.Blur;
 import com.bookstore.main.animation.ViewBlur;
 import com.bookstore.provider.BookProvider;
 import com.bookstore.provider.DB_Column;
@@ -46,6 +42,8 @@ public class MainActivity extends Activity {
     private final static int SCANNING_REQUEST_CODE = 1;
     public FloatButton mainFloatButton;
     BookListGridListViewAdapter mGridListViewAdapter;
+    View blurFromView = null;
+    ImageView blurToView = null;
     private ViewPager bookListViewPager;
     private BookListViewPagerAdapter pagerAdapter;
     private BookListLoader mBookListLoader = null;
@@ -67,6 +65,16 @@ public class MainActivity extends Activity {
             tintManager.setTintColor(getResources().getColor(android.R.color.darker_gray));
         }
         setContentView(R.layout.activity_main);
+        blurFromView = findViewById(R.id.booklist_mainView);
+        blurToView = (ImageView) findViewById(R.id.blur_view);
+        blurToView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mainFloatButton != null) {
+                    mainFloatButton.closeMenu();
+                }
+            }
+        });
 
         List<View> viewList = new ArrayList<View>();
         View booklist_gridview = LayoutInflater.from(this).inflate(R.layout.booklist_gridview, null);
@@ -144,7 +152,7 @@ public class MainActivity extends Activity {
         mainFloatButton.addMenuStateListener(new FloatButton.MenuStateListener() {
             @Override
             public void onMenuOpened(FloatButton fb) {
-                makeBlurWindow2();
+                makeBlurWindow();
                 fb.getContentView().setRotation(0);
                 PropertyValuesHolder rotation = PropertyValuesHolder.ofFloat(View.ROTATION, 45);
                 ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(fb.getContentView(), rotation);
@@ -157,33 +165,22 @@ public class MainActivity extends Activity {
                 PropertyValuesHolder rotation = PropertyValuesHolder.ofFloat(View.ROTATION, 0);
                 ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(fb.getContentView(), rotation);
                 animator.start();
+                disappearBlurWindow();
             }
         });
     }
 
-    public void makeBlurWindow1() {
-        ImageView blurView = new ImageView(this);
-        View fromView = findViewById(R.id.booklist_mainView);
-        fromView.buildDrawingCache();
-        Bitmap bitmapFromView = fromView.getDrawingCache();
-        blurView.setImageBitmap(Blur.fastblur(this, bitmapFromView, 12));
-        float alpha = 1.0f;
-        blurView.setAlpha(1.0F);
-        WindowManager mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-        WindowManager.LayoutParams mLayoutParams = new WindowManager.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.TYPE_SYSTEM_ERROR, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                | WindowManager.LayoutParams.FLAG_FULLSCREEN
-                | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN, // 全屏显示特征
-                PixelFormat.TRANSPARENT);
-        mWindowManager.addView(blurView, mLayoutParams);
-        blurView.setVisibility(View.VISIBLE);
+    public void makeBlurWindow() {
+        blurToView.setImageBitmap(null);
+        blurToView.setVisibility(View.VISIBLE);
+        ViewBlur.blur(blurFromView, blurToView, 2, 40);
+        blurFromView.setVisibility(View.INVISIBLE);
     }
 
-    public void makeBlurWindow2() {
-        View fromView = findViewById(R.id.booklist_mainView);
-        ImageView toView = (ImageView) findViewById(R.id.blur_view);
-        ViewBlur.blur(fromView, toView, 2, 8);
+    public void disappearBlurWindow() {
+        blurFromView.setVisibility(View.VISIBLE);
+        blurToView.setVisibility(View.INVISIBLE);
+        blurToView.setImageBitmap(null);
     }
 
     public void getBookInfo(final String isbn) {
@@ -275,6 +272,7 @@ public class MainActivity extends Activity {
             String book_author = data.getString(DataBaseProjection.COLUMN_AUTHOR);
             int pages = data.getInt(DataBaseProjection.COLUMN_PAGES);
             int p = pages;
+            //remember close the cursor after using it
         }
     }
 }

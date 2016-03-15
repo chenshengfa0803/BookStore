@@ -40,7 +40,7 @@ public class ViewBlur {
         Bitmap overlay = Bitmap.createBitmap((int) (toView.getMeasuredWidth() / scaleFactor),
                 (int) (toView.getMeasuredHeight() / scaleFactor), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(overlay);
-        canvas.translate(-toView.getLeft() / scaleFactor, -toView.getTop() / scaleFactor);
+        //canvas.translate(-toView.getLeft() / scaleFactor, -toView.getTop() / scaleFactor);
         canvas.scale(1 / scaleFactor, 1 / scaleFactor);
         Paint paint = new Paint();
         paint.setFlags(Paint.FILTER_BITMAP_FLAG);
