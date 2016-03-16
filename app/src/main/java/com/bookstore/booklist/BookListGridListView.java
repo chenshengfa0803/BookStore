@@ -93,6 +93,7 @@ public class BookListGridListView extends ListView implements AbsListView.OnScro
                     //此处多点触控会造成FC，以后再修改
                     updateHeaderViewHeight(deltaY / OFFSET_RADIO);
                 }
+                setVerticalScrollBarEnabled(true);
                 break;
             case MotionEvent.ACTION_UP:
                 mLastY = -1;

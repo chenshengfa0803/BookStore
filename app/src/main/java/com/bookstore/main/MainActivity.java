@@ -44,6 +44,7 @@ public class MainActivity extends Activity {
     BookListGridListViewAdapter mGridListViewAdapter;
     View blurFromView = null;
     ImageView blurToView = null;
+    BookListGridListView gridListView = null;
     private ViewPager bookListViewPager;
     private BookListViewPagerAdapter pagerAdapter;
     private BookListLoader mBookListLoader = null;
@@ -86,7 +87,7 @@ public class MainActivity extends Activity {
         pagerAdapter = new BookListViewPagerAdapter(this, viewList);
         bookListViewPager.setAdapter(pagerAdapter);
 
-        BookListGridListView gridListView = (BookListGridListView) booklist_gridview.findViewById(R.id.booklist_grid);
+        gridListView = (BookListGridListView) booklist_gridview.findViewById(R.id.booklist_grid);
         mGridListViewAdapter = new BookListGridListViewAdapter(this);
         gridListView.setAdapter(mGridListViewAdapter);
         gridListView.setListViewListener(new ListViewListener() {
@@ -171,6 +172,7 @@ public class MainActivity extends Activity {
     }
 
     public void makeBlurWindow() {
+        gridListView.setVerticalScrollBarEnabled(false);
         blurToView.setImageBitmap(null);
         blurToView.setVisibility(View.VISIBLE);
         ViewBlur.blur(blurFromView, blurToView, 2, 40);
@@ -263,7 +265,7 @@ public class MainActivity extends Activity {
         @Override
         public void onLoadComplete(Loader<Cursor> loader, Cursor data) {
             Log.i("BookListLoader", "load complete");
-            if (data == null) {
+            if (data == null || data.getCount() == 0) {
                 return;
             }
             mGridListViewAdapter.registerDataCursor(data);
