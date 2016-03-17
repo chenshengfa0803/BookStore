@@ -24,4 +24,8 @@
     <dimen name="cover3_marginBottom">5dp</dimen>
     <dimen name="cover3_marginRight">5dp</dimen>
     <dimen name="action_bar_height">30dp</dimen>
+    <dimen name="max_frame_width">240dp</dimen>
+    <dimen name="min_frame_width">120dp</dimen>
+    <dimen name="max_frame_height">180dp</dimen>
+    <dimen name="min_frame_height">120dp</dimen>
 </resources>

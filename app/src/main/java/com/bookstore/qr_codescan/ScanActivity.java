@@ -3,7 +3,6 @@ package com.bookstore.qr_codescan;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
-import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -111,9 +110,8 @@ public class ScanActivity extends Activity implements Callback {
      * ����ɨ����
      *
      * @param result
-     * @param barcode
      */
-    public void handleDecode(Result result, Bitmap barcode) {
+    public void handleDecode(Result result) {
         inactivityTimer.onActivity();
         playBeepSoundAndVibrate();
         String resultString = result.getText();
@@ -123,7 +121,6 @@ public class ScanActivity extends Activity implements Callback {
             Intent resultIntent = new Intent();
             Bundle bundle = new Bundle();
             bundle.putString("result", resultString);
-            bundle.putParcelable("bitmap", barcode);
             resultIntent.putExtras(bundle);
             this.setResult(RESULT_OK, resultIntent);
         }

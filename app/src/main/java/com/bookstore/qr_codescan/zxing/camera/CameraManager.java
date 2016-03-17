@@ -26,6 +26,8 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
+import com.bookstore.main.R;
+
 import java.io.IOException;
 
 /**
@@ -42,6 +44,10 @@ public final class CameraManager {
     private static final int MAX_FRAME_WIDTH = 480;
     private static final int MAX_FRAME_HEIGHT = 360;
     private static CameraManager cameraManager;
+    private static int min_frame_width = 0;
+    private static int min_frame_height = 0;
+    private static int max_frame_width = 0;
+    private static int max_frame_height = 0;
 
     static {
         int sdkInt;
@@ -86,6 +92,11 @@ public final class CameraManager {
 
         previewCallback = new PreviewCallback(configManager, useOneShotPreviewCallback);
         autoFocusCallback = new AutoFocusCallback();
+
+        min_frame_width = context.getResources().getDimensionPixelSize(R.dimen.min_frame_width);
+        min_frame_height = context.getResources().getDimensionPixelSize(R.dimen.min_frame_height);
+        max_frame_width = context.getResources().getDimensionPixelSize(R.dimen.max_frame_width);
+        max_frame_height = context.getResources().getDimensionPixelSize(R.dimen.max_frame_height);
     }
 
     /**
@@ -221,16 +232,16 @@ public final class CameraManager {
                 return null;
             }
             int width = screenResolution.x * 3 / 4;
-            if (width < MIN_FRAME_WIDTH) {
-                width = MIN_FRAME_WIDTH;
-            } else if (width > MAX_FRAME_WIDTH) {
-                width = MAX_FRAME_WIDTH;
+            if (width < min_frame_width) {
+                width = min_frame_width;
+            } else if (width > max_frame_width) {
+                width = max_frame_width;
             }
             int height = screenResolution.y * 3 / 4;
-            if (height < MIN_FRAME_HEIGHT) {
-                height = MIN_FRAME_HEIGHT;
-            } else if (height > MAX_FRAME_HEIGHT) {
-                height = MAX_FRAME_HEIGHT;
+            if (height < min_frame_height) {
+                height = min_frame_height;
+            } else if (height > max_frame_height) {
+                height = max_frame_height;
             }
             int leftOffset = (screenResolution.x - width) / 2;
             int topOffset = (screenResolution.y - height) / 2;

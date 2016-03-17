@@ -18,7 +18,6 @@ package com.bookstore.qr_codescan.zxing.decoding;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -78,10 +77,12 @@ public final class CaptureActivityHandler extends Handler {
                 Bundle bundle = message.getData();
 
                 /***********************************************************************/
-                Bitmap barcode = bundle == null ? null :
-                        (Bitmap) bundle.getParcelable(DecodeThread.BARCODE_BITMAP);//���ñ����߳�
-
-                activity.handleDecode((Result) message.obj, barcode);//���ؽ��?        /***********************************************************************/
+                //Bitmap barcode = bundle == null ? null :
+                //        (Bitmap) bundle.getParcelable(DecodeThread.BARCODE_BITMAP);//���ñ����߳�
+                // we do not need bitmap data after scan QR code, when bitmap size is bigger than 40K
+                // it will occur JavaBinder: !!! FAILED BINDER TRANSACTION !!! error, so I remove
+                // bitmap data from bundle.
+                activity.handleDecode((Result) message.obj);//���ؽ��?        /***********************************************************************/
                 break;
             case R.id.decode_failed:
                 // We're decoding as fast as possible, so when one decode fails, start another.
