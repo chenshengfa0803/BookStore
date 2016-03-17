@@ -24,6 +24,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -57,7 +58,7 @@ public final class ViewfinderView extends View {
     /**
      * ɨ����е��м��ߵ���ɨ������ҵļ�϶
      */
-    private static final int MIDDLE_LINE_PADDING = 5;
+    private static final int MIDDLE_LINE_PADDING = 55;
     /**
      * �м�������ÿ��ˢ���ƶ��ľ���
      */
@@ -100,11 +101,16 @@ public final class ViewfinderView extends View {
     private Bitmap resultBitmap;
     private Collection<ResultPoint> possibleResultPoints;
     private Collection<ResultPoint> lastPossibleResultPoints;
+    private Bitmap fix_camera;
+    private int fix_camera_size = 0;
 
     public ViewfinderView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         density = context.getResources().getDisplayMetrics().density;
+        BitmapDrawable bitmapDrawable = (BitmapDrawable) context.getResources().getDrawable(R.drawable.fixed_scan);
+        fix_camera = bitmapDrawable.getBitmap();
+        fix_camera_size = fix_camera.getWidth();//make sure that the fix camera icon width == height
         //������ת����dp
         ScreenRate = (int) (20 * density);
 
@@ -128,7 +134,7 @@ public final class ViewfinderView extends View {
         //��ʼ���м��߻��������ϱߺ����±�
         if (!isFirst) {
             isFirst = true;
-            slideTop = frame.top;
+            slideTop = frame.top + fix_camera_size / 2;
             slideBottom = frame.bottom;
         }
 
@@ -155,28 +161,32 @@ public final class ViewfinderView extends View {
 
             //��ɨ�����ϵĽǣ��ܹ�8������
             paint.setColor(Color.GREEN);
-            canvas.drawRect(frame.left, frame.top, frame.left + ScreenRate,
-                    frame.top + CORNER_WIDTH, paint);
-            canvas.drawRect(frame.left, frame.top, frame.left + CORNER_WIDTH, frame.top
-                    + ScreenRate, paint);
-            canvas.drawRect(frame.right - ScreenRate, frame.top, frame.right,
-                    frame.top + CORNER_WIDTH, paint);
-            canvas.drawRect(frame.right - CORNER_WIDTH, frame.top, frame.right, frame.top
-                    + ScreenRate, paint);
-            canvas.drawRect(frame.left, frame.bottom - CORNER_WIDTH, frame.left
-                    + ScreenRate, frame.bottom, paint);
-            canvas.drawRect(frame.left, frame.bottom - ScreenRate,
-                    frame.left + CORNER_WIDTH, frame.bottom, paint);
-            canvas.drawRect(frame.right - ScreenRate, frame.bottom - CORNER_WIDTH,
-                    frame.right, frame.bottom, paint);
-            canvas.drawRect(frame.right - CORNER_WIDTH, frame.bottom - ScreenRate,
-                    frame.right, frame.bottom, paint);
+//            canvas.drawRect(frame.left, frame.top, frame.left + ScreenRate,
+//                    frame.top + CORNER_WIDTH, paint);
+//            canvas.drawRect(frame.left, frame.top, frame.left + CORNER_WIDTH, frame.top
+//                    + ScreenRate, paint);
+//            canvas.drawRect(frame.right - ScreenRate, frame.top, frame.right,
+//                    frame.top + CORNER_WIDTH, paint);
+//            canvas.drawRect(frame.right - CORNER_WIDTH, frame.top, frame.right, frame.top
+//                    + ScreenRate, paint);
+//            canvas.drawRect(frame.left, frame.bottom - CORNER_WIDTH, frame.left
+//                    + ScreenRate, frame.bottom, paint);
+//            canvas.drawRect(frame.left, frame.bottom - ScreenRate,
+//                    frame.left + CORNER_WIDTH, frame.bottom, paint);
+//            canvas.drawRect(frame.right - ScreenRate, frame.bottom - CORNER_WIDTH,
+//                    frame.right, frame.bottom, paint);
+//            canvas.drawRect(frame.right - CORNER_WIDTH, frame.bottom - ScreenRate,
+//                    frame.right, frame.bottom, paint);
 
+            canvas.drawBitmap(fix_camera, frame.left, frame.top, paint);
+            canvas.drawBitmap(fix_camera, frame.right - fix_camera_size, frame.top, paint);
+            canvas.drawBitmap(fix_camera, frame.left, frame.bottom - fix_camera_size, paint);
+            canvas.drawBitmap(fix_camera, frame.right - fix_camera_size, frame.bottom - fix_camera_size, paint);
 
             //�����м����,ÿ��ˢ�½��棬�м���������ƶ�SPEEN_DISTANCE
             slideTop += SPEEN_DISTANCE;
-            if (slideTop >= frame.bottom) {
-                slideTop = frame.top;
+            if (slideTop >= frame.bottom - fix_camera_size / 2) {
+                slideTop = frame.top + fix_camera_size / 2;
             }
             canvas.drawRect(frame.left + MIDDLE_LINE_PADDING, slideTop - MIDDLE_LINE_WIDTH / 2, frame.right - MIDDLE_LINE_PADDING, slideTop + MIDDLE_LINE_WIDTH / 2, paint);
 
