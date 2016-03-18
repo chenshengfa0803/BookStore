@@ -23,7 +23,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.view.View;
@@ -192,11 +191,11 @@ public final class ViewfinderView extends View {
 
 
             //��ɨ����������
-            paint.setColor(Color.WHITE);
-            paint.setTextSize(TEXT_SIZE * density);
-            paint.setAlpha(0x40);
-            paint.setTypeface(Typeface.create("System", Typeface.BOLD));
-            canvas.drawText(getResources().getString(R.string.scan_text), frame.left, frame.bottom + (float) TEXT_PADDING_TOP * density, paint);
+//            paint.setColor(Color.WHITE);
+//            paint.setTextSize(TEXT_SIZE * density);
+//            paint.setAlpha(0x40);
+//            paint.setTypeface(Typeface.create("System", Typeface.BOLD));
+//            canvas.drawText(getResources().getString(R.string.scan_text), frame.left, frame.bottom + (float) TEXT_PADDING_TOP * density, paint);
 
 
             Collection<ResultPoint> currentPossible = possibleResultPoints;
