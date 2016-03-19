@@ -20,4 +20,9 @@
 
     </RelativeLayout>
 
+    <com.bookstore.qr_codescan.danmakuFlame.master.flame.danmaku.ui.widget.DanmakuView
+        android:id="@+id/danmu_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </FrameLayout>

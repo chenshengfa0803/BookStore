@@ -1,7 +1,6 @@
 package com.bookstore.qr_codescan;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -12,9 +11,9 @@ import android.os.Vibrator;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
-import android.widget.Toast;
 
 import com.bookstore.main.R;
+import com.bookstore.qr_codescan.danmakuFlame.master.flame.danmaku.controller.IDanmakuView;
 import com.bookstore.qr_codescan.zxing.camera.CameraManager;
 import com.bookstore.qr_codescan.zxing.decoding.CaptureActivityHandler;
 import com.bookstore.qr_codescan.zxing.decoding.InactivityTimer;
@@ -51,6 +50,9 @@ public class ScanActivity extends Activity implements Callback {
     private MediaPlayer mediaPlayer;
     private boolean playBeep;
     private boolean vibrate;
+    private Danmu mDanmu;
+    private IDanmakuView danmu_View;
+
 
     /**
      * Called when the activity is first created.
@@ -61,6 +63,10 @@ public class ScanActivity extends Activity implements Callback {
         setContentView(R.layout.activity_scan);
         CameraManager.init(getApplication());
         viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
+        danmu_View = (IDanmakuView) findViewById(R.id.danmu_view);
+
+        mDanmu = new Danmu(this);
+        mDanmu.initDanmuView(danmu_View);
 
         hasSurface = false;
         inactivityTimer = new InactivityTimer(this);
@@ -88,6 +94,7 @@ public class ScanActivity extends Activity implements Callback {
         initBeepSound();
         vibrate = true;
 
+        mDanmu.resume();
     }
 
     @Override
@@ -98,11 +105,14 @@ public class ScanActivity extends Activity implements Callback {
             handler = null;
         }
         CameraManager.get().closeDriver();
+
+        mDanmu.pause();
     }
 
     @Override
     protected void onDestroy() {
         inactivityTimer.shutdown();
+        mDanmu.destroy();
         super.onDestroy();
     }
 
@@ -115,16 +125,17 @@ public class ScanActivity extends Activity implements Callback {
         inactivityTimer.onActivity();
         playBeepSoundAndVibrate();
         String resultString = result.getText();
-        if (resultString.equals("")) {
-            Toast.makeText(ScanActivity.this, "Scan failed!", Toast.LENGTH_SHORT).show();
-        } else {
-            Intent resultIntent = new Intent();
-            Bundle bundle = new Bundle();
-            bundle.putString("result", resultString);
-            resultIntent.putExtras(bundle);
-            this.setResult(RESULT_OK, resultIntent);
-        }
-        ScanActivity.this.finish();
+//        if (resultString.equals("")) {
+//            Toast.makeText(ScanActivity.this, "Scan failed!", Toast.LENGTH_SHORT).show();
+//        } else {
+//            Intent resultIntent = new Intent();
+//            Bundle bundle = new Bundle();
+//            bundle.putString("result", resultString);
+//            resultIntent.putExtras(bundle);
+//            this.setResult(RESULT_OK, resultIntent);
+//        }
+        //ScanActivity.this.finish();
+        mDanmu.addDanmuText(false, resultString);
     }
 
     private void initCamera(SurfaceHolder surfaceHolder) {
