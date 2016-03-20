@@ -136,6 +136,15 @@ public class ScanActivity extends Activity implements Callback {
 //        }
         //ScanActivity.this.finish();
         mDanmu.addDanmuText(false, resultString);
+        Handler restartHandler = new Handler();
+        restartHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (handler != null) {
+                    handler.restartPreviewAndDecode();
+                }
+            }
+        }, 3000);
     }
 
     private void initCamera(SurfaceHolder surfaceHolder) {
