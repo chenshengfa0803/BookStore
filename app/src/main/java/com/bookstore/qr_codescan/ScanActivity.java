@@ -2,26 +2,41 @@ package com.bookstore.qr_codescan;
 
 import android.app.Activity;
 import android.content.res.AssetFileDescriptor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.text.SpannableStringBuilder;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
+import android.view.View;
 
+import com.bookstore.bookparser.BookData;
+import com.bookstore.bookparser.BookInfoJsonParser;
+import com.bookstore.connection.BookInfoRequestBase;
+import com.bookstore.connection.BookInfoUrlBase;
+import com.bookstore.connection.douban.DoubanBookInfoUrl;
 import com.bookstore.main.R;
 import com.bookstore.qr_codescan.danmakuFlame.master.flame.danmaku.controller.IDanmakuView;
+import com.bookstore.qr_codescan.danmakuFlame.master.flame.danmaku.danmaku.model.BaseDanmaku;
 import com.bookstore.qr_codescan.zxing.camera.CameraManager;
 import com.bookstore.qr_codescan.zxing.decoding.CaptureActivityHandler;
 import com.bookstore.qr_codescan.zxing.decoding.InactivityTimer;
 import com.bookstore.qr_codescan.zxing.view.ViewfinderView;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Vector;
 
 /**
@@ -52,6 +67,8 @@ public class ScanActivity extends Activity implements Callback {
     private boolean vibrate;
     private Danmu mDanmu;
     private IDanmakuView danmu_View;
+
+    private HashMap<Bitmap, BookData> scanBookMap = new HashMap<Bitmap, BookData>();
 
 
     /**
@@ -135,7 +152,8 @@ public class ScanActivity extends Activity implements Callback {
 //            this.setResult(RESULT_OK, resultIntent);
 //        }
         //ScanActivity.this.finish();
-        mDanmu.addDanmuText(false, resultString);
+        //mDanmu.addDanmuText(false, resultString);
+        getBookData(resultString);
         Handler restartHandler = new Handler();
         restartHandler.postDelayed(new Runnable() {
             @Override
@@ -229,4 +247,51 @@ public class ScanActivity extends Activity implements Callback {
         }
     }
 
+    public void getBookData(final String isbn) {
+        if (isbn == null) {
+            Log.i("BookStore", "isbn is null");
+            return;
+        }
+        Log.i("BookStore", "isbn is " + isbn);
+        DoubanBookInfoUrl doubanBookUrl = new DoubanBookInfoUrl(isbn);
+        BookInfoRequestBase bookRequest = new BookInfoRequestBase(doubanBookUrl) {
+            @Override
+            protected void requestPreExecute() {
+
+            }
+
+            @Override
+            protected void requestPostExecute(String bookInfo) {
+                try {
+                    BookData bookData = BookInfoJsonParser.getInstance().getSimpleBookDataFromString(bookInfo);
+                    Bitmap bitmap = ((BitmapDrawable) (getResources().getDrawable(R.drawable.downloading_smallcover))).getBitmap();
+                    mDanmu.addDanmuWithTextAndImage(false, bookData);
+                    //LoadBookSmallImage(bookData);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        bookRequest.requestExcute(BookInfoUrlBase.REQ_ISBN);
+    }
+
+    public void LoadBookSmallImage(final BookData bookData, final BaseDanmaku danmaku) {
+        DisplayImageOptions options = new DisplayImageOptions.Builder()
+                .cacheInMemory(true)
+                .cacheOnDisk(false)
+                .build();
+        ImageLoader.getInstance().loadImage(bookData.images_small, options, new SimpleImageLoadingListener() {
+            @Override
+            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                super.onLoadingComplete(imageUri, view, loadedImage);
+                BitmapDrawable drawable = new BitmapDrawable(loadedImage);
+                if (drawable != null) {
+                    drawable.setBounds(0, 0, 100, 100);
+                    SpannableStringBuilder spannable = mDanmu.createSpannable(drawable, bookData.title);
+                    danmaku.text = spannable;
+                    danmu_View.invalidateDanmaku(danmaku, false);
+                }
+            }
+        });
+    }
 }
