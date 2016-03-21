@@ -1,6 +1,8 @@
 package com.bookstore.qr_codescan;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -36,7 +38,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Vector;
 
 /**
@@ -48,6 +50,7 @@ public class ScanActivity extends Activity implements Callback {
 
     private static final float BEEP_VOLUME = 0.10f;
     private static final long VIBRATE_DURATION = 200L;
+    private static int pos = 0;
     /**
      * When the beep has finished playing, rewind to queue up another one.
      */
@@ -67,9 +70,7 @@ public class ScanActivity extends Activity implements Callback {
     private boolean vibrate;
     private Danmu mDanmu;
     private IDanmakuView danmu_View;
-
-    private HashMap<Bitmap, BookData> scanBookMap = new HashMap<Bitmap, BookData>();
-
+    private ArrayList<BookData> scanedBookList = new ArrayList<BookData>();
 
     /**
      * Called when the activity is first created.
@@ -87,6 +88,19 @@ public class ScanActivity extends Activity implements Callback {
 
         hasSurface = false;
         inactivityTimer = new InactivityTimer(this);
+
+        final Handler danmuHandler = new Handler();
+        danmuHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!scanedBookList.isEmpty()) {
+                    mDanmu.addDanmuWithTextAndImage(false, scanedBookList.get(pos));
+                    pos++;
+                    pos = pos % scanedBookList.size();
+                }
+                danmuHandler.postDelayed(this, getDelayTime(scanedBookList.size()));
+            }
+        }, 1000);
     }
 
     @Override
@@ -129,8 +143,34 @@ public class ScanActivity extends Activity implements Callback {
     @Override
     protected void onDestroy() {
         inactivityTimer.shutdown();
+        scanedBookList.clear();
         mDanmu.destroy();
         super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!scanedBookList.isEmpty()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            String alertTitle = getResources().getString(R.string.scan_alert_title, scanedBookList.size());
+            builder.setTitle(alertTitle);
+            builder.setPositiveButton(R.string.positive_OK, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    ScanActivity.this.finish();
+                }
+            });
+            builder.setNegativeButton(R.string.negative_cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.show();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     /**
@@ -264,9 +304,12 @@ public class ScanActivity extends Activity implements Callback {
             protected void requestPostExecute(String bookInfo) {
                 try {
                     BookData bookData = BookInfoJsonParser.getInstance().getSimpleBookDataFromString(bookInfo);
-                    Bitmap bitmap = ((BitmapDrawable) (getResources().getDrawable(R.drawable.downloading_smallcover))).getBitmap();
-                    mDanmu.addDanmuWithTextAndImage(false, bookData);
+                    //Bitmap bitmap = ((BitmapDrawable) (getResources().getDrawable(R.drawable.downloading_smallcover))).getBitmap();
+                    //mDanmu.addDanmuWithTextAndImage(false, bookData);
                     //LoadBookSmallImage(bookData);
+                    scanedBookList.add(bookData);
+                    mDanmu.addDanmuText(BaseDanmaku.TYPE_FIX_BOTTOM, false, bookData.title);
+                    //mDanmu.addDanmuText(BaseDanmaku.TYPE_SCROLL_LR, false, bookData.title);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -285,13 +328,39 @@ public class ScanActivity extends Activity implements Callback {
             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                 super.onLoadingComplete(imageUri, view, loadedImage);
                 BitmapDrawable drawable = new BitmapDrawable(loadedImage);
+                int width = 0;
+                int height = 0;
+                if (loadedImage != null) {
+                    width = loadedImage.getWidth();
+                    height = loadedImage.getHeight();
+                } else {
+                    width = 75;
+                    height = 100;
+                }
+
                 if (drawable != null) {
-                    drawable.setBounds(0, 0, 100, 100);
+                    drawable.setBounds(0, 0, width, height);
                     SpannableStringBuilder spannable = mDanmu.createSpannable(drawable, bookData.title);
                     danmaku.text = spannable;
                     danmu_View.invalidateDanmaku(danmaku, false);
                 }
             }
         });
+    }
+
+    public int getDelayTime(int scanCount) {
+        if (scanCount >= 0 && scanCount <= 1) {
+            return 5000;//delay 5s
+        } else if (scanCount >= 2 && scanCount <= 3) {
+            return 4000;//delay 4s
+        } else if (scanCount >= 4 && scanCount <= 5) {
+            return 3000;//delay 3s
+        } else if (scanCount >= 6 && scanCount <= 7) {
+            return 2000;//delay 2s
+        } else if (scanCount >= 8 && scanCount <= 10) {
+            return 1000;//delay 1s
+        } else {
+            return 500;//delay 0.5s
+        }
     }
 }

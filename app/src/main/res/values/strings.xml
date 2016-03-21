@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">我的书架</string>
     <string name="scan_text">将二维码放入框内, 即可自动扫描</string>
+    <string name="scan_alert_title">辛辛苦苦扫了 %d 本图书，确定要退出吗？</string>
+    <string name="positive_OK">确定</string>
+    <string name="negative_cancel">取消</string>
 </resources>

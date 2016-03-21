@@ -64,7 +64,7 @@ public class Danmu {
         overlappingEnablePair.put(BaseDanmaku.TYPE_SCROLL_RL, true);
         overlappingEnablePair.put(BaseDanmaku.TYPE_FIX_TOP, true);
         mDanmakuContext = DanmakuContext.create();
-        mDanmakuContext.setDanmakuStyle(IDisplayer.DANMAKU_STYLE_STROKEN, 3).setDuplicateMergingEnabled(false).setScrollSpeedFactor(1.2f).setScaleTextSize(1.2f)
+        mDanmakuContext.setDanmakuStyle(IDisplayer.DANMAKU_STYLE_STROKEN, 3).setDuplicateMergingEnabled(false).setScrollSpeedFactor(1f).setScaleTextSize(1.2f)
                 .setCacheStuffer(new SpannedCacheStuffer(), mCacheStufferAdapter)//如果弹幕包含图片和文字，必须设置该属性，否则图片显示不出来
                         //.setCacheStuffer(new SpannedCacheStuffer(), null)//用这条语句测试加载不了图书封面时的弹幕
                 .setMaximumLines(maxLinesPair)
@@ -139,12 +139,12 @@ public class Danmu {
         }
     }
 
-    public void addDanmuText(boolean islive, String text) {
-        BaseDanmaku danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
+    public void addDanmuText(int type, boolean islive, String text) {
+        BaseDanmaku danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(type);
         if (danmaku == null || mDanmakuView == null) {
             return;
         }
-        danmaku.text = "测试弹幕, isbn = " + text;
+        danmaku.text = text;
         danmaku.padding = 5;
         danmaku.priority = 1;
         danmaku.isLive = islive;
