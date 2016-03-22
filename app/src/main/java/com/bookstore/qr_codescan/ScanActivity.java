@@ -2,6 +2,7 @@ package com.bookstore.qr_codescan;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
@@ -27,9 +28,12 @@ import com.bookstore.connection.BookInfoRequestBase;
 import com.bookstore.connection.BookInfoUrlBase;
 import com.bookstore.connection.douban.DoubanBookInfoUrl;
 import com.bookstore.main.R;
+import com.bookstore.provider.BookProvider;
+import com.bookstore.provider.DB_Column;
 import com.bookstore.qr_codescan.danmakuFlame.master.flame.danmaku.controller.IDanmakuView;
 import com.bookstore.qr_codescan.danmakuFlame.master.flame.danmaku.danmaku.model.BaseDanmaku;
 import com.bookstore.qr_codescan.zxing.camera.CameraManager;
+import com.bookstore.qr_codescan.zxing.camera.FlashlightManager;
 import com.bookstore.qr_codescan.zxing.decoding.CaptureActivityHandler;
 import com.bookstore.qr_codescan.zxing.decoding.InactivityTimer;
 import com.bookstore.qr_codescan.zxing.view.ViewfinderView;
@@ -40,7 +44,9 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Vector;
 
 /**
@@ -277,6 +283,7 @@ public class ScanActivity extends Activity implements Callback {
                     top_off.setBounds(0, 0, top_off.getMinimumWidth(), top_off.getMinimumHeight());
                     flashlight_btn.setCompoundDrawables(null, top_off, null, null);
                     flashlight_btn.setText(R.string.flash_light_on);
+                    FlashlightManager.enableFlashlight();
                 } else {
                     flash_light = true;
                     Drawable top_on = getResources().getDrawable(R.drawable.flashlight_on);
@@ -290,7 +297,8 @@ public class ScanActivity extends Activity implements Callback {
         save_books_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //save_books_btn.setTextColor(Color.WHITE);
+                insertBookDataToDB();
+                ScanActivity.this.finish();
             }
         });
         save_books_btn.setEnabled(false);
@@ -408,5 +416,41 @@ public class ScanActivity extends Activity implements Callback {
         } else {
             return 500;//delay 0.5s
         }
+    }
+
+    public void insertBookDataToDB() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (BookData bookData : scanedBookList) {
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(DB_Column.TITLE, bookData.title);
+                    if (bookData.authors.size() > 0) {
+                        contentValues.put(DB_Column.AUTHOR, bookData.authors.get(0));
+                    }
+                    if (bookData.translator.size() > 0) {
+                        contentValues.put(DB_Column.TRANSLATOR, bookData.translator.get(0));
+                    }
+                    contentValues.put(DB_Column.PUB_DATE, bookData.pub_date);
+                    contentValues.put(DB_Column.PUBLISHER, bookData.publisher);
+                    contentValues.put(DB_Column.PRICE, bookData.price);
+                    contentValues.put(DB_Column.PAGES, bookData.pages);
+                    contentValues.put(DB_Column.BINGDING, bookData.binding);
+                    contentValues.put(DB_Column.IMG_SMALL, bookData.images_small);
+                    contentValues.put(DB_Column.IMG_MEDIUM, bookData.images_medium);
+                    contentValues.put(DB_Column.IMG_LARGE, bookData.images_large);
+                    contentValues.put(DB_Column.ISBN10, bookData.isbn10);
+                    contentValues.put(DB_Column.ISBN13, bookData.isbn13);
+                    SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    String date = sDateFormat.format(new Date());
+                    contentValues.put(DB_Column.ADD_DATE, date);
+                    try {
+                        getContentResolver().insert(BookProvider.CONTENT_URI, contentValues);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
     }
 }

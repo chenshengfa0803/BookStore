@@ -3,7 +3,6 @@ package com.bookstore.main;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -22,20 +21,12 @@ import com.bookstore.booklist.BookListLoader;
 import com.bookstore.booklist.BookListViewPagerAdapter;
 import com.bookstore.booklist.DataBaseProjection;
 import com.bookstore.booklist.ListViewListener;
-import com.bookstore.bookparser.BookData;
-import com.bookstore.bookparser.BookInfoJsonParser;
-import com.bookstore.connection.BookInfoRequestBase;
-import com.bookstore.connection.BookInfoUrlBase;
-import com.bookstore.connection.douban.DoubanBookInfoUrl;
 import com.bookstore.main.animation.ViewBlur;
 import com.bookstore.provider.BookProvider;
-import com.bookstore.provider.DB_Column;
 import com.bookstore.qr_codescan.ScanActivity;
 import com.bookstore.util.SystemBarTintManager;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends Activity {
@@ -119,7 +110,7 @@ public class MainActivity extends Activity {
                 if (resultCode == RESULT_OK) {
                     Bundle bundle = data.getExtras();
                     String isbn = bundle.getString("result");
-                    getBookInfo(isbn);
+                    //getBookInfo(isbn);
                 }
             }
             break;
@@ -185,32 +176,6 @@ public class MainActivity extends Activity {
         blurToView.setImageBitmap(null);
     }
 
-    public void getBookInfo(final String isbn) {
-        if (isbn == null) {
-            Log.i("BookStore", "isbn is null");
-            return;
-        }
-        Log.i("BookStore", "isbn is " + isbn);
-        DoubanBookInfoUrl doubanBookUrl = new DoubanBookInfoUrl(isbn);
-        BookInfoRequestBase bookRequest = new BookInfoRequestBase(doubanBookUrl) {
-            @Override
-            protected void requestPreExecute() {
-
-            }
-
-            @Override
-            protected void requestPostExecute(String bookInfo) {
-                try {
-                    BookData bookData = BookInfoJsonParser.getInstance().getSimpleBookDataFromString(bookInfo);
-                    insertBookDataToDB(bookData);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        bookRequest.requestExcute(BookInfoUrlBase.REQ_ISBN);
-    }
-
     synchronized public void stopRefreshBookList() {
         if (mBookListLoader != null) {
             mBookListLoader.unregisterListener(mLoadListener);
@@ -226,36 +191,6 @@ public class MainActivity extends Activity {
         mLoadListener = new bookListLoadListener();
         mBookListLoader.registerListener(0, mLoadListener);
         mBookListLoader.startLoading();
-    }
-
-    public void insertBookDataToDB(final BookData bookData) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                ContentValues contentValues = new ContentValues();
-                contentValues.put(DB_Column.TITLE, bookData.title);
-                contentValues.put(DB_Column.AUTHOR, bookData.authors.get(0));
-                contentValues.put(DB_Column.TRANSLATOR, "HAHA");
-                contentValues.put(DB_Column.PUB_DATE, bookData.pub_date);
-                contentValues.put(DB_Column.PUBLISHER, bookData.publisher);
-                contentValues.put(DB_Column.PRICE, bookData.price);
-                contentValues.put(DB_Column.PAGES, bookData.pages);
-                contentValues.put(DB_Column.BINGDING, bookData.binding);
-                contentValues.put(DB_Column.IMG_SMALL, bookData.images_small);
-                contentValues.put(DB_Column.IMG_MEDIUM, bookData.images_medium);
-                contentValues.put(DB_Column.IMG_LARGE, bookData.images_large);
-                contentValues.put(DB_Column.ISBN10, bookData.isbn10);
-                contentValues.put(DB_Column.ISBN13, bookData.isbn13);
-                SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                String date = sDateFormat.format(new Date());
-                contentValues.put(DB_Column.ADD_DATE, date);
-                try {
-                    getContentResolver().insert(BookProvider.CONTENT_URI, contentValues);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
     }
 
     public class bookListLoadListener implements Loader.OnLoadCompleteListener<Cursor> {
