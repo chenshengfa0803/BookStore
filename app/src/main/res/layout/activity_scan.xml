@@ -20,9 +20,50 @@
 
     </RelativeLayout>
 
-    <com.bookstore.qr_codescan.danmakuFlame.master.flame.danmaku.ui.widget.DanmakuView
-        android:id="@+id/danmu_view"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/scan_control_panel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/flash_light"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/scan_control_panel_margin"
+                android:layout_marginRight="@dimen/scan_control_panel_margin"
+                android:drawableTop="@drawable/flashlight_off"
+                android:gravity="center_horizontal"
+                android:text="@string/flash_light_on"
+                android:textColor="@drawable/save_book_textcolor_selector" />
+
+            <TextView
+                android:id="@+id/save_books"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/scan_control_panel_margin"
+                android:layout_marginRight="@dimen/scan_control_panel_margin"
+                android:clickable="true"
+                android:drawableTop="@drawable/save_book_selector"
+                android:gravity="center_horizontal"
+                android:text="@string/add_to_bookshelf"
+                android:textColor="@drawable/save_book_textcolor_selector" />
+        </LinearLayout>
+
+        <com.bookstore.qr_codescan.danmakuFlame.master.flame.danmaku.ui.widget.DanmakuView
+            android:id="@+id/danmu_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/scan_control_panel" />
+
+
+    </RelativeLayout>
+
 
 </FrameLayout>

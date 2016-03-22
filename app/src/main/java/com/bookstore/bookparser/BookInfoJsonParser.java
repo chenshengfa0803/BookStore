@@ -111,7 +111,7 @@ public class BookInfoJsonParser {
 
     public void getBookPages(BookData bookData, JSONObject json) throws JSONException {
         if (json.has("pages")) {
-            bookData.pages = json.getInt("pages");
+            bookData.pages = json.getString("pages");
         }
     }
 

@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -18,6 +19,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.TextView;
 
 import com.bookstore.bookparser.BookData;
 import com.bookstore.bookparser.BookInfoJsonParser;
@@ -68,9 +70,12 @@ public class ScanActivity extends Activity implements Callback {
     private MediaPlayer mediaPlayer;
     private boolean playBeep;
     private boolean vibrate;
+    private boolean flash_light = false;
     private Danmu mDanmu;
     private IDanmakuView danmu_View;
     private ArrayList<BookData> scanedBookList = new ArrayList<BookData>();
+    private TextView flashlight_btn = null;
+    private TextView save_books_btn = null;
 
     /**
      * Called when the activity is first created.
@@ -86,6 +91,8 @@ public class ScanActivity extends Activity implements Callback {
         mDanmu = new Danmu(this);
         mDanmu.initDanmuView(danmu_View);
 
+        initControlPanel();
+
         hasSurface = false;
         inactivityTimer = new InactivityTimer(this);
 
@@ -94,6 +101,9 @@ public class ScanActivity extends Activity implements Callback {
             @Override
             public void run() {
                 if (!scanedBookList.isEmpty()) {
+                    if (pos >= scanedBookList.size()) {
+                        return;//prevent IndexOutOfBoundsException
+                    }
                     mDanmu.addDanmuWithTextAndImage(false, scanedBookList.get(pos));
                     pos++;
                     pos = pos % scanedBookList.size();
@@ -253,6 +263,39 @@ public class ScanActivity extends Activity implements Callback {
 
     }
 
+    private void initControlPanel() {
+        flashlight_btn = (TextView) findViewById(R.id.flash_light);
+        save_books_btn = (TextView) findViewById(R.id.save_books);
+
+        flashlight_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //flashlight_btn.setTextColor(Color.WHITE);
+                if (flash_light) {
+                    flash_light = false;
+                    Drawable top_off = getResources().getDrawable(R.drawable.flashlight_off);
+                    top_off.setBounds(0, 0, top_off.getMinimumWidth(), top_off.getMinimumHeight());
+                    flashlight_btn.setCompoundDrawables(null, top_off, null, null);
+                    flashlight_btn.setText(R.string.flash_light_on);
+                } else {
+                    flash_light = true;
+                    Drawable top_on = getResources().getDrawable(R.drawable.flashlight_on);
+                    top_on.setBounds(0, 0, top_on.getMinimumWidth(), top_on.getMinimumHeight());
+                    flashlight_btn.setCompoundDrawables(null, top_on, null, null);
+                    flashlight_btn.setText(R.string.flash_light_off);
+                }
+            }
+        });
+
+        save_books_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //save_books_btn.setTextColor(Color.WHITE);
+            }
+        });
+        save_books_btn.setEnabled(false);
+    }
+
     private void initBeepSound() {
         if (playBeep && mediaPlayer == null) {
             // The volume on STREAM_SYSTEM is not adjustable, and users found it
@@ -308,6 +351,7 @@ public class ScanActivity extends Activity implements Callback {
                     //mDanmu.addDanmuWithTextAndImage(false, bookData);
                     //LoadBookSmallImage(bookData);
                     scanedBookList.add(bookData);
+                    save_books_btn.setEnabled(true);
                     mDanmu.addDanmuText(BaseDanmaku.TYPE_FIX_BOTTOM, false, bookData.title);
                     //mDanmu.addDanmuText(BaseDanmaku.TYPE_SCROLL_LR, false, bookData.title);
                 } catch (Exception e) {
@@ -359,6 +403,8 @@ public class ScanActivity extends Activity implements Callback {
             return 2000;//delay 2s
         } else if (scanCount >= 8 && scanCount <= 10) {
             return 1000;//delay 1s
+        } else if (scanCount >= 11 && scanCount <= 15) {
+            return 800;//delay 0.8s
         } else {
             return 500;//delay 0.5s
         }

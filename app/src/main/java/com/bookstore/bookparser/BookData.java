@@ -30,7 +30,7 @@ final public class BookData {
     public String price = null;
     public int series_id = -1;
     public String series_title = null;
-    public int pages = -1;
+    public String pages = null;
     public Detail intro = null;
     public EBook ebook = null;
     public int book_id = -1;

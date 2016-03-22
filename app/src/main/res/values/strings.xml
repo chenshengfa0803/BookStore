@@ -4,4 +4,7 @@
     <string name="scan_alert_title">辛辛苦苦扫了 %d 本图书，确定要退出吗？</string>
     <string name="positive_OK">确定</string>
     <string name="negative_cancel">取消</string>
+    <string name="flash_light_on">开灯</string>
+    <string name="flash_light_off">关灯</string>
+    <string name="add_to_bookshelf">保存到书架</string>
 </resources>

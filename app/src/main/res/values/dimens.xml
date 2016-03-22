@@ -28,4 +28,5 @@
     <dimen name="min_frame_width">120dp</dimen>
     <dimen name="max_frame_height">180dp</dimen>
     <dimen name="min_frame_height">120dp</dimen>
+    <dimen name="scan_control_panel_margin">20dp</dimen>
 </resources>
