@@ -19,7 +19,6 @@ import com.bookstore.booklist.BookListGridListView;
 import com.bookstore.booklist.BookListGridListViewAdapter;
 import com.bookstore.booklist.BookListLoader;
 import com.bookstore.booklist.BookListViewPagerAdapter;
-import com.bookstore.booklist.DataBaseProjection;
 import com.bookstore.booklist.ListViewListener;
 import com.bookstore.main.animation.ViewBlur;
 import com.bookstore.provider.BookProvider;
@@ -100,6 +99,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        refreshBookList();
     }
 
     @Override
@@ -205,12 +205,7 @@ public class MainActivity extends Activity {
                 return;
             }
             mGridListViewAdapter.registerDataCursor(data);
-            data.moveToFirst();
-            String book_title = data.getString(DataBaseProjection.COLUMN_TITLE);
-            String book_author = data.getString(DataBaseProjection.COLUMN_AUTHOR);
-            int pages = data.getInt(DataBaseProjection.COLUMN_PAGES);
-            int p = pages;
-            //remember close the cursor after using it
+            mGridListViewAdapter.notifyDataSetChanged();
         }
     }
 }

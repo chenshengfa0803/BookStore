@@ -8,13 +8,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bookstore.main.R;
+import com.bookstore.util.BookCategory;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 /**
  * Created by Administrator on 2016/3/1.
  */
 public class BookListGridListViewAdapter extends BaseAdapter {
+    public static final String TAG = "BookStore";
     public Context mContext;
     private TypedArray mColor_list;
     private Cursor mDataCursor = null;
@@ -27,7 +33,7 @@ public class BookListGridListViewAdapter extends BaseAdapter {
     @Override
 
     public int getCount() {
-        return 30;
+        return BookCategory.getCategoryCount();
     }
 
     @Override
@@ -62,7 +68,39 @@ public class BookListGridListViewAdapter extends BaseAdapter {
         } else {
             listItemView = convertView;
         }
+        bindView(listItemView, position);
         return listItemView;
+    }
+
+    public void bindView(View listItemView, int position) {
+        TextView category_name = (TextView) listItemView.findViewById(R.id.category_name);
+        category_name.setText(BookCategory.getCategoryName(position));
+
+        if (position == 0) {
+            if (mDataCursor == null) return;
+            DisplayImageOptions options = new DisplayImageOptions.Builder()
+                    .cacheInMemory(true)
+                    .cacheOnDisk(true)
+                    .build();
+
+            //show cover1
+            mDataCursor.moveToPosition(position);
+            String cover1Url = mDataCursor.getString(DataBaseProjection.COLUMN_IMG_LARGE);
+            ImageView cover1 = (ImageView) listItemView.findViewById(R.id.cover1);
+            ImageLoader.getInstance().displayImage(cover1Url, cover1, options);
+
+            //show cover2
+            mDataCursor.moveToPosition(position + 1);
+            String cover2Url = mDataCursor.getString(DataBaseProjection.COLUMN_IMG_LARGE);
+            ImageView cover2 = (ImageView) listItemView.findViewById(R.id.cover2);
+            ImageLoader.getInstance().displayImage(cover2Url, cover2, options);
+
+            //show cover3
+            mDataCursor.moveToPosition(position + 2);
+            String cover3Url = mDataCursor.getString(DataBaseProjection.COLUMN_IMG_LARGE);
+            ImageView cover3 = (ImageView) listItemView.findViewById(R.id.cover3);
+            ImageLoader.getInstance().displayImage(cover3Url, cover3, options);
+        }
     }
 
     public int getColor(int position) {
