@@ -108,9 +108,10 @@ public class MainActivity extends Activity {
         switch (requestCode) {
             case SCANNING_REQUEST_CODE: {
                 if (resultCode == RESULT_OK) {
-                    Bundle bundle = data.getExtras();
-                    String isbn = bundle.getString("result");
+                    //Bundle bundle = data.getExtras();
+                    //String isbn = bundle.getString("result");
                     //getBookInfo(isbn);
+                    refreshBookList();
                 }
             }
             break;

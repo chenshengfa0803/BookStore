@@ -10,7 +10,8 @@ import android.util.Log;
  */
 public class BookSQLiteOpenHelper extends SQLiteOpenHelper {
     //version 1: Add database
-    public static final int DATABASE_VERSION = 1;
+    //version 2: change DB_Column.PAGES from integer to text
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "BookProvider.db";
     public static final String BOOKINFO_TABLE_NAME = "BookInfo";
     private static BookSQLiteOpenHelper singleton;
@@ -40,7 +41,7 @@ public class BookSQLiteOpenHelper extends SQLiteOpenHelper {
                 + DB_Column.PUB_DATE + " text, "
                 + DB_Column.PUBLISHER + " text, "
                 + DB_Column.PRICE + " text, "
-                + DB_Column.PAGES + " integer, "
+                + DB_Column.PAGES + " text, "
                 + DB_Column.BINGDING + " text, "
                 + DB_Column.IMG_SMALL + " text, "
                 + DB_Column.IMG_MEDIUM + " text, "

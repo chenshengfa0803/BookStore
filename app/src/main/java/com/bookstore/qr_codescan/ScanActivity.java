@@ -298,6 +298,7 @@ public class ScanActivity extends Activity implements Callback {
             @Override
             public void onClick(View v) {
                 insertBookDataToDB();
+                ScanActivity.this.setResult(RESULT_OK);
                 ScanActivity.this.finish();
             }
         });
