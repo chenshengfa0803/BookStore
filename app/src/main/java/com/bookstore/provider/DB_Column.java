@@ -19,4 +19,6 @@ public abstract class DB_Column {
     public static final String ISBN10 = "isbn10";
     public static final String ISBN13 = "isbn13";
     public static final String ADD_DATE = "timestamp";
+    public static final String CATEGORY = "category";
+    public static final String CLC_NUMBER = "clc_number";//Chinese Libray Classification number,中图分类号，根据这个number把图书分类，需要到国家图书馆获取该number
 }

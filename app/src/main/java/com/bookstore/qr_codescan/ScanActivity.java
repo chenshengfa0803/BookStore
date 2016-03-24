@@ -22,10 +22,12 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.bookstore.bookparser.BookCategory;
 import com.bookstore.bookparser.BookData;
 import com.bookstore.bookparser.BookInfoJsonParser;
 import com.bookstore.connection.BookInfoRequestBase;
 import com.bookstore.connection.BookInfoUrlBase;
+import com.bookstore.connection.ChineseLibraryURL;
 import com.bookstore.connection.douban.DoubanBookInfoUrl;
 import com.bookstore.main.R;
 import com.bookstore.provider.BookProvider;
@@ -359,8 +361,7 @@ public class ScanActivity extends Activity implements Callback {
                     //Bitmap bitmap = ((BitmapDrawable) (getResources().getDrawable(R.drawable.downloading_smallcover))).getBitmap();
                     //mDanmu.addDanmuWithTextAndImage(false, bookData);
                     //LoadBookSmallImage(bookData);
-                    scanedBookList.add(bookData);
-                    save_books_btn.setEnabled(true);
+                    getBookCategory(bookData);
                     mDanmu.addDanmuText(BaseDanmaku.TYPE_FIX_BOTTOM, false, bookData.title);
                     //mDanmu.addDanmuText(BaseDanmaku.TYPE_SCROLL_LR, false, bookData.title);
                 } catch (Exception e) {
@@ -369,6 +370,28 @@ public class ScanActivity extends Activity implements Callback {
             }
         };
         bookRequest.requestExcute(BookInfoUrlBase.REQ_ISBN);
+    }
+
+    public void getBookCategory(final BookData bookData) {
+        ChineseLibraryURL clc_url = new ChineseLibraryURL(bookData.isbn13);
+        BookInfoRequestBase bookCategoryRequest = new BookInfoRequestBase(clc_url) {
+            @Override
+            protected void requestPreExecute() {
+
+            }
+
+            @Override
+            protected void requestPostExecute(String clcStr) {
+                String clcNum = BookCategory.getClcNumber(clcStr);
+                int category = BookCategory.getCategoryByClcNum(clcNum);
+                bookData.clc_number = clcNum;
+                bookData.category = category;
+                scanedBookList.add(bookData);
+                save_books_btn.setEnabled(true);
+            }
+        };
+        bookCategoryRequest.requestExcute(BookInfoUrlBase.REQ_CATEGORY);
+
     }
 
     public void LoadBookSmallImage(final BookData bookData, final BaseDanmaku danmaku) {
@@ -445,6 +468,8 @@ public class ScanActivity extends Activity implements Callback {
                     SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                     String date = sDateFormat.format(new Date());
                     contentValues.put(DB_Column.ADD_DATE, date);
+                    contentValues.put(DB_Column.CATEGORY, bookData.category);
+                    contentValues.put(DB_Column.CLC_NUMBER, bookData.clc_number);
                     try {
                         getContentResolver().insert(BookProvider.CONTENT_URI, contentValues);
                     } catch (Exception e) {

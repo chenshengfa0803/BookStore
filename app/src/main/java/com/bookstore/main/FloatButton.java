@@ -199,6 +199,10 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
         }
     }
 
+    public boolean isMenuOpened() {
+        return menuOpened;
+    }
+
     public void closeMenu() {
         if (animationHandler.isAnimating()) {
             return;//do not add view to container if animating

@@ -11,7 +11,9 @@ import android.util.Log;
 public class BookSQLiteOpenHelper extends SQLiteOpenHelper {
     //version 1: Add database
     //version 2: change DB_Column.PAGES from integer to text
-    public static final int DATABASE_VERSION = 2;
+    //version 3: add category column
+    //version 4: add CLC_NUMBER column
+    public static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME = "BookProvider.db";
     public static final String BOOKINFO_TABLE_NAME = "BookInfo";
     private static BookSQLiteOpenHelper singleton;
@@ -48,7 +50,9 @@ public class BookSQLiteOpenHelper extends SQLiteOpenHelper {
                 + DB_Column.IMG_LARGE + " text, "
                 + DB_Column.ISBN10 + " text, "
                 + DB_Column.ISBN13 + " text, "
-                + DB_Column.ADD_DATE + " text" + ");";
+                + DB_Column.ADD_DATE + " text, "
+                + DB_Column.CATEGORY + " integer, "
+                + DB_Column.CLC_NUMBER + " text" + ");";
 
         try {
             db.execSQL(create_database);
@@ -59,6 +63,7 @@ public class BookSQLiteOpenHelper extends SQLiteOpenHelper {
 
     }
 
+    //when database version code change, it will call onUpgrade
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.i("BookDatabase", "upgrading from version " + oldVersion + " to " + newVersion + ", old data will be destroy");

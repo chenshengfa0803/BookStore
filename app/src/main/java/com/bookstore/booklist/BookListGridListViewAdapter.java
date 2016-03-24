@@ -11,8 +11,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bookstore.bookparser.BookCategory;
 import com.bookstore.main.R;
-import com.bookstore.util.BookCategory;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -84,22 +84,23 @@ public class BookListGridListViewAdapter extends BaseAdapter {
                     .build();
 
             //show cover1
-            mDataCursor.moveToPosition(position);
-            String cover1Url = mDataCursor.getString(DataBaseProjection.COLUMN_IMG_LARGE);
-            ImageView cover1 = (ImageView) listItemView.findViewById(R.id.cover1);
-            ImageLoader.getInstance().displayImage(cover1Url, cover1, options);
-
+            if (mDataCursor.moveToPosition(position)) {
+                String cover1Url = mDataCursor.getString(DataBaseProjection.COLUMN_IMG_LARGE);
+                ImageView cover1 = (ImageView) listItemView.findViewById(R.id.cover1);
+                ImageLoader.getInstance().displayImage(cover1Url, cover1, options);
+            }
             //show cover2
-            mDataCursor.moveToPosition(position + 1);
-            String cover2Url = mDataCursor.getString(DataBaseProjection.COLUMN_IMG_LARGE);
-            ImageView cover2 = (ImageView) listItemView.findViewById(R.id.cover2);
-            ImageLoader.getInstance().displayImage(cover2Url, cover2, options);
-
+            if (mDataCursor.moveToPosition(position + 1)) {
+                String cover2Url = mDataCursor.getString(DataBaseProjection.COLUMN_IMG_LARGE);
+                ImageView cover2 = (ImageView) listItemView.findViewById(R.id.cover2);
+                ImageLoader.getInstance().displayImage(cover2Url, cover2, options);
+            }
             //show cover3
-            mDataCursor.moveToPosition(position + 2);
-            String cover3Url = mDataCursor.getString(DataBaseProjection.COLUMN_IMG_LARGE);
-            ImageView cover3 = (ImageView) listItemView.findViewById(R.id.cover3);
-            ImageLoader.getInstance().displayImage(cover3Url, cover3, options);
+            if (mDataCursor.moveToPosition(position + 2)) {
+                String cover3Url = mDataCursor.getString(DataBaseProjection.COLUMN_IMG_LARGE);
+                ImageView cover3 = (ImageView) listItemView.findViewById(R.id.cover3);
+                ImageLoader.getInstance().displayImage(cover3Url, cover3, options);
+            }
         }
     }
 

@@ -19,4 +19,6 @@ public interface DataBaseProjection {
     int COLUMN_ISBN10 = COLUMN_ID + 12;
     int COLUMN_ISBN13 = COLUMN_ID + 13;
     int COLUMN_ADD_DATE = COLUMN_ID + 14;
+    int COLUMN_CATEGORY = COLUMN_ID + 15;
+    int COLUMN_CLC_NUMBER = COLUMN_ID + 16;
 }
