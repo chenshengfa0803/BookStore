@@ -3,8 +3,10 @@ package com.bookstore.main;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +22,7 @@ import com.bookstore.booklist.BookListGridListViewAdapter;
 import com.bookstore.booklist.BookListLoader;
 import com.bookstore.booklist.BookListViewPagerAdapter;
 import com.bookstore.booklist.ListViewListener;
+import com.bookstore.bookparser.BookCategory;
 import com.bookstore.main.animation.ViewBlur;
 import com.bookstore.provider.BookProvider;
 import com.bookstore.qr_codescan.ScanActivity;
@@ -29,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends Activity {
+    public static final String PREFERENCE_FILE_NAME = "config_preference";
     private final static int SCANNING_REQUEST_CODE = 1;
     public FloatButton mainFloatButton;
     BookListGridListViewAdapter mGridListViewAdapter;
@@ -56,6 +60,12 @@ public class MainActivity extends Activity {
             tintManager.setTintColor(getResources().getColor(android.R.color.darker_gray));
         }
         setContentView(R.layout.activity_main);
+
+        if (isFirstLaunch()) {
+            ArrayList<String> list = BookCategory.getDefault_category_list();
+            DBHandler.saveBookCategory(this, list);
+        }
+
         blurFromView = findViewById(R.id.booklist_mainView);
         blurToView = (ImageView) findViewById(R.id.blur_view);
         blurToView.setOnClickListener(new View.OnClickListener() {
@@ -125,6 +135,17 @@ public class MainActivity extends Activity {
             }
             break;
         }
+    }
+
+    public boolean isFirstLaunch() {
+        final SharedPreferences mSharedPreferences = getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
+        boolean isFirstLaunch = mSharedPreferences.getBoolean("isFirstLaunch", true);
+        if (isFirstLaunch) {
+            SharedPreferences.Editor editor = mSharedPreferences.edit();
+            editor.putBoolean("isFirstLaunch", false);
+            editor.commit();
+        }
+        return isFirstLaunch;
     }
 
     public void createFloatButtonMenu() {
@@ -197,7 +218,7 @@ public class MainActivity extends Activity {
     public void refreshBookList() {
         stopRefreshBookList();
         //final String[] projection = new String[]{DB_Column.TITLE, DB_Column.AUTHOR};
-        mBookListLoader = new BookListLoader(this, BookProvider.CONTENT_URI, null, null, null, null);
+        mBookListLoader = new BookListLoader(this, BookProvider.BOOKINFO_URI, null, null, null, null);
         mLoadListener = new bookListLoadListener();
         mBookListLoader.registerListener(0, mLoadListener);
         mBookListLoader.startLoading();

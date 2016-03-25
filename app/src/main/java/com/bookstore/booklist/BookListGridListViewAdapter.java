@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.bookstore.bookparser.BookCategory;
 import com.bookstore.main.R;
+import com.bookstore.provider.BookInfoProjection;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -85,22 +86,26 @@ public class BookListGridListViewAdapter extends BaseAdapter {
 
             //show cover1
             if (mDataCursor.moveToPosition(position)) {
-                String cover1Url = mDataCursor.getString(DataBaseProjection.COLUMN_IMG_LARGE);
+                String cover1Url = mDataCursor.getString(BookInfoProjection.COLUMN_IMG_LARGE);
                 ImageView cover1 = (ImageView) listItemView.findViewById(R.id.cover1);
                 ImageLoader.getInstance().displayImage(cover1Url, cover1, options);
             }
             //show cover2
             if (mDataCursor.moveToPosition(position + 1)) {
-                String cover2Url = mDataCursor.getString(DataBaseProjection.COLUMN_IMG_LARGE);
+                String cover2Url = mDataCursor.getString(BookInfoProjection.COLUMN_IMG_LARGE);
                 ImageView cover2 = (ImageView) listItemView.findViewById(R.id.cover2);
                 ImageLoader.getInstance().displayImage(cover2Url, cover2, options);
             }
             //show cover3
             if (mDataCursor.moveToPosition(position + 2)) {
-                String cover3Url = mDataCursor.getString(DataBaseProjection.COLUMN_IMG_LARGE);
+                String cover3Url = mDataCursor.getString(BookInfoProjection.COLUMN_IMG_LARGE);
                 ImageView cover3 = (ImageView) listItemView.findViewById(R.id.cover3);
                 ImageLoader.getInstance().displayImage(cover3Url, cover3, options);
             }
+        }
+        if (position == 4) {
+            ImageView cover33 = (ImageView) listItemView.findViewById(R.id.cover3);
+            cover33.setVisibility(View.GONE);
         }
     }
 

@@ -17,47 +17,51 @@ public class BookCategory {
     public static final int CATEGORY_COMPUTER_INTERNET = 9;
     public static final int CATEGORY_UTILITY = 10;
     public static final int CATEGORY_OTHER = 11;
-    private static ArrayList<String> category_list = null;
+    private static ArrayList<String> default_category_list = null;
 
     static {
-        category_list = new ArrayList<String>();
-        category_list.add("全部分类");
-        category_list.add("马列主义、毛泽东思想、邓小平理论");// A
-        category_list.add("哲学、宗教");                       // B
-        category_list.add("社会科学总论");                    // C
-        category_list.add("政治、法律");                       // D
-        category_list.add("军事");                            // E
-        category_list.add("经济");                            // F
-        category_list.add("文化、科学、教育、体育");         // G
-        category_list.add("语言、文字");                      // H
-        category_list.add("文学");                           // I
-        category_list.add("艺术");                           // J
-        category_list.add("历史、地理");                    // K
-        category_list.add("自然科学总论");                  // N
-        category_list.add("数理科学和化学");                // O
-        category_list.add("天文学、地球科学");              // P
-        category_list.add("生物科学");                      // Q
-        category_list.add("医药、卫生");                    // R
-        category_list.add("农业科学");                      // S
-        category_list.add("工业技术");                      // T
-        category_list.add("交通运输");                      // U
-        category_list.add("航空、航天");                    // V
-        category_list.add("环境科学、安全科学");           // X
-        category_list.add("综合性图书");                    // Z
-        category_list.add("其他");
+        default_category_list = new ArrayList<String>();
+        default_category_list.add("全部分类");
+        default_category_list.add("马列主义、毛泽东思想、邓小平理论");// A
+        default_category_list.add("哲学、宗教");                       // B
+        default_category_list.add("社会科学总论");                    // C
+        default_category_list.add("政治、法律");                       // D
+        default_category_list.add("军事");                            // E
+        default_category_list.add("经济");                            // F
+        default_category_list.add("文化、科学、教育、体育");         // G
+        default_category_list.add("语言、文字");                      // H
+        default_category_list.add("文学");                           // I
+        default_category_list.add("艺术");                           // J
+        default_category_list.add("历史、地理");                    // K
+        default_category_list.add("自然科学总论");                  // N
+        default_category_list.add("数理科学和化学");                // O
+        default_category_list.add("天文学、地球科学");              // P
+        default_category_list.add("生物科学");                      // Q
+        default_category_list.add("医药、卫生");                    // R
+        default_category_list.add("农业科学");                      // S
+        default_category_list.add("工业技术");                      // T
+        default_category_list.add("交通运输");                      // U
+        default_category_list.add("航空、航天");                    // V
+        default_category_list.add("环境科学、安全科学");           // X
+        default_category_list.add("综合性图书");                    // Z
+        default_category_list.add("其他");
 
     }
 
+    public static ArrayList<String> getDefault_category_list() {
+        return default_category_list;
+    }
+
     public static String getCategoryName(int pos) {
-        if (pos >= category_list.size()) {
+        if (pos >= default_category_list.size()) {
             return null;
         } else {
-            return category_list.get(pos);
+            return default_category_list.get(pos);
         }
     }
 
     public static int getCategoryCount() {
-        return category_list.size();
+        return default_category_list.size();
     }
 
     public static int getCategoryByClcNum(String clcNum) {

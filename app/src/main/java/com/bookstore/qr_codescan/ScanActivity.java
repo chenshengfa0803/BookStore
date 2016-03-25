@@ -448,30 +448,30 @@ public class ScanActivity extends Activity implements Callback {
             public void run() {
                 for (BookData bookData : scanedBookList) {
                     ContentValues contentValues = new ContentValues();
-                    contentValues.put(DB_Column.TITLE, bookData.title);
+                    contentValues.put(DB_Column.BookInfo.TITLE, bookData.title);
                     if (bookData.authors.size() > 0) {
-                        contentValues.put(DB_Column.AUTHOR, bookData.authors.get(0));
+                        contentValues.put(DB_Column.BookInfo.AUTHOR, bookData.authors.get(0));
                     }
                     if (bookData.translator.size() > 0) {
-                        contentValues.put(DB_Column.TRANSLATOR, bookData.translator.get(0));
+                        contentValues.put(DB_Column.BookInfo.TRANSLATOR, bookData.translator.get(0));
                     }
-                    contentValues.put(DB_Column.PUB_DATE, bookData.pub_date);
-                    contentValues.put(DB_Column.PUBLISHER, bookData.publisher);
-                    contentValues.put(DB_Column.PRICE, bookData.price);
-                    contentValues.put(DB_Column.PAGES, bookData.pages);
-                    contentValues.put(DB_Column.BINGDING, bookData.binding);
-                    contentValues.put(DB_Column.IMG_SMALL, bookData.images_small);
-                    contentValues.put(DB_Column.IMG_MEDIUM, bookData.images_medium);
-                    contentValues.put(DB_Column.IMG_LARGE, bookData.images_large);
-                    contentValues.put(DB_Column.ISBN10, bookData.isbn10);
-                    contentValues.put(DB_Column.ISBN13, bookData.isbn13);
+                    contentValues.put(DB_Column.BookInfo.PUB_DATE, bookData.pub_date);
+                    contentValues.put(DB_Column.BookInfo.PUBLISHER, bookData.publisher);
+                    contentValues.put(DB_Column.BookInfo.PRICE, bookData.price);
+                    contentValues.put(DB_Column.BookInfo.PAGES, bookData.pages);
+                    contentValues.put(DB_Column.BookInfo.BINGDING, bookData.binding);
+                    contentValues.put(DB_Column.BookInfo.IMG_SMALL, bookData.images_small);
+                    contentValues.put(DB_Column.BookInfo.IMG_MEDIUM, bookData.images_medium);
+                    contentValues.put(DB_Column.BookInfo.IMG_LARGE, bookData.images_large);
+                    contentValues.put(DB_Column.BookInfo.ISBN10, bookData.isbn10);
+                    contentValues.put(DB_Column.BookInfo.ISBN13, bookData.isbn13);
                     SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                     String date = sDateFormat.format(new Date());
-                    contentValues.put(DB_Column.ADD_DATE, date);
-                    contentValues.put(DB_Column.CATEGORY, bookData.category);
-                    contentValues.put(DB_Column.CLC_NUMBER, bookData.clc_number);
+                    contentValues.put(DB_Column.BookInfo.ADD_DATE, date);
+                    contentValues.put(DB_Column.BookInfo.CATEGORY, bookData.category);
+                    contentValues.put(DB_Column.BookInfo.CLC_NUMBER, bookData.clc_number);
                     try {
-                        getContentResolver().insert(BookProvider.CONTENT_URI, contentValues);
+                        getContentResolver().insert(BookProvider.BOOKINFO_URI, contentValues);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

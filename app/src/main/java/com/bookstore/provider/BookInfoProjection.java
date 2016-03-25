@@ -1,9 +1,9 @@
-package com.bookstore.booklist;
+package com.bookstore.provider;
 
 /**
  * Created by Administrator on 2016/3/12.
  */
-public interface DataBaseProjection {
+public interface BookInfoProjection {
     int COLUMN_ID = 0;
     int COLUMN_TITLE = COLUMN_ID + 1;
     int COLUMN_AUTHOR = COLUMN_ID + 2;

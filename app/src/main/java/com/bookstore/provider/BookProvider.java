@@ -18,15 +18,21 @@ import android.text.TextUtils;
  */
 public class BookProvider extends ContentProvider {
     public static final String AUTHORITY = "com.bookstore.provider.BookProvider";
-    public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME);
+    public static final Uri BOOKINFO_URI = Uri.parse("content://" + AUTHORITY + "/" + BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME);
+    public static final Uri BOOKCATEGORY_URI = Uri.parse("content://" + AUTHORITY + "/" + BookSQLiteOpenHelper.BOOKCATEGORY_TABLE_NAME);
     private static final int URI_MATCHER_CODE_BOOKINFO = 0x1000;
     private static final int URI_MATCHER_CODE_BOOKINFO_ID = URI_MATCHER_CODE_BOOKINFO + 1;
+
+    private static final int URI_MATCHER_CODE_BOOKCATEGORY = URI_MATCHER_CODE_BOOKINFO + 0x1000;
+    private static final int URI_MATCHER_CODE_BOOKCATEGORY_ID = URI_MATCHER_CODE_BOOKCATEGORY + 1;
     private static final UriMatcher sURIMatcher;
 
     static {
         sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         sURIMatcher.addURI(AUTHORITY, "BookInfo", URI_MATCHER_CODE_BOOKINFO);
         sURIMatcher.addURI(AUTHORITY, "BookInfo/#", URI_MATCHER_CODE_BOOKINFO_ID);
+        sURIMatcher.addURI(AUTHORITY, "BookCategory", URI_MATCHER_CODE_BOOKCATEGORY);
+        sURIMatcher.addURI(AUTHORITY, "BookCategory/#", URI_MATCHER_CODE_BOOKCATEGORY_ID);
     }
 
     private BookSQLiteOpenHelper dbHelper;
@@ -73,10 +79,20 @@ public class BookProvider extends ContentProvider {
                     result_cursor = database.rawQuery(query_str1, selectionArgs);
                     break;
                 case URI_MATCHER_CODE_BOOKINFO_ID:
-                    String id = uri.getPathSegments().get(1);
-                    String select = DB_Column.ID + "=" + id + (TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ")");
+                    String bookinfo_id = uri.getPathSegments().get(1);
+                    String select = DB_Column.BookInfo.ID + "=" + bookinfo_id + (TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ")");
                     String query_str2 = SQLiteQueryBuilder.buildQueryString(false, BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME, projection, select, null, null, sortOrder, null);
                     result_cursor = database.rawQuery(query_str2, selectionArgs);
+                    break;
+                case URI_MATCHER_CODE_BOOKCATEGORY:
+                    String query_str3 = SQLiteQueryBuilder.buildQueryString(false, BookSQLiteOpenHelper.BOOKCATEGORY_TABLE_NAME, projection, selection, null, null, sortOrder, null);
+                    result_cursor = database.rawQuery(query_str3, selectionArgs);
+                    break;
+                case URI_MATCHER_CODE_BOOKCATEGORY_ID:
+                    String bookcategory_id = uri.getPathSegments().get(1);
+                    String category_select = DB_Column.BookCategory.ID + "=" + bookcategory_id + (TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ")");
+                    String query_str4 = SQLiteQueryBuilder.buildQueryString(false, BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME, projection, category_select, null, null, sortOrder, null);
+                    result_cursor = database.rawQuery(query_str4, selectionArgs);
                     break;
             }
         } catch (SQLiteException e) {
@@ -106,6 +122,11 @@ public class BookProvider extends ContentProvider {
                     resultUri = ContentUris.withAppendedId(uri, id);
                     getContext().getContentResolver().notifyChange(resultUri, null);
                     break;
+                case URI_MATCHER_CODE_BOOKCATEGORY:
+                    long category_id = database.insert("BookCategory", null, values);
+                    resultUri = ContentUris.withAppendedId(uri, category_id);
+                    getContext().getContentResolver().notifyChange(resultUri, null);
+                    break;
             }
         } catch (SQLiteException e) {
             throw e;
@@ -126,8 +147,16 @@ public class BookProvider extends ContentProvider {
                     break;
                 case URI_MATCHER_CODE_BOOKINFO_ID:
                     String id = uri.getPathSegments().get(1);
-                    String select = DB_Column.ID + "=" + id + (TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ")");
+                    String select = DB_Column.BookInfo.ID + "=" + id + (TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ")");
                     result_count = database.delete(BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME, select, selectionArgs);
+                    break;
+                case URI_MATCHER_CODE_BOOKCATEGORY:
+                    result_count = database.delete(BookSQLiteOpenHelper.BOOKCATEGORY_TABLE_NAME, selection, selectionArgs);
+                    break;
+                case URI_MATCHER_CODE_BOOKCATEGORY_ID:
+                    String category_id = uri.getPathSegments().get(1);
+                    String category_select = DB_Column.BookCategory.ID + "=" + category_id + (TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ")");
+                    result_count = database.delete(BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME, category_select, selectionArgs);
                     break;
             }
         } catch (SQLiteException e) {
@@ -151,8 +180,16 @@ public class BookProvider extends ContentProvider {
                     break;
                 case URI_MATCHER_CODE_BOOKINFO_ID:
                     String id = uri.getPathSegments().get(1);
-                    String select = DB_Column.ID + "=" + id + (TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ")");
+                    String select = DB_Column.BookInfo.ID + "=" + id + (TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ")");
                     result_count = database.update(BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME, values, select, selectionArgs);
+                    break;
+                case URI_MATCHER_CODE_BOOKCATEGORY:
+                    result_count = database.update(BookSQLiteOpenHelper.BOOKCATEGORY_TABLE_NAME, values, selection, selectionArgs);
+                    break;
+                case URI_MATCHER_CODE_BOOKCATEGORY_ID:
+                    String category_id = uri.getPathSegments().get(1);
+                    String category_select = DB_Column.BookCategory.ID + "=" + category_id + (TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ")");
+                    result_count = database.update(BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME, values, category_select, selectionArgs);
                     break;
             }
         } catch (SQLiteException e) {
