@@ -27,6 +27,7 @@ public abstract class DB_Column {
     public class BookCategory {
         public static final String ID = "_id";
         public static final String Name = "category_name";
+        public static final String Code = "category_code";
     }
 
 

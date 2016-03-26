@@ -11,10 +11,11 @@ import android.util.Log;
 public class BookSQLiteOpenHelper extends SQLiteOpenHelper {
     //version 1: Add database
     //version 2: change DB_Column.PAGES from integer to text
-    //version 3: add category column
-    //version 4: add CLC_NUMBER column
+    //version 3: add BookInfo table category column
+    //version 4: add BookInfo table CLC_NUMBER column
     //version 5: add BookCategory table
-    public static final int DATABASE_VERSION = 5;
+    //version 6: add BookCategory table CODE column
+    public static final int DATABASE_VERSION = 6;
     public static final String DATABASE_NAME = "BookProvider.db";
     public static final String BOOKINFO_TABLE_NAME = "BookInfo";
     public static final String BOOKCATEGORY_TABLE_NAME = "BookCategory";
@@ -74,7 +75,8 @@ public class BookSQLiteOpenHelper extends SQLiteOpenHelper {
     public void createBookCategoryTable(SQLiteDatabase db) {
         String create_database = "create table " + BOOKCATEGORY_TABLE_NAME + " ("
                 + DB_Column.BookCategory.ID + " integer primary key autoincrement, "
-                + DB_Column.BookCategory.Name + " text not null" + ");";
+                + DB_Column.BookCategory.Name + " text not null, "
+                + DB_Column.BookCategory.Code + " integer" + ");";
 
         try {
             db.execSQL(create_database);
@@ -90,6 +92,7 @@ public class BookSQLiteOpenHelper extends SQLiteOpenHelper {
         Log.i("BookDatabase", "upgrading from version " + oldVersion + " to " + newVersion + ", old data will be destroy");
         try {
             db.execSQL("DROP TABLE IF EXISTS " + BOOKINFO_TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + BOOKCATEGORY_TABLE_NAME);
         } catch (Exception e) {
             e.printStackTrace();
         }

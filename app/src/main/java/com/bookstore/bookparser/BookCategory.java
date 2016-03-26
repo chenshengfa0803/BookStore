@@ -17,51 +17,19 @@ public class BookCategory {
     public static final int CATEGORY_COMPUTER_INTERNET = 9;
     public static final int CATEGORY_UTILITY = 10;
     public static final int CATEGORY_OTHER = 11;
-    private static ArrayList<String> default_category_list = null;
 
     static {
-        default_category_list = new ArrayList<String>();
-        default_category_list.add("全部分类");
-        default_category_list.add("马列主义、毛泽东思想、邓小平理论");// A
-        default_category_list.add("哲学、宗教");                       // B
-        default_category_list.add("社会科学总论");                    // C
-        default_category_list.add("政治、法律");                       // D
-        default_category_list.add("军事");                            // E
-        default_category_list.add("经济");                            // F
-        default_category_list.add("文化、科学、教育、体育");         // G
-        default_category_list.add("语言、文字");                      // H
-        default_category_list.add("文学");                           // I
-        default_category_list.add("艺术");                           // J
-        default_category_list.add("历史、地理");                    // K
-        default_category_list.add("自然科学总论");                  // N
-        default_category_list.add("数理科学和化学");                // O
-        default_category_list.add("天文学、地球科学");              // P
-        default_category_list.add("生物科学");                      // Q
-        default_category_list.add("医药、卫生");                    // R
-        default_category_list.add("农业科学");                      // S
-        default_category_list.add("工业技术");                      // T
-        default_category_list.add("交通运输");                      // U
-        default_category_list.add("航空、航天");                    // V
-        default_category_list.add("环境科学、安全科学");           // X
-        default_category_list.add("综合性图书");                    // Z
-        default_category_list.add("其他");
+
 
     }
 
-    public static ArrayList<String> getDefault_category_list() {
-        return default_category_list;
-    }
+    private ArrayList<CategoryItem> default_category_list = null;
+    private ArrayList<CategoryItem> user_category_list = null;
 
-    public static String getCategoryName(int pos) {
-        if (pos >= default_category_list.size()) {
-            return null;
-        } else {
-            return default_category_list.get(pos);
-        }
-    }
-
-    public static int getCategoryCount() {
-        return default_category_list.size();
+    public BookCategory() {
+        default_category_list = new ArrayList<CategoryItem>();
+        user_category_list = new ArrayList<CategoryItem>();
+        generateDefaultCategoryList();
     }
 
     public static int getCategoryByClcNum(String clcNum) {
@@ -111,5 +79,58 @@ public class BookCategory {
         String clcNum = clc_no_blank.substring(0, endPos);
         return clcNum;
 
+    }
+
+    public void generateDefaultCategoryList() {
+        default_category_list.add(new CategoryItem('a', "总藏书"));
+        default_category_list.add(new CategoryItem('A', "马列主义、毛泽东思想、邓小平理论"));// A
+        default_category_list.add(new CategoryItem('B', "哲学、宗教"));                       // B
+        default_category_list.add(new CategoryItem('C', "社会科学总论"));                    // C
+        default_category_list.add(new CategoryItem('D', "政治、法律"));                       // D
+        default_category_list.add(new CategoryItem('E', "军事"));                            // E
+        default_category_list.add(new CategoryItem('F', "经济"));                            // F
+        default_category_list.add(new CategoryItem('G', "文化、科学、教育、体育"));         // G
+        default_category_list.add(new CategoryItem('H', "语言、文字"));                      // H
+        default_category_list.add(new CategoryItem('I', "文学"));                           // I
+        default_category_list.add(new CategoryItem('J', "艺术"));                           // J
+        default_category_list.add(new CategoryItem('K', "历史、地理"));                    // K
+        default_category_list.add(new CategoryItem('N', "自然科学总论"));                  // N
+        default_category_list.add(new CategoryItem('O', "数理科学和化学"));                // O
+        default_category_list.add(new CategoryItem('P', "天文学、地球科学"));              // P
+        default_category_list.add(new CategoryItem('Q', "生物科学"));                      // Q
+        default_category_list.add(new CategoryItem('R', "医药、卫生"));                    // R
+        default_category_list.add(new CategoryItem('S', "农业科学"));                      // S
+        default_category_list.add(new CategoryItem('T', "工业技术"));                      // T
+        default_category_list.add(new CategoryItem('U', "交通运输"));                      // U
+        default_category_list.add(new CategoryItem('V', "航空、航天"));                    // V
+        default_category_list.add(new CategoryItem('X', "环境科学、安全科学"));           // X
+        default_category_list.add(new CategoryItem('Z', "综合性图书"));                    // Z
+        default_category_list.add(new CategoryItem(0, "其他"));
+    }
+
+    public ArrayList<CategoryItem> getDefault_category_list() {
+        return default_category_list;
+    }
+
+    public String getCategoryName(int pos) {
+        if (pos >= default_category_list.size()) {
+            return null;
+        } else {
+            return default_category_list.get(pos).category_name;
+        }
+    }
+
+    public int getCategoryCount() {
+        return default_category_list.size();
+    }
+
+    public class CategoryItem {
+        public int category_code;
+        public String category_name;
+
+        public CategoryItem(int category_code, String category_name) {
+            this.category_code = category_code;
+            this.category_name = category_name;
+        }
     }
 }

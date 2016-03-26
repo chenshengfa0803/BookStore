@@ -25,6 +25,7 @@ import com.bookstore.booklist.ListViewListener;
 import com.bookstore.bookparser.BookCategory;
 import com.bookstore.main.animation.ViewBlur;
 import com.bookstore.provider.BookProvider;
+import com.bookstore.provider.DB_Column;
 import com.bookstore.qr_codescan.ScanActivity;
 import com.bookstore.util.SystemBarTintManager;
 
@@ -61,10 +62,12 @@ public class MainActivity extends Activity {
         }
         setContentView(R.layout.activity_main);
 
+        BookCategory bookCategory = new BookCategory();
         if (isFirstLaunch()) {
-            ArrayList<String> list = BookCategory.getDefault_category_list();
+            ArrayList<BookCategory.CategoryItem> list = bookCategory.getDefault_category_list();
             DBHandler.saveBookCategory(this, list);
         }
+        DBHandler.getBookCategory(this);
 
         blurFromView = findViewById(R.id.booklist_mainView);
         blurToView = (ImageView) findViewById(R.id.blur_view);
@@ -218,7 +221,7 @@ public class MainActivity extends Activity {
     public void refreshBookList() {
         stopRefreshBookList();
         //final String[] projection = new String[]{DB_Column.TITLE, DB_Column.AUTHOR};
-        mBookListLoader = new BookListLoader(this, BookProvider.BOOKINFO_URI, null, null, null, null);
+        mBookListLoader = new BookListLoader(this, BookProvider.BOOKINFO_URI, null, null, null, DB_Column.BookInfo.ID + " DESC");
         mLoadListener = new bookListLoadListener();
         mBookListLoader.registerListener(0, mLoadListener);
         mBookListLoader.startLoading();

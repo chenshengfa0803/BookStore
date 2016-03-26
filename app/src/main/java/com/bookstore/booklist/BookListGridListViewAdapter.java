@@ -23,18 +23,20 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 public class BookListGridListViewAdapter extends BaseAdapter {
     public static final String TAG = "BookStore";
     public Context mContext;
+    BookCategory bookCategory;
     private TypedArray mColor_list;
     private Cursor mDataCursor = null;
 
     public BookListGridListViewAdapter(Context context) {
         mContext = context;
         mColor_list = mContext.getResources().obtainTypedArray(R.array.color_list);
+        bookCategory = new BookCategory();
     }
 
     @Override
 
     public int getCount() {
-        return BookCategory.getCategoryCount();
+        return bookCategory.getCategoryCount();
     }
 
     @Override
@@ -75,7 +77,7 @@ public class BookListGridListViewAdapter extends BaseAdapter {
 
     public void bindView(View listItemView, int position) {
         TextView category_name = (TextView) listItemView.findViewById(R.id.category_name);
-        category_name.setText(BookCategory.getCategoryName(position));
+        category_name.setText(bookCategory.getCategoryName(position));
 
         if (position == 0) {
             if (mDataCursor == null) return;
@@ -102,10 +104,6 @@ public class BookListGridListViewAdapter extends BaseAdapter {
                 ImageView cover3 = (ImageView) listItemView.findViewById(R.id.cover3);
                 ImageLoader.getInstance().displayImage(cover3Url, cover3, options);
             }
-        }
-        if (position == 4) {
-            ImageView cover33 = (ImageView) listItemView.findViewById(R.id.cover3);
-            cover33.setVisibility(View.GONE);
         }
     }
 
