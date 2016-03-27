@@ -228,17 +228,23 @@ public class MainActivity extends Activity {
                 item.listener = null;
             }
         }
+        loaders.clear();
+        mGridListViewAdapter.clearDataCursor();
     }
 
     public void refreshBookList() {
+        String selection = null;
         stopRefreshBookList();
         ArrayList<BookCategory.CategoryItem> categoryList = mBookCategory.getUser_category_list();
 
         for (BookCategory.CategoryItem item : categoryList) {
-            String selection = DB_Column.BookInfo.CATEGORY_CODE
-                    + "="
-                    + item.category_code;
-            dbHandler.loadBookList(this, BookProvider.BOOKINFO_URI, null, selection, null, DB_Column.BookInfo.ID + " DESC");
+            if (item.category_code != 'a') {//if category_code is 'a', that means all, it not need selection
+                selection = DB_Column.BookInfo.CATEGORY_CODE
+                        + "="
+                        + item.category_code;
+            }
+            String[] projection = {DB_Column.BookInfo.IMG_LARGE, DB_Column.BookInfo.CATEGORY_CODE};
+            dbHandler.loadBookList(this, BookProvider.BOOKINFO_URI, projection, selection, null, DB_Column.BookInfo.ID + " DESC LIMIT 3");
         }
 
 

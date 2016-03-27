@@ -13,10 +13,11 @@ import android.widget.TextView;
 
 import com.bookstore.bookparser.BookCategory;
 import com.bookstore.main.R;
-import com.bookstore.provider.Projection;
+import com.bookstore.provider.DB_Column;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -27,7 +28,6 @@ public class BookListGridListViewAdapter extends BaseAdapter {
     public Context mContext;
     BookCategory bookCategory;
     private TypedArray mColor_list;
-    private Cursor mDataCursor = null;
     private HashMap<Integer, Cursor> dataMap = null;
 
     public BookListGridListViewAdapter(Context context) {
@@ -80,34 +80,43 @@ public class BookListGridListViewAdapter extends BaseAdapter {
     }
 
     public void bindView(View listItemView, int position) {
+        listItemView.setVisibility(View.VISIBLE);
         TextView category_name = (TextView) listItemView.findViewById(R.id.category_name);
         category_name.setText(bookCategory.getCategoryName(position));
 
-        if (position == 0) {
-            if (mDataCursor == null) return;
-            DisplayImageOptions options = new DisplayImageOptions.Builder()
-                    .cacheInMemory(true)
-                    .cacheOnDisk(true)
-                    .build();
+        ArrayList<BookCategory.CategoryItem> list = bookCategory.getUser_category_list();
+        int key = list.get(position).category_code;
+        Cursor dataCursor = dataMap.get(key);
+        if (dataCursor == null) {
+            listItemView.setVisibility(View.INVISIBLE);
+            return;
+        }
 
-            //show cover1
-            if (mDataCursor.moveToPosition(position)) {
-                String cover1Url = mDataCursor.getString(Projection.BookInfo.COLUMN_IMG_LARGE);
-                ImageView cover1 = (ImageView) listItemView.findViewById(R.id.cover1);
-                ImageLoader.getInstance().displayImage(cover1Url, cover1, options);
-            }
-            //show cover2
-            if (mDataCursor.moveToPosition(position + 1)) {
-                String cover2Url = mDataCursor.getString(Projection.BookInfo.COLUMN_IMG_LARGE);
-                ImageView cover2 = (ImageView) listItemView.findViewById(R.id.cover2);
-                ImageLoader.getInstance().displayImage(cover2Url, cover2, options);
-            }
-            //show cover3
-            if (mDataCursor.moveToPosition(position + 2)) {
-                String cover3Url = mDataCursor.getString(Projection.BookInfo.COLUMN_IMG_LARGE);
-                ImageView cover3 = (ImageView) listItemView.findViewById(R.id.cover3);
-                ImageLoader.getInstance().displayImage(cover3Url, cover3, options);
-            }
+        DisplayImageOptions options = new DisplayImageOptions.Builder()
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .build();
+
+        //show cover1
+        if (dataCursor.moveToPosition(position)) {
+            //String cover1Url = mDataCursor.getString(Projection.BookInfo.COLUMN_IMG_LARGE);
+            String cover1Url = dataCursor.getString(dataCursor.getColumnIndex(DB_Column.BookInfo.IMG_LARGE));
+            ImageView cover1 = (ImageView) listItemView.findViewById(R.id.cover1);
+            ImageLoader.getInstance().displayImage(cover1Url, cover1, options);
+        }
+        //show cover2
+        if (dataCursor.moveToPosition(position + 1)) {
+            //String cover2Url = mDataCursor.getString(Projection.BookInfo.COLUMN_IMG_LARGE);
+            String cover2Url = dataCursor.getString(dataCursor.getColumnIndex(DB_Column.BookInfo.IMG_LARGE));
+            ImageView cover2 = (ImageView) listItemView.findViewById(R.id.cover2);
+            ImageLoader.getInstance().displayImage(cover2Url, cover2, options);
+        }
+        //show cover3
+        if (dataCursor.moveToPosition(position + 2)) {
+            //String cover3Url = mDataCursor.getString(Projection.BookInfo.COLUMN_IMG_LARGE);
+            String cover3Url = dataCursor.getString(dataCursor.getColumnIndex(DB_Column.BookInfo.IMG_LARGE));
+            ImageView cover3 = (ImageView) listItemView.findViewById(R.id.cover3);
+            ImageLoader.getInstance().displayImage(cover3Url, cover3, options);
         }
     }
 
@@ -115,13 +124,14 @@ public class BookListGridListViewAdapter extends BaseAdapter {
         return mColor_list.getColor(position % mColor_list.length(), 0);
     }
 
-    public void registerDataCursor(Cursor dataCursor) {
+    public void registerDataCursor(int category_code, Cursor dataCursor) {
         if (dataCursor == null) {
             return;
         }
-        if (mDataCursor != null) {
-            mDataCursor.close();
-        }
-        mDataCursor = dataCursor;
+        dataMap.put(category_code, dataCursor);
+    }
+
+    public void clearDataCursor() {
+        dataMap.clear();
     }
 }

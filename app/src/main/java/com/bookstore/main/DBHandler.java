@@ -109,8 +109,15 @@ public class DBHandler {
             if (data == null || data.getCount() == 0) {
                 return;
             }
-            adapter.registerDataCursor(data);
-            adapter.notifyDataSetChanged();
+            data.moveToFirst();
+            int category_code = data.getInt(data.getColumnIndex(DB_Column.BookInfo.CATEGORY_CODE));
+            adapter.registerDataCursor(category_code, data);
+
+            //other category code is 0, define in BookCategory
+            //other category is always the last query, if it is other category, then notify data change and refresh listview
+            if (0 == category_code) {
+                adapter.notifyDataSetChanged();
+            }
         }
     }
 }

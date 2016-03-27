@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 public class BookCategory {
     public static ArrayList<CategoryItem> default_category_list = new ArrayList<CategoryItem>();
-    public static ArrayList<CategoryItem> user_category_list = new ArrayList<CategoryItem>();
+    public static ArrayList<CategoryItem> user_category_list = new ArrayList<CategoryItem>();//user may define new category
 
     public BookCategory() {
         generateDefaultCategoryList();
@@ -63,7 +63,7 @@ public class BookCategory {
     }
 
     public void generateDefaultCategoryList() {
-        default_category_list.add(new CategoryItem('a', "总藏书"));
+        default_category_list.add(new CategoryItem('a', "所有图书"));
         default_category_list.add(new CategoryItem('A', "马列主义、毛泽东思想、邓小平理论"));// A
         default_category_list.add(new CategoryItem('B', "哲学、宗教"));                       // B
         default_category_list.add(new CategoryItem('C', "社会科学总论"));                    // C
