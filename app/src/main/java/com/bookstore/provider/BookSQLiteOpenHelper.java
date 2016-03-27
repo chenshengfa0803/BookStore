@@ -15,7 +15,8 @@ public class BookSQLiteOpenHelper extends SQLiteOpenHelper {
     //version 4: add BookInfo table CLC_NUMBER column
     //version 5: add BookCategory table
     //version 6: add BookCategory table CODE column
-    public static final int DATABASE_VERSION = 6;
+    //version 7: add BookInfo table CATEGORY_CODE column
+    public static final int DATABASE_VERSION = 7;
     public static final String DATABASE_NAME = "BookProvider.db";
     public static final String BOOKINFO_TABLE_NAME = "BookInfo";
     public static final String BOOKCATEGORY_TABLE_NAME = "BookCategory";
@@ -61,7 +62,8 @@ public class BookSQLiteOpenHelper extends SQLiteOpenHelper {
                 + DB_Column.BookInfo.ISBN10 + " text, "
                 + DB_Column.BookInfo.ISBN13 + " text, "
                 + DB_Column.BookInfo.ADD_DATE + " text, "
-                + DB_Column.BookInfo.CATEGORY + " integer, "
+                + DB_Column.BookInfo.CATEGORY_NAME + " text, "
+                + DB_Column.BookInfo.CATEGORY_CODE + " integer, "
                 + DB_Column.BookInfo.CLC_NUMBER + " text" + ");";
 
         try {

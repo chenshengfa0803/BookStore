@@ -6,29 +6,10 @@ import java.util.ArrayList;
  * Created by Administrator on 2016/3/24.
  */
 public class BookCategory {
-    public static final int CATEGORY_LITERATURE = 1;
-    public static final int CATEGORY_HISTORY = 2;
-    public static final int CATEGORY_GEOGRAPHY = 3;
-    public static final int CATEGORY_SOCIAL_SCIENCES = 4;
-    public static final int CATEGORY_TECHNOLOGY = 5;
-    public static final int CATEGORY_ART = 6;
-    public static final int CATEGORY_ECONOMIC_MANAGEMENT = 7;
-    public static final int CATEGORY_LIVING = 8;
-    public static final int CATEGORY_COMPUTER_INTERNET = 9;
-    public static final int CATEGORY_UTILITY = 10;
-    public static final int CATEGORY_OTHER = 11;
-
-    static {
-
-
-    }
-
-    private ArrayList<CategoryItem> default_category_list = null;
-    private ArrayList<CategoryItem> user_category_list = null;
+    public static ArrayList<CategoryItem> default_category_list = new ArrayList<CategoryItem>();
+    public static ArrayList<CategoryItem> user_category_list = new ArrayList<CategoryItem>();
 
     public BookCategory() {
-        default_category_list = new ArrayList<CategoryItem>();
-        user_category_list = new ArrayList<CategoryItem>();
         generateDefaultCategoryList();
     }
 
@@ -112,19 +93,27 @@ public class BookCategory {
         return default_category_list;
     }
 
+    public ArrayList<CategoryItem> getUser_category_list() {
+        return user_category_list;
+    }
+
+    public void setUser_category_list(ArrayList<CategoryItem> list) {
+        user_category_list = list;
+    }
+
     public String getCategoryName(int pos) {
-        if (pos >= default_category_list.size()) {
+        if (pos >= user_category_list.size()) {
             return null;
         } else {
-            return default_category_list.get(pos).category_name;
+            return user_category_list.get(pos).category_name;
         }
     }
 
     public int getCategoryCount() {
-        return default_category_list.size();
+        return user_category_list.size();
     }
 
-    public class CategoryItem {
+    public static class CategoryItem {
         public int category_code;
         public String category_name;
 

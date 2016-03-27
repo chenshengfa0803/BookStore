@@ -385,7 +385,7 @@ public class ScanActivity extends Activity implements Callback {
                 String clcNum = BookCategory.getClcNumber(clcStr);
                 int category = BookCategory.getCategoryByClcNum(clcNum);
                 bookData.clc_number = clcNum;
-                bookData.category = category;
+                bookData.category_code = category;
                 scanedBookList.add(bookData);
                 save_books_btn.setEnabled(true);
             }
@@ -468,7 +468,7 @@ public class ScanActivity extends Activity implements Callback {
                     SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                     String date = sDateFormat.format(new Date());
                     contentValues.put(DB_Column.BookInfo.ADD_DATE, date);
-                    contentValues.put(DB_Column.BookInfo.CATEGORY, bookData.category);
+                    contentValues.put(DB_Column.BookInfo.CATEGORY_CODE, bookData.category_code);
                     contentValues.put(DB_Column.BookInfo.CLC_NUMBER, bookData.clc_number);
                     try {
                         getContentResolver().insert(BookProvider.BOOKINFO_URI, contentValues);

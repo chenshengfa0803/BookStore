@@ -32,7 +32,8 @@ final public class BookData {
     public String series_title = null;
     public String pages = null;
     public String clc_number = null;
-    public int category = 0;
+    public int category_code = 0;
+    public String category_name = null;
     public Detail intro = null;
     public EBook ebook = null;
     public int book_id = -1;

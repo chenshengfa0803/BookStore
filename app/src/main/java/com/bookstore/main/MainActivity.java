@@ -5,13 +5,12 @@ import android.animation.PropertyValuesHolder;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -19,7 +18,6 @@ import android.widget.ImageView;
 
 import com.bookstore.booklist.BookListGridListView;
 import com.bookstore.booklist.BookListGridListViewAdapter;
-import com.bookstore.booklist.BookListLoader;
 import com.bookstore.booklist.BookListViewPagerAdapter;
 import com.bookstore.booklist.ListViewListener;
 import com.bookstore.bookparser.BookCategory;
@@ -34,16 +32,26 @@ import java.util.List;
 
 public class MainActivity extends Activity {
     public static final String PREFERENCE_FILE_NAME = "config_preference";
+    public static final int MSG_GET_BOOK_CATEGORY = 100;
     private final static int SCANNING_REQUEST_CODE = 1;
     public FloatButton mainFloatButton;
-    BookListGridListViewAdapter mGridListViewAdapter;
+    public BookListGridListViewAdapter mGridListViewAdapter;
+    public DBHandler dbHandler = null;
+    public BookCategory mBookCategory = null;
+    public Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MSG_GET_BOOK_CATEGORY:
+                    break;
+            }
+        }
+    };
     View blurFromView = null;
     ImageView blurToView = null;
     BookListGridListView gridListView = null;
     private ViewPager bookListViewPager;
     private BookListViewPagerAdapter pagerAdapter;
-    private BookListLoader mBookListLoader = null;
-    private bookListLoadListener mLoadListener = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,12 +70,12 @@ public class MainActivity extends Activity {
         }
         setContentView(R.layout.activity_main);
 
-        BookCategory bookCategory = new BookCategory();
+        mBookCategory = new BookCategory();
         if (isFirstLaunch()) {
-            ArrayList<BookCategory.CategoryItem> list = bookCategory.getDefault_category_list();
+            ArrayList<BookCategory.CategoryItem> list = mBookCategory.getDefault_category_list();
             DBHandler.saveBookCategory(this, list);
         }
-        DBHandler.getBookCategory(this);
+        DBHandler.getBookCategory(this, mBookCategory);
 
         blurFromView = findViewById(R.id.booklist_mainView);
         blurToView = (ImageView) findViewById(R.id.blur_view);
@@ -105,6 +113,7 @@ public class MainActivity extends Activity {
 
             }
         });
+        dbHandler = new DBHandler(mGridListViewAdapter);
 
         createFloatButtonMenu();
     }
@@ -211,34 +220,27 @@ public class MainActivity extends Activity {
     }
 
     synchronized public void stopRefreshBookList() {
-        if (mBookListLoader != null) {
-            mBookListLoader.unregisterListener(mLoadListener);
-            mBookListLoader.reset();
-            mLoadListener = null;
+        ArrayList<DBHandler.LoaderItem> loaders = dbHandler.getLoaders();
+        for (DBHandler.LoaderItem item : loaders) {
+            if (item.loader != null) {
+                item.loader.unregisterListener(item.listener);
+                item.loader.reset();
+                item.listener = null;
+            }
         }
     }
 
     public void refreshBookList() {
         stopRefreshBookList();
-        //final String[] projection = new String[]{DB_Column.TITLE, DB_Column.AUTHOR};
-        mBookListLoader = new BookListLoader(this, BookProvider.BOOKINFO_URI, null, null, null, DB_Column.BookInfo.ID + " DESC");
-        mLoadListener = new bookListLoadListener();
-        mBookListLoader.registerListener(0, mLoadListener);
-        mBookListLoader.startLoading();
-    }
+        ArrayList<BookCategory.CategoryItem> categoryList = mBookCategory.getUser_category_list();
 
-    public class bookListLoadListener implements Loader.OnLoadCompleteListener<Cursor> {
-        public bookListLoadListener() {
+        for (BookCategory.CategoryItem item : categoryList) {
+            String selection = DB_Column.BookInfo.CATEGORY_CODE
+                    + "="
+                    + item.category_code;
+            dbHandler.loadBookList(this, BookProvider.BOOKINFO_URI, null, selection, null, DB_Column.BookInfo.ID + " DESC");
         }
 
-        @Override
-        public void onLoadComplete(Loader<Cursor> loader, Cursor data) {
-            Log.i("BookListLoader", "load complete");
-            if (data == null || data.getCount() == 0) {
-                return;
-            }
-            mGridListViewAdapter.registerDataCursor(data);
-            mGridListViewAdapter.notifyDataSetChanged();
-        }
+
     }
 }
