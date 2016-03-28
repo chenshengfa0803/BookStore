@@ -75,7 +75,7 @@ public class MainActivity extends Activity {
             ArrayList<BookCategory.CategoryItem> list = mBookCategory.getDefault_category_list();
             DBHandler.saveBookCategory(this, list);
         }
-        DBHandler.getBookCategory(this, mBookCategory);
+        //DBHandler.getBookCategory(this, mBookCategory);
 
         blurFromView = findViewById(R.id.booklist_mainView);
         blurToView = (ImageView) findViewById(R.id.blur_view);
@@ -228,14 +228,14 @@ public class MainActivity extends Activity {
                 item.listener = null;
             }
         }
-        loaders.clear();
-        mGridListViewAdapter.clearDataCursor();
+        dbHandler.reset();
+        mGridListViewAdapter.reset();
     }
 
     public void refreshBookList() {
         String selection = null;
         stopRefreshBookList();
-        ArrayList<BookCategory.CategoryItem> categoryList = mBookCategory.getUser_category_list();
+        ArrayList<BookCategory.CategoryItem> categoryList = mBookCategory.getDefault_category_list();
 
         for (BookCategory.CategoryItem item : categoryList) {
             if (item.category_code != 'a') {//if category_code is 'a', that means all, it not need selection

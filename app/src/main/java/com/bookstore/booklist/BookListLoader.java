@@ -47,4 +47,8 @@ public class BookListLoader extends AsyncTaskLoader {
         mCursor = (Cursor) data;
         super.deliverResult(data);
     }
+
+    public String getLoaderSelection() {
+        return mSelection;
+    }
 }

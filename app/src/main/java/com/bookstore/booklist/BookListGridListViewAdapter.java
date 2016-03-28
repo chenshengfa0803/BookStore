@@ -18,7 +18,6 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by Administrator on 2016/3/1.
@@ -28,19 +27,20 @@ public class BookListGridListViewAdapter extends BaseAdapter {
     public Context mContext;
     BookCategory bookCategory;
     private TypedArray mColor_list;
-    private HashMap<Integer, Cursor> dataMap = null;
+    private ArrayList<AdapterItem> dataList = null;
 
     public BookListGridListViewAdapter(Context context) {
         mContext = context;
         mColor_list = mContext.getResources().obtainTypedArray(R.array.color_list);
         bookCategory = new BookCategory();
-        dataMap = new HashMap<Integer, Cursor>();
+        dataList = new ArrayList<AdapterItem>();
     }
 
     @Override
 
     public int getCount() {
-        return bookCategory.getCategoryCount();
+        //return bookCategory.getCategoryCount();
+        return dataList.size();
     }
 
     @Override
@@ -80,17 +80,10 @@ public class BookListGridListViewAdapter extends BaseAdapter {
     }
 
     public void bindView(View listItemView, int position) {
-        listItemView.setVisibility(View.VISIBLE);
+        int category_code = dataList.get(position).category_code;
+        Cursor dataCursor = dataList.get(position).dataCursor;
         TextView category_name = (TextView) listItemView.findViewById(R.id.category_name);
-        category_name.setText(bookCategory.getCategoryName(position));
-
-        ArrayList<BookCategory.CategoryItem> list = bookCategory.getUser_category_list();
-        int key = list.get(position).category_code;
-        Cursor dataCursor = dataMap.get(key);
-        if (dataCursor == null) {
-            listItemView.setVisibility(View.INVISIBLE);
-            return;
-        }
+        category_name.setText(bookCategory.getCategoryName(category_code));
 
         DisplayImageOptions options = new DisplayImageOptions.Builder()
                 .cacheInMemory(true)
@@ -98,26 +91,27 @@ public class BookListGridListViewAdapter extends BaseAdapter {
                 .build();
 
         //show cover1
-        if (dataCursor.moveToPosition(position)) {
+        if (dataCursor.moveToPosition(0)) {
             //String cover1Url = mDataCursor.getString(Projection.BookInfo.COLUMN_IMG_LARGE);
             String cover1Url = dataCursor.getString(dataCursor.getColumnIndex(DB_Column.BookInfo.IMG_LARGE));
             ImageView cover1 = (ImageView) listItemView.findViewById(R.id.cover1);
             ImageLoader.getInstance().displayImage(cover1Url, cover1, options);
         }
         //show cover2
-        if (dataCursor.moveToPosition(position + 1)) {
+        if (dataCursor.moveToPosition(1)) {
             //String cover2Url = mDataCursor.getString(Projection.BookInfo.COLUMN_IMG_LARGE);
             String cover2Url = dataCursor.getString(dataCursor.getColumnIndex(DB_Column.BookInfo.IMG_LARGE));
             ImageView cover2 = (ImageView) listItemView.findViewById(R.id.cover2);
             ImageLoader.getInstance().displayImage(cover2Url, cover2, options);
         }
         //show cover3
-        if (dataCursor.moveToPosition(position + 2)) {
+        if (dataCursor.moveToPosition(2)) {
             //String cover3Url = mDataCursor.getString(Projection.BookInfo.COLUMN_IMG_LARGE);
             String cover3Url = dataCursor.getString(dataCursor.getColumnIndex(DB_Column.BookInfo.IMG_LARGE));
             ImageView cover3 = (ImageView) listItemView.findViewById(R.id.cover3);
             ImageLoader.getInstance().displayImage(cover3Url, cover3, options);
         }
+        dataCursor.close();
     }
 
     public int getColor(int position) {
@@ -128,10 +122,20 @@ public class BookListGridListViewAdapter extends BaseAdapter {
         if (dataCursor == null) {
             return;
         }
-        dataMap.put(category_code, dataCursor);
+        dataList.add(new AdapterItem(category_code, dataCursor));
     }
 
-    public void clearDataCursor() {
-        dataMap.clear();
+    public void reset() {
+        dataList.clear();
+    }
+
+    class AdapterItem {
+        public int category_code;
+        public Cursor dataCursor;
+
+        public AdapterItem(int category_code, Cursor dataCursor) {
+            this.category_code = category_code;
+            this.dataCursor = dataCursor;
+        }
     }
 }

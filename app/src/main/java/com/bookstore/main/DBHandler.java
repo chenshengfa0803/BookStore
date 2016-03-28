@@ -21,6 +21,7 @@ import java.util.ArrayList;
  * Created by Administrator on 2016/3/26.
  */
 public class DBHandler {
+    public static int loadCompleteTimes = 0;
     public ArrayList<LoaderItem> loaders;
     private BookListGridListViewAdapter adapter = null;
     private BookListLoader mlistLoader = null;
@@ -65,6 +66,8 @@ public class DBHandler {
                         } while (result_cursor.moveToNext());
                         category.setUser_category_list(list);
                         if (((MainActivity) activity).mGridListViewAdapter != null) {
+                            //this code is error, it will throw exception "Only the original thread that created a view hierarchy can touch its views"
+                            //use sendMessage replace notifyDataSetChanged
                             ((MainActivity) activity).mGridListViewAdapter.notifyDataSetChanged();
                         }
                     }
@@ -89,6 +92,11 @@ public class DBHandler {
         return loaders;
     }
 
+    public void reset() {
+        loaders.clear();
+        loadCompleteTimes = 0;
+    }
+
     public static class LoaderItem {
         BookListLoader loader;
         BookListLoadListener listener;
@@ -106,16 +114,19 @@ public class DBHandler {
         @Override
         public void onLoadComplete(Loader<Cursor> loader, Cursor data) {
             Log.i("BookListLoader", "load complete");
+            loadCompleteTimes++;
             if (data == null || data.getCount() == 0) {
                 return;
             }
-            data.moveToFirst();
-            int category_code = data.getInt(data.getColumnIndex(DB_Column.BookInfo.CATEGORY_CODE));
-            adapter.registerDataCursor(category_code, data);
+            if (((BookListLoader) loader).getLoaderSelection() == null) {//if selection is null, then it is all book list loader
+                adapter.registerDataCursor('a', data);
+            } else {
+                data.moveToFirst();
+                int category_code = data.getInt(data.getColumnIndex(DB_Column.BookInfo.CATEGORY_CODE));
+                adapter.registerDataCursor(category_code, data);
+            }
 
-            //other category code is 0, define in BookCategory
-            //other category is always the last query, if it is other category, then notify data change and refresh listview
-            if (0 == category_code) {
+            if (loadCompleteTimes == loaders.size()) {
                 adapter.notifyDataSetChanged();
             }
         }
