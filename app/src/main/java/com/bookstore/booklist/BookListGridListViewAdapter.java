@@ -28,6 +28,7 @@ public class BookListGridListViewAdapter extends BaseAdapter {
     BookCategory bookCategory;
     private TypedArray mColor_list;
     private ArrayList<AdapterItem> dataList = null;
+    private ArrayList<AdapterItem> adapterList = null;
 
     public BookListGridListViewAdapter(Context context) {
         mContext = context;
@@ -40,7 +41,15 @@ public class BookListGridListViewAdapter extends BaseAdapter {
 
     public int getCount() {
         //return bookCategory.getCategoryCount();
-        return dataList.size();
+        adapterList = new ArrayList<AdapterItem>();
+        int count = 0;
+        for (AdapterItem item : dataList) {
+            if (item.category_code != -1) {
+                count++;
+                adapterList.add(item);
+            }
+        }
+        return count;
     }
 
     @Override
@@ -80,8 +89,8 @@ public class BookListGridListViewAdapter extends BaseAdapter {
     }
 
     public void bindView(View listItemView, int position) {
-        int category_code = dataList.get(position).category_code;
-        Cursor dataCursor = dataList.get(position).dataCursor;
+        int category_code = adapterList.get(position).category_code;
+        Cursor dataCursor = adapterList.get(position).dataCursor;
         TextView category_name = (TextView) listItemView.findViewById(R.id.category_name);
         category_name.setText(bookCategory.getCategoryName(category_code));
 
@@ -91,27 +100,33 @@ public class BookListGridListViewAdapter extends BaseAdapter {
                 .build();
 
         //show cover1
+        ImageView cover1 = (ImageView) listItemView.findViewById(R.id.cover1);
         if (dataCursor.moveToPosition(0)) {
             //String cover1Url = mDataCursor.getString(Projection.BookInfo.COLUMN_IMG_LARGE);
             String cover1Url = dataCursor.getString(dataCursor.getColumnIndex(DB_Column.BookInfo.IMG_LARGE));
-            ImageView cover1 = (ImageView) listItemView.findViewById(R.id.cover1);
             ImageLoader.getInstance().displayImage(cover1Url, cover1, options);
+        } else {
+            cover1.setImageBitmap(null);
         }
         //show cover2
+        ImageView cover2 = (ImageView) listItemView.findViewById(R.id.cover2);
         if (dataCursor.moveToPosition(1)) {
             //String cover2Url = mDataCursor.getString(Projection.BookInfo.COLUMN_IMG_LARGE);
             String cover2Url = dataCursor.getString(dataCursor.getColumnIndex(DB_Column.BookInfo.IMG_LARGE));
-            ImageView cover2 = (ImageView) listItemView.findViewById(R.id.cover2);
             ImageLoader.getInstance().displayImage(cover2Url, cover2, options);
+        } else {
+            cover2.setImageBitmap(null);
         }
         //show cover3
+        ImageView cover3 = (ImageView) listItemView.findViewById(R.id.cover3);
         if (dataCursor.moveToPosition(2)) {
             //String cover3Url = mDataCursor.getString(Projection.BookInfo.COLUMN_IMG_LARGE);
             String cover3Url = dataCursor.getString(dataCursor.getColumnIndex(DB_Column.BookInfo.IMG_LARGE));
-            ImageView cover3 = (ImageView) listItemView.findViewById(R.id.cover3);
             ImageLoader.getInstance().displayImage(cover3Url, cover3, options);
+        } else {
+            cover3.setImageBitmap(null);
         }
-        dataCursor.close();
+        //dataCursor.close();
     }
 
     public int getColor(int position) {
@@ -122,11 +137,21 @@ public class BookListGridListViewAdapter extends BaseAdapter {
         if (dataCursor == null) {
             return;
         }
-        dataList.add(new AdapterItem(category_code, dataCursor));
+        int index = bookCategory.getIndexByCategoryCode(category_code);
+        //dataList.add(index, new AdapterItem(category_code, dataCursor));
+        dataList.set(index, new AdapterItem(category_code, dataCursor));
     }
 
     public void reset() {
+        for (AdapterItem item : dataList) {
+            if (item.dataCursor != null && item.dataCursor.isClosed() == false) {
+                item.dataCursor.close();
+            }
+        }
         dataList.clear();
+        for (int i = 0; i < bookCategory.getCategoryCount(); i++) {
+            dataList.add(new AdapterItem(-1, null));
+        }
     }
 
     class AdapterItem {

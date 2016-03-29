@@ -113,6 +113,15 @@ public class BookCategory {
         return null;
     }
 
+    public int getIndexByCategoryCode(int category_code) {
+        for (int i = 0; i < default_category_list.size(); i++) {
+            if (default_category_list.get(i).category_code == category_code) {
+                return i;
+            }
+        }
+        return default_category_list.size() - 1;
+    }
+
     public int getCategoryCount() {
         return default_category_list.size();
     }

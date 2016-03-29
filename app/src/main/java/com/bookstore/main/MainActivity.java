@@ -125,6 +125,17 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        stopRefreshBookList();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
     public void onBackPressed() {
         if (mainFloatButton.isMenuOpened()) {
             mainFloatButton.closeMenu();

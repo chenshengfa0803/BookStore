@@ -113,9 +113,12 @@ public class DBHandler {
 
         @Override
         public void onLoadComplete(Loader<Cursor> loader, Cursor data) {
-            Log.i("BookListLoader", "load complete");
+            Log.i("BookListLoader", "load complete " + ((BookListLoader) loader).getLoaderSelection());
             loadCompleteTimes++;
             if (data == null || data.getCount() == 0) {
+                if (loadCompleteTimes == loaders.size()) {
+                    adapter.notifyDataSetChanged();
+                }
                 return;
             }
             if (((BookListLoader) loader).getLoaderSelection() == null) {//if selection is null, then it is all book list loader
