@@ -103,7 +103,10 @@ public class BookListGridListViewAdapter extends BaseAdapter {
         if (dataCursor.moveToPosition(0)) {
             //String cover1Url = mDataCursor.getString(Projection.BookInfo.COLUMN_IMG_LARGE);
             String cover1Url = dataCursor.getString(dataCursor.getColumnIndex(DB_Column.BookInfo.IMG_LARGE));
-            ImageLoader.getInstance().displayImage(cover1Url, cover1, options);
+            if (!cover1Url.equals(cover1.getTag())) {
+                ImageLoader.getInstance().displayImage(cover1Url, cover1, options);
+            }
+            cover1.setTag(cover1Url);
         } else {
             cover1.setImageBitmap(null);
         }
@@ -112,7 +115,10 @@ public class BookListGridListViewAdapter extends BaseAdapter {
         if (dataCursor.moveToPosition(1)) {
             //String cover2Url = mDataCursor.getString(Projection.BookInfo.COLUMN_IMG_LARGE);
             String cover2Url = dataCursor.getString(dataCursor.getColumnIndex(DB_Column.BookInfo.IMG_LARGE));
-            ImageLoader.getInstance().displayImage(cover2Url, cover2, options);
+            if (!cover2Url.equals(cover2.getTag())) {
+                ImageLoader.getInstance().displayImage(cover2Url, cover2, options);
+            }
+            cover2.setTag(cover2Url);
         } else {
             cover2.setImageBitmap(null);
         }
@@ -121,7 +127,10 @@ public class BookListGridListViewAdapter extends BaseAdapter {
         if (dataCursor.moveToPosition(2)) {
             //String cover3Url = mDataCursor.getString(Projection.BookInfo.COLUMN_IMG_LARGE);
             String cover3Url = dataCursor.getString(dataCursor.getColumnIndex(DB_Column.BookInfo.IMG_LARGE));
-            ImageLoader.getInstance().displayImage(cover3Url, cover3, options);
+            if (!cover3Url.equals(cover3.getTag())) {
+                ImageLoader.getInstance().displayImage(cover3Url, cover3, options);
+            }
+            cover3.setTag(cover3Url);
         } else {
             cover3.setImageBitmap(null);
         }

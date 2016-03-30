@@ -122,6 +122,14 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
         refreshBookList();
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                refreshBookList();
+                handler.postDelayed(this, 5000);
+            }
+        }, 5000);
     }
 
     @Override
