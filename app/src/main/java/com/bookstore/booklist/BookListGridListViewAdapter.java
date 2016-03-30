@@ -3,7 +3,6 @@ package com.bookstore.booklist;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.Cursor;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,15 +68,15 @@ public class BookListGridListViewAdapter extends BaseAdapter {
             LayoutInflater mInflater = LayoutInflater.from(mContext);
             listItemView = mInflater.inflate(R.layout.booklist_gridview_list_item, null);
             View morebooks = listItemView.findViewById(R.id.MoreBooks);
-            morebooks.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View arg0) {
-                    // TODO Auto-generated method stub
-                    Log.i("csf", "btn click");
-                }
-
-            });
+//            morebooks.setOnClickListener(new View.OnClickListener() {
+//
+//                @Override
+//                public void onClick(View arg0) {
+//                    // TODO Auto-generated method stub
+//                    Log.i("csf", "btn click");
+//                }
+//
+//            });
 
             View color_panel = listItemView.findViewById(R.id.color_view);
             color_panel.setBackgroundColor(getColor(position));

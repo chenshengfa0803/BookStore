@@ -8,6 +8,8 @@
         android:id="@+id/book_category"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/ripple_category_more_button"
+        android:clickable="true"
         android:orientation="vertical">
 
         <LinearLayout
@@ -27,15 +29,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_weight="1.0"
-                android:text="分类" />
+                android:layout_weight="1.0" />
 
             <LinearLayout
                 android:id="@+id/MoreBooks"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|center_vertical"
-                android:orientation="horizontal">"
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -48,7 +49,7 @@
                     android:layout_width="22dp"
                     android:layout_height="22dp"
                     android:layout_gravity="end|center_vertical"
-                    android:src="@drawable/more_btn" />"
+                    android:src="@drawable/more_btn" />
             </LinearLayout>
         </LinearLayout>
 
