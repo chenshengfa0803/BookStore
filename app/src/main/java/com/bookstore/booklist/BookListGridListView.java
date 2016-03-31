@@ -95,7 +95,8 @@ public class BookListGridListView extends ListView implements AbsListView.OnScro
                 }
                 setVerticalScrollBarEnabled(true);
                 break;
-            case MotionEvent.ACTION_UP:
+            //case MotionEvent.ACTION_UP:
+            default:
                 mLastY = -1;
                 isTouchingScreen = false;
                 if (getFirstVisiblePosition() == 0) {
