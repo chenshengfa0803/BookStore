@@ -117,6 +117,7 @@ public class DBHandler {
             loadCompleteTimes++;
             if (data == null || data.getCount() == 0) {
                 if (loadCompleteTimes == loaders.size()) {
+                    adapter.buildAdapterList();
                     adapter.notifyDataSetChanged();
                 }
                 return;
@@ -130,6 +131,7 @@ public class DBHandler {
             }
 
             if (loadCompleteTimes == loaders.size()) {
+                adapter.buildAdapterList();
                 adapter.notifyDataSetChanged();
             }
         }

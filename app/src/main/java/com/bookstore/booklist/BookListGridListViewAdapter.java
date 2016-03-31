@@ -40,15 +40,11 @@ public class BookListGridListViewAdapter extends BaseAdapter {
 
     public int getCount() {
         //return bookCategory.getCategoryCount();
-        adapterList = new ArrayList<AdapterItem>();
-        int count = 0;
-        for (AdapterItem item : dataList) {
-            if (item.category_code != -1) {
-                count++;
-                adapterList.add(item);
-            }
+        if (adapterList != null) {
+            return adapterList.size();
+        } else {
+            return 0;
         }
-        return count;
     }
 
     @Override
@@ -148,6 +144,15 @@ public class BookListGridListViewAdapter extends BaseAdapter {
         int index = bookCategory.getIndexByCategoryCode(category_code);
         //dataList.add(index, new AdapterItem(category_code, dataCursor));
         dataList.set(index, new AdapterItem(category_code, dataCursor));
+    }
+
+    public void buildAdapterList() {
+        adapterList = new ArrayList<AdapterItem>();
+        for (AdapterItem item : dataList) {
+            if (item.category_code != -1) {
+                adapterList.add(item);
+            }
+        }
     }
 
     public void reset() {
