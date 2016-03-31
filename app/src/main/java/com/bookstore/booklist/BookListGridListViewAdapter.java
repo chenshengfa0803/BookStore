@@ -105,6 +105,7 @@ public class BookListGridListViewAdapter extends BaseAdapter {
             cover1.setTag(cover1Url);
         } else {
             cover1.setImageBitmap(null);
+            cover1.setTag(null);
         }
         //show cover2
         ImageView cover2 = (ImageView) listItemView.findViewById(R.id.cover2);
@@ -117,6 +118,7 @@ public class BookListGridListViewAdapter extends BaseAdapter {
             cover2.setTag(cover2Url);
         } else {
             cover2.setImageBitmap(null);
+            cover2.setTag(null);
         }
         //show cover3
         ImageView cover3 = (ImageView) listItemView.findViewById(R.id.cover3);
@@ -129,6 +131,7 @@ public class BookListGridListViewAdapter extends BaseAdapter {
             cover3.setTag(cover3Url);
         } else {
             cover3.setImageBitmap(null);
+            cover3.setTag(null);
         }
         //dataCursor.close();
     }
