@@ -8,9 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bookstore.bookparser.BookCategory;
+import com.bookstore.main.CategoryBookListFragment;
+import com.bookstore.main.MainActivity;
 import com.bookstore.main.R;
 import com.bookstore.provider.DB_Column;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -23,8 +26,8 @@ import java.util.ArrayList;
  */
 public class BookListGridListViewAdapter extends BaseAdapter {
     public static final String TAG = "BookStore";
-    public Context mContext;
     BookCategory bookCategory;
+    private Context mContext;
     private TypedArray mColor_list;
     private ArrayList<AdapterItem> dataList = null;
     private ArrayList<AdapterItem> adapterList = null;
@@ -63,16 +66,6 @@ public class BookListGridListViewAdapter extends BaseAdapter {
         if (convertView == null) {
             LayoutInflater mInflater = LayoutInflater.from(mContext);
             listItemView = mInflater.inflate(R.layout.booklist_gridview_list_item, null);
-            View morebooks = listItemView.findViewById(R.id.MoreBooks);
-//            morebooks.setOnClickListener(new View.OnClickListener() {
-//
-//                @Override
-//                public void onClick(View arg0) {
-//                    // TODO Auto-generated method stub
-//                    Log.i("csf", "btn click");
-//                }
-//
-//            });
 
             View color_panel = listItemView.findViewById(R.id.color_view);
             color_panel.setBackgroundColor(getColor(position));
@@ -84,8 +77,19 @@ public class BookListGridListViewAdapter extends BaseAdapter {
     }
 
     public void bindView(View listItemView, int position) {
-        int category_code = adapterList.get(position).category_code;
+        final int category_code = adapterList.get(position).category_code;
         Cursor dataCursor = adapterList.get(position).dataCursor;
+
+        LinearLayout category_line = (LinearLayout) listItemView.findViewById(R.id.book_category);
+        category_line.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CategoryBookListFragment fragment = CategoryBookListFragment.newInstance(category_code);
+                String tag = CategoryBookListFragment.class.getSimpleName();
+                ((MainActivity) mContext).replaceFragment(fragment, tag);
+            }
+        });
+
         TextView category_name = (TextView) listItemView.findViewById(R.id.category_name);
         category_name.setText(bookCategory.getCategoryName(category_code));
 

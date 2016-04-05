@@ -24,7 +24,6 @@ public class MainActivity extends Activity {
     public static final int MSG_GET_BOOK_CATEGORY = 100;
     private final static int SCANNING_REQUEST_CODE = 1;
     public FloatButton mainFloatButton;
-    public View fragmentContainer;
 
     public Handler mHandler = new Handler() {
         @Override
@@ -54,10 +53,10 @@ public class MainActivity extends Activity {
             tintManager.setTintColor(getResources().getColor(android.R.color.darker_gray));
         }
         setContentView(R.layout.activity_main);
-        fragmentContainer = findViewById(R.id.container_view);
-        BookListFragment bookListFragment = BookListFragment.newInstance();
-        String tag = BookListFragment.class.getSimpleName();
-        getFragmentManager().beginTransaction().replace(R.id.container_view, bookListFragment, tag).commit();
+
+        MainBookListFragment bookListFragment = MainBookListFragment.newInstance();
+        String tag = MainBookListFragment.class.getSimpleName();
+        replaceFragment(bookListFragment, tag);
 
         blurFromView = findViewById(R.id.container_view);
         blurToView = (ImageView) findViewById(R.id.blur_view);
@@ -178,9 +177,9 @@ public class MainActivity extends Activity {
     }
 
     public void makeBlurWindow() {
-        Fragment fragment = getFragmentManager().findFragmentByTag(BookListFragment.class.getSimpleName());
+        Fragment fragment = getFragmentManager().findFragmentByTag(MainBookListFragment.class.getSimpleName());
         if (fragment != null) {
-            ((BookListFragment) fragment).setListViewVerticalScrollBarEnable(false);//do not show scroll bar
+            ((MainBookListFragment) fragment).setListViewVerticalScrollBarEnable(false);//do not show scroll bar
         }
         blurToView.setImageBitmap(null);
         blurToView.setVisibility(View.VISIBLE);
@@ -192,6 +191,10 @@ public class MainActivity extends Activity {
         blurFromView.setVisibility(View.VISIBLE);
         blurToView.setVisibility(View.INVISIBLE);
         blurToView.setImageBitmap(null);
+    }
+
+    public void replaceFragment(Fragment fragment, String tag) {
+        getFragmentManager().beginTransaction().replace(R.id.container_view, fragment, tag).commit();
     }
 
 

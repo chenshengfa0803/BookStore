@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Created by Administrator on 2016/4/5.
  */
-public class BookListFragment extends Fragment {
+public class MainBookListFragment extends Fragment {
     public DBHandler dbHandler = null;
     public BookCategory mBookCategory = null;
     private Activity mActivity;
@@ -33,8 +33,8 @@ public class BookListFragment extends Fragment {
     private BookListGridListView gridListView = null;
     private BookListGridListViewAdapter mGridListViewAdapter;
 
-    public static BookListFragment newInstance() {
-        BookListFragment fragment = new BookListFragment();
+    public static MainBookListFragment newInstance() {
+        MainBookListFragment fragment = new MainBookListFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
 
