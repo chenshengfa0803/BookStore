@@ -50,6 +50,7 @@ public class DBHandler {
         }).start();
     }
 
+    @Deprecated
     public static void getBookCategory(final Activity activity, final BookCategory category) {
         new Thread(new Runnable() {
             @Override
@@ -65,11 +66,11 @@ public class DBHandler {
                             list.add(new BookCategory.CategoryItem(category_code, category_name));
                         } while (result_cursor.moveToNext());
                         category.setUser_category_list(list);
-                        if (((MainActivity) activity).mGridListViewAdapter != null) {
-                            //this code is error, it will throw exception "Only the original thread that created a view hierarchy can touch its views"
-                            //use sendMessage replace notifyDataSetChanged
-                            ((MainActivity) activity).mGridListViewAdapter.notifyDataSetChanged();
-                        }
+//                        if (((MainActivity) activity).mGridListViewAdapter != null) {
+//                            //this code is error, it will throw exception "Only the original thread that created a view hierarchy can touch its views"
+//                            //use sendMessage replace notifyDataSetChanged
+//                            ((MainActivity) activity).mGridListViewAdapter.notifyDataSetChanged();
+//                        }
                     }
                     result_cursor.close();
                 }

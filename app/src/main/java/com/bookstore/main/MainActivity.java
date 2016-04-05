@@ -3,6 +3,7 @@ package com.bookstore.main;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,34 +11,21 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
-import com.bookstore.booklist.BookListGridListView;
-import com.bookstore.booklist.BookListGridListViewAdapter;
-import com.bookstore.booklist.BookListViewPagerAdapter;
-import com.bookstore.booklist.ListViewListener;
-import com.bookstore.bookparser.BookCategory;
 import com.bookstore.main.animation.ViewBlur;
-import com.bookstore.provider.BookProvider;
-import com.bookstore.provider.DB_Column;
 import com.bookstore.qr_codescan.ScanActivity;
 import com.bookstore.util.SystemBarTintManager;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends Activity {
     public static final String PREFERENCE_FILE_NAME = "config_preference";
     public static final int MSG_GET_BOOK_CATEGORY = 100;
     private final static int SCANNING_REQUEST_CODE = 1;
     public FloatButton mainFloatButton;
-    public BookListGridListViewAdapter mGridListViewAdapter;
-    public DBHandler dbHandler = null;
-    public BookCategory mBookCategory = null;
+    public View fragmentContainer;
+
     public Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -49,9 +37,6 @@ public class MainActivity extends Activity {
     };
     View blurFromView = null;
     ImageView blurToView = null;
-    BookListGridListView gridListView = null;
-    private ViewPager bookListViewPager;
-    private BookListViewPagerAdapter pagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,15 +54,12 @@ public class MainActivity extends Activity {
             tintManager.setTintColor(getResources().getColor(android.R.color.darker_gray));
         }
         setContentView(R.layout.activity_main);
+        fragmentContainer = findViewById(R.id.container_view);
+        BookListFragment bookListFragment = BookListFragment.newInstance();
+        String tag = BookListFragment.class.getSimpleName();
+        getFragmentManager().beginTransaction().replace(R.id.container_view, bookListFragment, tag).commit();
 
-        mBookCategory = new BookCategory();
-        if (isFirstLaunch()) {
-            ArrayList<BookCategory.CategoryItem> list = mBookCategory.getDefault_category_list();
-            DBHandler.saveBookCategory(this, list);
-        }
-        //DBHandler.getBookCategory(this, mBookCategory);
-
-        blurFromView = findViewById(R.id.booklist_mainView);
+        blurFromView = findViewById(R.id.container_view);
         blurToView = (ImageView) findViewById(R.id.blur_view);
         blurToView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,40 +70,12 @@ public class MainActivity extends Activity {
             }
         });
 
-        List<View> viewList = new ArrayList<View>();
-        View booklist_gridview = LayoutInflater.from(this).inflate(R.layout.booklist_gridview, null);
-        View booklist_listview = LayoutInflater.from(this).inflate(R.layout.booklist_listview, null);
-        viewList.add(booklist_gridview);
-        viewList.add(booklist_listview);
-
-        bookListViewPager = (ViewPager) findViewById(R.id.bookListPager);
-        pagerAdapter = new BookListViewPagerAdapter(this, viewList);
-        bookListViewPager.setAdapter(pagerAdapter);
-
-        gridListView = (BookListGridListView) booklist_gridview.findViewById(R.id.booklist_grid);
-        mGridListViewAdapter = new BookListGridListViewAdapter(this);
-        gridListView.setAdapter(mGridListViewAdapter);
-        gridListView.setListViewListener(new ListViewListener() {
-            @Override
-            public void onRefresh() {
-                //Execute a syncTask to Refresh
-                refreshBookList();
-            }
-
-            @Override
-            public void onLoadMore() {
-
-            }
-        });
-        dbHandler = new DBHandler(mGridListViewAdapter);
-
         createFloatButtonMenu();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        refreshBookList();
 //        final Handler handler = new Handler();
 //        handler.postDelayed(new Runnable() {
 //            @Override
@@ -135,7 +89,6 @@ public class MainActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
-        stopRefreshBookList();
     }
 
     @Override
@@ -161,7 +114,7 @@ public class MainActivity extends Activity {
                     //Bundle bundle = data.getExtras();
                     //String isbn = bundle.getString("result");
                     //getBookInfo(isbn);
-                    refreshBookList();
+                    //refreshBookList();
                 }
             }
             break;
@@ -225,7 +178,10 @@ public class MainActivity extends Activity {
     }
 
     public void makeBlurWindow() {
-        gridListView.setVerticalScrollBarEnabled(false);
+        Fragment fragment = getFragmentManager().findFragmentByTag(BookListFragment.class.getSimpleName());
+        if (fragment != null) {
+            ((BookListFragment) fragment).setListViewVerticalScrollBarEnable(false);//do not show scroll bar
+        }
         blurToView.setImageBitmap(null);
         blurToView.setVisibility(View.VISIBLE);
         ViewBlur.blur(blurFromView, blurToView, 2, 40);
@@ -238,34 +194,5 @@ public class MainActivity extends Activity {
         blurToView.setImageBitmap(null);
     }
 
-    synchronized public void stopRefreshBookList() {
-        ArrayList<DBHandler.LoaderItem> loaders = dbHandler.getLoaders();
-        for (DBHandler.LoaderItem item : loaders) {
-            if (item.loader != null) {
-                item.loader.unregisterListener(item.listener);
-                item.loader.reset();
-                item.listener = null;
-            }
-        }
-        dbHandler.reset();
-        mGridListViewAdapter.reset();
-    }
 
-    public void refreshBookList() {
-        String selection = null;
-        stopRefreshBookList();
-        ArrayList<BookCategory.CategoryItem> categoryList = mBookCategory.getDefault_category_list();
-
-        for (BookCategory.CategoryItem item : categoryList) {
-            if (item.category_code != 'a') {//if category_code is 'a', that means all, it not need selection
-                selection = DB_Column.BookInfo.CATEGORY_CODE
-                        + "="
-                        + item.category_code;
-            }
-            String[] projection = {DB_Column.BookInfo.IMG_LARGE, DB_Column.BookInfo.CATEGORY_CODE};
-            dbHandler.loadBookList(this, BookProvider.BOOKINFO_URI, projection, selection, null, DB_Column.BookInfo.ID + " DESC LIMIT 3");
-        }
-
-
-    }
 }
