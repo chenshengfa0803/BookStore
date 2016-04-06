@@ -24,8 +24,9 @@
         android:id="@+id/FloatActionButton"
         android:layout_width="@dimen/main_float_button_size"
         android:layout_height="@dimen/main_float_button_size"
-        android:layout_gravity="bottom|left"
+        android:layout_gravity="bottom|start"
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
         mine:drawable="@drawable/main_floatbutton_add"/>
 </FrameLayout>
