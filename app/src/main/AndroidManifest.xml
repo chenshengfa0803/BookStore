@@ -20,18 +20,18 @@
         </activity>
         <activity
             android:name="com.bookstore.booklist.activity.BookListActivity"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
         <activity
             android:name="com.bookstore.qr_codescan.ScanActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:windowSoftInputMode="stateAlwaysHidden"></activity>
+            android:windowSoftInputMode="stateAlwaysHidden" />
 
         <provider
             android:name="com.bookstore.provider.BookProvider"
             android:authorities="com.bookstore.provider.BookProvider"
-            android:multiprocess="true"></provider>
+            android:multiprocess="true" />
     </application>
 
     <uses-permission android:name="android.permission.VIBRATE" />

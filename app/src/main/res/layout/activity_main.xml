@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:visibility="invisible"></ImageView>
+        android:visibility="invisible" />
 
     <com.bookstore.main.FloatButton
         android:id="@+id/FloatActionButton"
