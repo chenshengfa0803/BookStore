@@ -126,7 +126,7 @@ public class MainActivity extends Activity {
         if (isFirstLaunch) {
             SharedPreferences.Editor editor = mSharedPreferences.edit();
             editor.putBoolean("isFirstLaunch", false);
-            editor.commit();
+            editor.apply();
         }
         return isFirstLaunch;
     }
