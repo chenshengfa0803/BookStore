@@ -357,6 +357,10 @@ public class ScanActivity extends Activity implements Callback {
             @Override
             protected void requestPostExecute(String bookInfo) {
                 try {
+                    if (bookInfo == null) {
+                        mDanmu.addDanmuText(BaseDanmaku.TYPE_FIX_BOTTOM, false, getResources().getString(R.string.network_slow));
+                        return;
+                    }
                     BookData bookData = BookInfoJsonParser.getInstance().getSimpleBookDataFromString(bookInfo);
                     //Bitmap bitmap = ((BitmapDrawable) (getResources().getDrawable(R.drawable.downloading_smallcover))).getBitmap();
                     //mDanmu.addDanmuWithTextAndImage(false, bookData);
