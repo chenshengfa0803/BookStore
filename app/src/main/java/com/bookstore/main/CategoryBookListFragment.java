@@ -2,6 +2,8 @@ package com.bookstore.main;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Loader;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -11,8 +13,11 @@ import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.TextView;
 
+import com.bookstore.booklist.BookListLoader;
 import com.bookstore.booklist.CategoryBookGridViewAdapter;
 import com.bookstore.bookparser.BookCategory;
+import com.bookstore.provider.BookProvider;
+import com.bookstore.provider.DB_Column;
 
 /**
  * Created by Administrator on 2016/4/6.
@@ -23,6 +28,8 @@ public class CategoryBookListFragment extends Fragment {
     private int mCategoryCode = 0;
     private View category_fragment = null;
     private CategoryBookGridViewAdapter gridViewAdapter = null;
+    private BookListLoader mlistLoader = null;
+    private BookListLoadListener mLoadListener = null;
 
     public static CategoryBookListFragment newInstance(int category_code) {
         CategoryBookListFragment fragment = new CategoryBookListFragment();
@@ -68,7 +75,18 @@ public class CategoryBookListFragment extends Fragment {
 
     @Override
     public void onResume() {
+        String selection = null;
         super.onResume();
+        if (mCategoryCode != 'a') {
+            selection = DB_Column.BookInfo.CATEGORY_CODE
+                    + "="
+                    + mCategoryCode;
+        }
+        String[] projection = {DB_Column.BookInfo.IMG_LARGE, DB_Column.BookInfo.TITLE};
+        mlistLoader = new BookListLoader(mActivity, BookProvider.BOOKINFO_URI, projection, selection, null, DB_Column.BookInfo.ID + " DESC LIMIT 15");
+        mLoadListener = new BookListLoadListener();
+        mlistLoader.registerListener(0, mLoadListener);
+        mlistLoader.startLoading();
     }
 
     @Override
@@ -89,5 +107,16 @@ public class CategoryBookListFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    public class BookListLoadListener implements Loader.OnLoadCompleteListener<Cursor> {
+        public BookListLoadListener() {
+        }
+
+        @Override
+        public void onLoadComplete(Loader<Cursor> loader, Cursor data) {
+            gridViewAdapter.registerDataCursor(data);
+            gridViewAdapter.notifyDataSetChanged();
+        }
     }
 }
