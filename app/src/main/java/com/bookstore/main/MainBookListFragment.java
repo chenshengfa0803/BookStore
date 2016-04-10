@@ -2,9 +2,11 @@ package com.bookstore.main;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
+import android.transition.Fade;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,7 @@ import com.bookstore.booklist.BookListGridListViewAdapter;
 import com.bookstore.booklist.BookListViewPagerAdapter;
 import com.bookstore.booklist.ListViewListener;
 import com.bookstore.bookparser.BookCategory;
+import com.bookstore.main.animation.BookDetailTransition;
 import com.bookstore.provider.BookProvider;
 import com.bookstore.provider.DB_Column;
 
@@ -32,6 +35,26 @@ public class MainBookListFragment extends Fragment {
     private BookListViewPagerAdapter pagerAdapter;
     private BookListGridListView gridListView = null;
     private BookListGridListViewAdapter mGridListViewAdapter;
+    private BookOnClickListener mListener = new BookOnClickListener() {
+        @Override
+        public void onBookClick(View clickedImageView, int book_id) {
+            BookDetailFragment detailFragment = BookDetailFragment.newInstance(book_id);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                detailFragment.setSharedElementEnterTransition(new BookDetailTransition());
+                setExitTransition(new Fade());
+                detailFragment.setEnterTransition(new Fade());
+                detailFragment.setSharedElementReturnTransition(new BookDetailTransition());
+            }
+
+            mActivity.getFragmentManager().beginTransaction()
+                    .addSharedElement(clickedImageView, getString(R.string.image_transition))
+                    .replace(R.id.container_view, detailFragment)
+                    .addToBackStack(null)
+                    .commit();
+
+        }
+    };
 
     public static MainBookListFragment newInstance() {
         MainBookListFragment fragment = new MainBookListFragment();
@@ -70,7 +93,7 @@ public class MainBookListFragment extends Fragment {
         bookListViewPager.setAdapter(pagerAdapter);
 
         gridListView = (BookListGridListView) booklist_gridview.findViewById(R.id.booklist_grid);
-        mGridListViewAdapter = new BookListGridListViewAdapter(mActivity);
+        mGridListViewAdapter = new BookListGridListViewAdapter(mActivity, mListener);
         gridListView.setAdapter(mGridListViewAdapter);
         gridListView.setListViewListener(new ListViewListener() {
             @Override
@@ -151,7 +174,7 @@ public class MainBookListFragment extends Fragment {
                         + "="
                         + item.category_code;
             }
-            String[] projection = {DB_Column.BookInfo.IMG_LARGE, DB_Column.BookInfo.CATEGORY_CODE};
+            String[] projection = {DB_Column.BookInfo.ID, DB_Column.BookInfo.IMG_LARGE, DB_Column.BookInfo.CATEGORY_CODE};
             dbHandler.loadBookList(mActivity, BookProvider.BOOKINFO_URI, projection, selection, null, DB_Column.BookInfo.ID + " DESC LIMIT 3");
         }
     }

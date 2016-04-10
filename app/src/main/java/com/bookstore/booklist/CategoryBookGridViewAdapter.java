@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bookstore.main.BookOnClickListener;
 import com.bookstore.main.R;
 import com.bookstore.provider.DB_Column;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -20,9 +21,11 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 public class CategoryBookGridViewAdapter extends BaseAdapter {
     private Context mContext;
     private Cursor dataCursor = null;
+    private BookOnClickListener mListener = null;
 
-    public CategoryBookGridViewAdapter(Context context) {
+    public CategoryBookGridViewAdapter(Context context, BookOnClickListener listener) {
         mContext = context;
+        mListener = listener;
     }
 
     @Override
@@ -63,13 +66,20 @@ public class CategoryBookGridViewAdapter extends BaseAdapter {
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
                 .build();
-        ImageView book_cover = (ImageView) gridItemView.findViewById(R.id.book_cover);
+        final ImageView book_cover = (ImageView) gridItemView.findViewById(R.id.book_cover);
         TextView book_title = (TextView) gridItemView.findViewById(R.id.book_name);
         if (dataCursor.moveToPosition(position)) {
             String coverUrl = dataCursor.getString(dataCursor.getColumnIndex(DB_Column.BookInfo.IMG_LARGE));
             String book_name = dataCursor.getString(dataCursor.getColumnIndex(DB_Column.BookInfo.TITLE));
             ImageLoader.getInstance().displayImage(coverUrl, book_cover, options);
             book_title.setText(book_name);
+            book_cover.setTransitionName("image" + position);
+            gridItemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mListener.onBookClick(book_cover, dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.ID)));
+                }
+            });
         }
 
     }

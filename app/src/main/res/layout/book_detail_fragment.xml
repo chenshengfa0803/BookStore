@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/detail_book_cover"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/cover1_marginBottom"
+        android:layout_marginLeft="@dimen/cover1_marginLeft"
+        android:layout_marginRight="@dimen/cover1_marginRight"
+        android:layout_marginTop="@dimen/cover1_marginTop"
+        android:src="@drawable/cover1"
+        android:transitionName="@string/image_transition" />
+</FrameLayout>

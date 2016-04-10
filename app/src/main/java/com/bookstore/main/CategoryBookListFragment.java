@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Loader;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.transition.Fade;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 import com.bookstore.booklist.BookListLoader;
 import com.bookstore.booklist.CategoryBookGridViewAdapter;
 import com.bookstore.bookparser.BookCategory;
+import com.bookstore.main.animation.BookDetailTransition;
 import com.bookstore.provider.BookProvider;
 import com.bookstore.provider.DB_Column;
 
@@ -26,10 +29,29 @@ public class CategoryBookListFragment extends Fragment {
     public static final String ARGS_CATEGORY_CODE = "category_code";
     private Activity mActivity;
     private int mCategoryCode = 0;
-    private View category_fragment = null;
     private CategoryBookGridViewAdapter gridViewAdapter = null;
     private BookListLoader mlistLoader = null;
     private BookListLoadListener mLoadListener = null;
+    private BookOnClickListener mListener = new BookOnClickListener() {
+        @Override
+        public void onBookClick(View clickedImageView, int book_id) {
+            BookDetailFragment detailFragment = BookDetailFragment.newInstance(book_id);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                detailFragment.setSharedElementEnterTransition(new BookDetailTransition());
+                setExitTransition(new Fade());
+                detailFragment.setEnterTransition(new Fade());
+                detailFragment.setSharedElementReturnTransition(new BookDetailTransition());
+            }
+
+            mActivity.getFragmentManager().beginTransaction()
+                    .addSharedElement(clickedImageView, getString(R.string.image_transition))
+                    .replace(R.id.container_view, detailFragment)
+                    .addToBackStack(null)
+                    .commit();
+
+        }
+    };
 
     public static CategoryBookListFragment newInstance(int category_code) {
         CategoryBookListFragment fragment = new CategoryBookListFragment();
@@ -52,13 +74,14 @@ public class CategoryBookListFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View category_fragment = null;
         category_fragment = inflater.inflate(R.layout.category_list_fragment, null);
         TextView title = (TextView) category_fragment.findViewById(R.id.book_category_name);
         BookCategory bookCategory = new BookCategory();
         title.setText(bookCategory.getCategoryName(mCategoryCode));
 
         GridView gridView = (GridView) category_fragment.findViewById(R.id.category_book_gridview);
-        gridViewAdapter = new CategoryBookGridViewAdapter(mActivity);
+        gridViewAdapter = new CategoryBookGridViewAdapter(mActivity, mListener);
         gridView.setAdapter(gridViewAdapter);
         return category_fragment;
     }
@@ -82,7 +105,7 @@ public class CategoryBookListFragment extends Fragment {
                     + "="
                     + mCategoryCode;
         }
-        String[] projection = {DB_Column.BookInfo.IMG_LARGE, DB_Column.BookInfo.TITLE};
+        String[] projection = {DB_Column.BookInfo.ID, DB_Column.BookInfo.IMG_LARGE, DB_Column.BookInfo.TITLE};
         //mlistLoader = new BookListLoader(mActivity, BookProvider.BOOKINFO_URI, projection, selection, null, DB_Column.BookInfo.ID + " DESC LIMIT 15");
         mlistLoader = new BookListLoader(mActivity, BookProvider.BOOKINFO_URI, projection, selection, null, DB_Column.BookInfo.ID);
         mLoadListener = new BookListLoadListener();
@@ -110,7 +133,7 @@ public class CategoryBookListFragment extends Fragment {
         super.onDestroy();
     }
 
-    public class BookListLoadListener implements Loader.OnLoadCompleteListener<Cursor> {
+    private class BookListLoadListener implements Loader.OnLoadCompleteListener<Cursor> {
         public BookListLoadListener() {
         }
 

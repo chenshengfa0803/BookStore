@@ -8,4 +8,5 @@
     <string name="flash_light_off">关灯</string>
     <string name="add_to_bookshelf">保存到书架</string>
     <string name="network_slow">网络缓慢，请重新扫描</string>
+    <string name="image_transition">image</string>
 </resources>
