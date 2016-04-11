@@ -19,9 +19,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.bookstore.booklist.activity.BookListActivity"
-            android:theme="@style/AppTheme" />
-        <activity
             android:name="com.bookstore.qr_codescan.ScanActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait"

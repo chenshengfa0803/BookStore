@@ -1,4 +1,4 @@
-package com.bookstore.main;
+package com.bookstore.booklist;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -15,9 +15,10 @@ import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.TextView;
 
-import com.bookstore.booklist.BookListLoader;
-import com.bookstore.booklist.CategoryBookGridViewAdapter;
+import com.bookstore.bookdetail.BookDetailFragment;
 import com.bookstore.bookparser.BookCategory;
+import com.bookstore.main.BookOnClickListener;
+import com.bookstore.main.R;
 import com.bookstore.main.animation.BookDetailTransition;
 import com.bookstore.provider.BookProvider;
 import com.bookstore.provider.DB_Column;

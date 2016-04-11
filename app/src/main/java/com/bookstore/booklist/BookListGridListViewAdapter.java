@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.bookstore.bookparser.BookCategory;
 import com.bookstore.main.BookOnClickListener;
-import com.bookstore.main.CategoryBookListFragment;
 import com.bookstore.main.MainActivity;
 import com.bookstore.main.R;
 import com.bookstore.provider.DB_Column;

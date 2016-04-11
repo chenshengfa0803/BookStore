@@ -1,4 +1,4 @@
-package com.bookstore.main;
+package com.bookstore.bookdetail;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bookstore.booklist.BookListLoader;
+import com.bookstore.main.R;
 import com.bookstore.provider.BookProvider;
 import com.bookstore.provider.BookSQLiteOpenHelper;
 import com.bookstore.provider.DB_Column;
