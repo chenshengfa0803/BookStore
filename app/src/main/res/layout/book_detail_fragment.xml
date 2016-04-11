@@ -5,8 +5,8 @@
 
     <ImageView
         android:id="@+id/detail_book_cover"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="100dp"
+        android:layout_height="150dp"
         android:layout_marginBottom="@dimen/cover1_marginBottom"
         android:layout_marginLeft="@dimen/cover1_marginLeft"
         android:layout_marginRight="@dimen/cover1_marginRight"

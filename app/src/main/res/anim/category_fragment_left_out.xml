@@ -5,7 +5,7 @@
         android:interpolator="@android:anim/decelerate_interpolator"
         android:propertyName="translationX"
         android:valueFrom="0"
-        android:valueTo="300dp" />
+        android:valueTo="-300dp" />
 
     <objectAnimator
         android:duration="300"

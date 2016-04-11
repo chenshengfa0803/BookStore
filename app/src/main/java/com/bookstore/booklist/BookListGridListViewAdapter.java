@@ -114,6 +114,7 @@ public class BookListGridListViewAdapter extends BaseAdapter {
             cover1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    dataCursor.moveToPosition(0);
                     mListener.onBookClick(cover1, dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.ID)));
                 }
             });
@@ -134,6 +135,7 @@ public class BookListGridListViewAdapter extends BaseAdapter {
             cover2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    dataCursor.moveToPosition(1);
                     mListener.onBookClick(cover2, dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.ID)));
                 }
             });
@@ -154,6 +156,7 @@ public class BookListGridListViewAdapter extends BaseAdapter {
             cover3.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    dataCursor.moveToPosition(2);
                     mListener.onBookClick(cover3, dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.ID)));
                 }
             });
@@ -188,7 +191,7 @@ public class BookListGridListViewAdapter extends BaseAdapter {
 
     public void reset() {
         for (AdapterItem item : dataList) {
-            if (item.dataCursor != null && item.dataCursor.isClosed() == false) {
+            if (item.dataCursor != null && !item.dataCursor.isClosed()) {
                 item.dataCursor.close();
             }
         }

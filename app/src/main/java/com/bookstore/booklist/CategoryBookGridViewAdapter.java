@@ -60,7 +60,7 @@ public class CategoryBookGridViewAdapter extends BaseAdapter {
         return gridItemView;
     }
 
-    public void bindView(View gridItemView, int position) {
+    public void bindView(View gridItemView, final int position) {
 
         DisplayImageOptions options = new DisplayImageOptions.Builder()
                 .cacheInMemory(true)
@@ -77,6 +77,7 @@ public class CategoryBookGridViewAdapter extends BaseAdapter {
             gridItemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    dataCursor.moveToPosition(position);
                     mListener.onBookClick(book_cover, dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.ID)));
                 }
             });
