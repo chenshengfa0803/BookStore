@@ -49,7 +49,7 @@ public class MainBookListFragment extends Fragment {
             }
 
             mActivity.getFragmentManager().beginTransaction()
-                    .addSharedElement(clickedImageView, getString(R.string.image_transition))
+                    .addSharedElement(clickedImageView, getResources().getString(R.string.image_transition))
                     .replace(R.id.container_view, detailFragment)
                     .addToBackStack(null)
                     .commit();
