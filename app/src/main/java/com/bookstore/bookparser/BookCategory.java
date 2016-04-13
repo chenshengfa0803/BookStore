@@ -74,6 +74,9 @@ public class BookCategory {
     * this function is intent to find string "CALL-NO: TN911.73"
     * */
     public static String getClcNumber(String clcStr) {
+        if (clcStr == null) {
+            return null;
+        }
         int pos = clcStr.indexOf("CALL-NO");
         if (pos == -1) {
             return null;

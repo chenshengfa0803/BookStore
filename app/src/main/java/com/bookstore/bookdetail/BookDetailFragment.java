@@ -50,13 +50,10 @@ public class BookDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View detail_fragment = inflater.inflate(R.layout.book_detail_fragment, null);
-        ImageView image = (ImageView) detail_fragment.findViewById(R.id.detail_book_cover);
-        image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mActivity.getFragmentManager().popBackStack();
-            }
-        });
+        BookDetailListView detailListView = (BookDetailListView) detail_fragment.findViewById(R.id.book_detail_list_container);
+        BookDetailListViewAdapter detailListViewAdapter = new BookDetailListViewAdapter(mActivity);
+        detailListView.setAdapter(detailListViewAdapter);
+
         return detail_fragment;
     }
 
