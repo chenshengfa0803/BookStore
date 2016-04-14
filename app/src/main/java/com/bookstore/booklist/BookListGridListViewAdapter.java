@@ -93,7 +93,7 @@ public class BookListGridListViewAdapter extends BaseAdapter {
         });
 
         TextView category_name = (TextView) listItemView.findViewById(R.id.category_name);
-        category_name.setText(bookCategory.getCategoryName(category_code));
+        category_name.setText(BookCategory.getCategoryName(category_code));
 
         DisplayImageOptions options = new DisplayImageOptions.Builder()
                 .cacheInMemory(true)

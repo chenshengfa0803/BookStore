@@ -7,7 +7,12 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/detail_book_introdution"
+        android:id="@+id/detail_book_summary_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/detail_book_summary_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

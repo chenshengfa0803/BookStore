@@ -7,12 +7,18 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bookstore.booklist.BookListLoader;
+import com.bookstore.bookparser.BookData;
+import com.bookstore.bookparser.BookInfoJsonParser;
+import com.bookstore.connection.BookInfoRequestBase;
+import com.bookstore.connection.BookInfoUrlBase;
+import com.bookstore.connection.douban.DoubanBookInfoUrl;
 import com.bookstore.main.R;
 import com.bookstore.provider.BookProvider;
 import com.bookstore.provider.BookSQLiteOpenHelper;
@@ -29,6 +35,7 @@ public class BookDetailFragment extends Fragment {
     private Activity mActivity;
     private BookListLoader mlistLoader = null;
     private BookListLoadListener mLoadListener = null;
+    private BookDetailListViewAdapter detailListViewAdapter = null;
 
     public static BookDetailFragment newInstance(int book_id) {
         BookDetailFragment fragment = new BookDetailFragment();
@@ -51,7 +58,7 @@ public class BookDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View detail_fragment = inflater.inflate(R.layout.book_detail_fragment, null);
         BookDetailListView detailListView = (BookDetailListView) detail_fragment.findViewById(R.id.book_detail_list_container);
-        BookDetailListViewAdapter detailListViewAdapter = new BookDetailListViewAdapter(mActivity);
+        detailListViewAdapter = new BookDetailListViewAdapter(mActivity);
         detailListView.setAdapter(detailListViewAdapter);
 
         return detail_fragment;
@@ -74,7 +81,7 @@ public class BookDetailFragment extends Fragment {
         String selection = DB_Column.BookInfo.ID
                 + "="
                 + mBook_id;
-        String[] projection = {DB_Column.BookInfo.IMG_LARGE, DB_Column.BookInfo.TITLE};
+        String[] projection = {DB_Column.BookInfo.IMG_LARGE, DB_Column.BookInfo.ISBN10};
         //mlistLoader = new BookListLoader(mActivity, BookProvider.BOOKINFO_URI, projection, selection, null, null);
         mlistLoader = new BookListLoader(mActivity, uri, projection, null, null, null);
         mLoadListener = new BookListLoadListener();
@@ -102,6 +109,33 @@ public class BookDetailFragment extends Fragment {
         super.onDestroy();
     }
 
+    public void getBookDetailInfo(String isbn) {
+        if (isbn == null) {
+            Log.i("BookStore", "isbn is null");
+            return;
+        }
+        Log.i("BookStore", "isbn is " + isbn);
+        DoubanBookInfoUrl doubanBookUrl = new DoubanBookInfoUrl(isbn);
+        BookInfoRequestBase bookRequest = new BookInfoRequestBase(doubanBookUrl) {
+            @Override
+            protected void requestPreExecute() {
+
+            }
+
+            @Override
+            protected void requestPostExecute(String bookInfo) {
+                try {
+                    BookData bookData = BookInfoJsonParser.getInstance().getFullBookDataFromJson(bookInfo);
+                    detailListViewAdapter.registerData(bookData);
+                    detailListViewAdapter.notifyDataSetChanged();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        bookRequest.requestExcute(BookInfoUrlBase.REQ_ISBN);
+    }
+
     private class BookListLoadListener implements Loader.OnLoadCompleteListener<Cursor> {
         public BookListLoadListener() {
         }
@@ -119,6 +153,8 @@ public class BookDetailFragment extends Fragment {
                             .build();
 
                     ImageLoader.getInstance().displayImage(cover, image, options);
+                    String isbn = data.getString(data.getColumnIndex(DB_Column.BookInfo.ISBN10));
+                    getBookDetailInfo(isbn);
                 }
             }
         }

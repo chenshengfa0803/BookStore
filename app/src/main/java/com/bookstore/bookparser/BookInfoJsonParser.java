@@ -33,10 +33,14 @@ public class BookInfoJsonParser {
 
     // full book data will read from network, but not stored in local database
     public BookData getFullBookDataFromJson(String str) throws Exception {
-        BookData data = getSimpleBookDataFromString(str);
+        JSONObject JsObj = getJsonObjFromString(str);
+        BookData bookData = getSimpleBookDataFromString(str);
+        getBookSummary(bookData, JsObj);
+        getBookAuthorIntro(bookData, JsObj);
+        getBookCatalog(bookData, JsObj);
 
         //TODO:Detail parser
-        return data;
+        return bookData;
     }
 
     // simple book data will be stored in local database
@@ -136,6 +140,24 @@ public class BookInfoJsonParser {
         }
         if (json.has("isbn13")) {
             bookData.isbn13 = json.getString("isbn13");
+        }
+    }
+
+    public void getBookSummary(BookData bookData, JSONObject json) throws JSONException {
+        if (json.has("summary")) {
+            bookData.detail.summary = json.getString("summary");
+        }
+    }
+
+    public void getBookAuthorIntro(BookData bookData, JSONObject json) throws JSONException {
+        if (json.has("author_intro")) {
+            bookData.detail.author_intro = json.getString("author_intro");
+        }
+    }
+
+    public void getBookCatalog(BookData bookData, JSONObject json) throws JSONException {
+        if (json.has("catalog")) {
+            bookData.detail.catalog = json.getString("catalog");
         }
     }
 }

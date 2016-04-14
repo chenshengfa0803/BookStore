@@ -91,7 +91,14 @@ public class BookCategory {
 
     }
 
-
+    public static String getCategoryName(int category_code) {
+        for (CategoryItem item : default_category_list) {
+            if (item.category_code == category_code) {
+                return item.category_name;
+            }
+        }
+        return null;
+    }
 
     public ArrayList<CategoryItem> getDefault_category_list() {
         return default_category_list;
@@ -105,15 +112,6 @@ public class BookCategory {
     @Deprecated
     public void setUser_category_list(ArrayList<CategoryItem> list) {
         user_category_list = list;
-    }
-
-    public String getCategoryName(int category_code) {
-        for (CategoryItem item : default_category_list) {
-            if (item.category_code == category_code) {
-                return item.category_name;
-            }
-        }
-        return null;
     }
 
     public int getIndexByCategoryCode(int category_code) {

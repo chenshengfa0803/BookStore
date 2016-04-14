@@ -34,7 +34,7 @@ final public class BookData {
     public String clc_number = null;
     public int category_code = 0;
     public String category_name = null;
-    public Detail intro = null;
+    public Detail detail = null;
     public EBook ebook = null;
     public int book_id = -1;
 
@@ -44,7 +44,7 @@ final public class BookData {
         translator = new ArrayList<String>();
         tag = new ArrayList<Tags>();
         rating = new Rating();
-        intro = new Detail();
+        detail = new Detail();
         ebook = new EBook();
     }
 

@@ -79,7 +79,7 @@ public class CategoryBookListFragment extends Fragment {
         category_fragment = inflater.inflate(R.layout.category_list_fragment, null);
         TextView title = (TextView) category_fragment.findViewById(R.id.book_category_name);
         BookCategory bookCategory = new BookCategory();
-        title.setText(bookCategory.getCategoryName(mCategoryCode));
+        title.setText(BookCategory.getCategoryName(mCategoryCode));
 
         GridView gridView = (GridView) category_fragment.findViewById(R.id.category_book_gridview);
         gridViewAdapter = new CategoryBookGridViewAdapter(mActivity, mListener);

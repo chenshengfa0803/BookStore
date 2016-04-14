@@ -7,8 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.bookstore.bookparser.BookCategory;
+import com.bookstore.bookparser.BookData;
 import com.bookstore.main.R;
 
 /**
@@ -16,6 +19,7 @@ import com.bookstore.main.R;
  */
 public class BookDetailListViewAdapter extends BaseAdapter {
     private Context mContext;
+    private BookData mBookData = null;
 
     public BookDetailListViewAdapter(Context context) {
         mContext = context;
@@ -43,8 +47,6 @@ public class BookDetailListViewAdapter extends BaseAdapter {
             case 0:
                 if (convertView == null) {
                     detail_item_view = mInflater.inflate(R.layout.bookdetail_list_item0, null);
-                    TextView book_title = (TextView) detail_item_view.findViewById(R.id.detail_book_title);
-                    book_title.setText("ttttttt");
 
                     ImageView book_cover = (ImageView) detail_item_view.findViewById(R.id.detail_book_cover);
                     book_cover.setOnClickListener(new View.OnClickListener() {
@@ -60,8 +62,6 @@ public class BookDetailListViewAdapter extends BaseAdapter {
             case 1:
                 if (convertView == null) {
                     detail_item_view = mInflater.inflate(R.layout.bookdetail_list_item1, null);
-                    TextView book_intro = (TextView) detail_item_view.findViewById(R.id.detail_book_introdution);
-                    book_intro.setText("简介");
                 } else {
                     detail_item_view = convertView;
                 }
@@ -69,13 +69,49 @@ public class BookDetailListViewAdapter extends BaseAdapter {
             case 2:
                 if (convertView == null) {
                     detail_item_view = mInflater.inflate(R.layout.bookdetail_list_item2, null);
-                    TextView book_catalog = (TextView) detail_item_view.findViewById(R.id.catalog_header);
-                    book_catalog.setText("目录");
                 } else {
                     detail_item_view = convertView;
                 }
                 break;
         }
+        bindView(detail_item_view, position);
         return detail_item_view;
+    }
+
+    public void bindView(View detail_item_view, int position) {
+        switch (position) {
+            case 0:
+                if (mBookData != null) {
+                    TextView book_title = (TextView) detail_item_view.findViewById(R.id.detail_book_title);
+                    RatingBar ratingBar = (RatingBar) detail_item_view.findViewById(R.id.detail_book_rating);
+                    TextView book_author = (TextView) detail_item_view.findViewById(R.id.detail_book_author);
+                    TextView book_category = (TextView) detail_item_view.findViewById(R.id.detail_book_category);
+
+                    book_title.setText(mBookData.title);
+                    book_author.setText(mBookData.authors.get(0));
+                    book_category.setText(BookCategory.getCategoryName(mBookData.category_code));
+                }
+                break;
+            case 1:
+                if (mBookData != null) {
+                    TextView summary_header = (TextView) detail_item_view.findViewById(R.id.detail_book_summary_header);
+                    TextView summary_content = (TextView) detail_item_view.findViewById(R.id.detail_book_summary_content);
+                    summary_header.setText("简介");
+                    summary_content.setText(mBookData.detail.summary);
+                }
+                break;
+            case 2:
+                if (mBookData != null) {
+                    TextView catalog_header = (TextView) detail_item_view.findViewById(R.id.catalog_header);
+                    TextView book_catalog_content = (TextView) detail_item_view.findViewById(R.id.catalog_content);
+                    catalog_header.setText("目录");
+                    book_catalog_content.setText(mBookData.detail.catalog);
+                }
+                break;
+        }
+    }
+
+    public void registerData(BookData bookData) {
+        mBookData = bookData;
     }
 }
