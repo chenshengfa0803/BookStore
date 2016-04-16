@@ -49,9 +49,8 @@ final public class BookData {
     }
 
     final public class Rating {
-        public int max = -1;
         public int num_raters = -1;
-        public int average = -1;
+        public float average;
     }
 
     final public class Tags {

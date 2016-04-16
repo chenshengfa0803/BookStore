@@ -9,16 +9,23 @@
     <TextView
         android:id="@+id/detail_book_summary_header"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/detail_book_summary_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="5" />
 
     <ImageView
-        android:id="@+id/book_intro_expand"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:id="@+id/book_intro_expand_collapse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="2dp"
+        android:layout_marginTop="2dp" />
 
 </LinearLayout>

@@ -88,6 +88,8 @@ public class BookDetailListViewAdapter extends BaseAdapter {
                     TextView book_category = (TextView) detail_item_view.findViewById(R.id.detail_book_category);
 
                     book_title.setText(mBookData.title);
+                    ratingBar.setVisibility(View.VISIBLE);
+                    ratingBar.setRating(mBookData.rating.average);
                     book_author.setText(mBookData.authors.get(0));
                     book_category.setText(BookCategory.getCategoryName(mBookData.category_code));
                 }
@@ -95,9 +97,22 @@ public class BookDetailListViewAdapter extends BaseAdapter {
             case 1:
                 if (mBookData != null) {
                     TextView summary_header = (TextView) detail_item_view.findViewById(R.id.detail_book_summary_header);
-                    TextView summary_content = (TextView) detail_item_view.findViewById(R.id.detail_book_summary_content);
+                    final TextView summary_content = (TextView) detail_item_view.findViewById(R.id.detail_book_summary_content);
+                    ImageView expand_collapse = (ImageView) detail_item_view.findViewById(R.id.book_intro_expand_collapse);
                     summary_header.setText("简介");
                     summary_content.setText(mBookData.detail.summary);
+                    if (summary_content.getLineCount() == summary_content.getMaxLines()) {
+                        expand_collapse.setVisibility(View.VISIBLE);
+                        expand_collapse.setImageDrawable(mContext.getDrawable(R.drawable.ic_expand));
+                        expand_collapse.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                summary_content.setMinLines(10);
+                                summary_content.requestLayout();
+                                summary_content.setEllipsize(null);
+                            }
+                        });
+                    }
                 }
                 break;
             case 2:

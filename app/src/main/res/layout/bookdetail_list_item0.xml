@@ -28,8 +28,14 @@
 
         <RatingBar
             android:id="@+id/detail_book_rating"
+            style="?android:attr/ratingBarStyleSmall"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:isIndicator="true"
+            android:max="10"
+            android:numStars="10"
+            android:stepSize="0.1"
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/detail_book_author"

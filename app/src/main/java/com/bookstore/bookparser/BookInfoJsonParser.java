@@ -38,6 +38,7 @@ public class BookInfoJsonParser {
         getBookSummary(bookData, JsObj);
         getBookAuthorIntro(bookData, JsObj);
         getBookCatalog(bookData, JsObj);
+        getBookRating(bookData, JsObj);
 
         //TODO:Detail parser
         return bookData;
@@ -158,6 +159,15 @@ public class BookInfoJsonParser {
     public void getBookCatalog(BookData bookData, JSONObject json) throws JSONException {
         if (json.has("catalog")) {
             bookData.detail.catalog = json.getString("catalog");
+        }
+    }
+
+    public void getBookRating(BookData bookData, JSONObject json) throws JSONException {
+        if (json.has("rating")) {
+            JSONObject ratingJson = json.getJSONObject("rating");
+            bookData.rating.num_raters = ratingJson.getInt("numRaters");
+            String average = ratingJson.getString("average");
+            bookData.rating.average = Float.parseFloat(average);
         }
     }
 }
