@@ -78,7 +78,9 @@ public class CategoryBookGridViewAdapter extends BaseAdapter {
                 @Override
                 public void onClick(View v) {
                     dataCursor.moveToPosition(position);
-                    mListener.onBookClick(book_cover, dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.ID)));
+                    mListener.onBookClick(book_cover,
+                            dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.ID)),
+                            dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.CATEGORY_CODE)));
                 }
             });
         }

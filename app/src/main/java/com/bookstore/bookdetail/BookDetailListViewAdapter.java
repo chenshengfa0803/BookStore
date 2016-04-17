@@ -2,6 +2,7 @@ package com.bookstore.bookdetail;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +19,13 @@ import com.bookstore.main.R;
  * Created by Administrator on 2016/4/13.
  */
 public class BookDetailListViewAdapter extends BaseAdapter {
+    private final SparseBooleanArray mCollapsedStatus;
     private Context mContext;
     private BookData mBookData = null;
 
     public BookDetailListViewAdapter(Context context) {
         mContext = context;
+        mCollapsedStatus = new SparseBooleanArray();
     }
     @Override
     public int getCount() {
@@ -97,30 +100,17 @@ public class BookDetailListViewAdapter extends BaseAdapter {
             case 1:
                 if (mBookData != null) {
                     TextView summary_header = (TextView) detail_item_view.findViewById(R.id.detail_book_summary_header);
-                    final TextView summary_content = (TextView) detail_item_view.findViewById(R.id.detail_book_summary_content);
-                    ImageView expand_collapse = (ImageView) detail_item_view.findViewById(R.id.book_intro_expand_collapse);
+                    ExpandableTextView book_summary = (ExpandableTextView) detail_item_view.findViewById(R.id.detail_expanded_book_summary);
                     summary_header.setText("简介");
-                    summary_content.setText(mBookData.detail.summary);
-                    if (summary_content.getLineCount() == summary_content.getMaxLines()) {
-                        expand_collapse.setVisibility(View.VISIBLE);
-                        expand_collapse.setImageDrawable(mContext.getDrawable(R.drawable.ic_expand));
-                        expand_collapse.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                summary_content.setMinLines(10);
-                                summary_content.requestLayout();
-                                summary_content.setEllipsize(null);
-                            }
-                        });
-                    }
+                    book_summary.setText(mBookData.detail.summary, mCollapsedStatus, position);
                 }
                 break;
             case 2:
                 if (mBookData != null) {
                     TextView catalog_header = (TextView) detail_item_view.findViewById(R.id.catalog_header);
-                    TextView book_catalog_content = (TextView) detail_item_view.findViewById(R.id.catalog_content);
+                    ExpandableTextView book_catalog = (ExpandableTextView) detail_item_view.findViewById(R.id.detail_expanded_book_catalog);
                     catalog_header.setText("目录");
-                    book_catalog_content.setText(mBookData.detail.catalog);
+                    book_catalog.setText(mBookData.detail.catalog, mCollapsedStatus, position);
                 }
                 break;
         }

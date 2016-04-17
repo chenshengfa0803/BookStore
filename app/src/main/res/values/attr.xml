@@ -17,4 +17,11 @@
         <attr name="bottomcircle_x" format="dimension" />
         <attr name="bottomcircle_y" format="dimension" />
     </declare-styleable>
+    <declare-styleable name="ExpandableTextView">
+        <attr name="maxCollapsedLines" format="integer" />
+        <attr name="animDuration" format="integer" />
+        <attr name="animAlphaStart" format="float" />
+        <attr name="expandDrawable" format="reference" />
+        <attr name="collapseDrawable" format="reference" />
+    </declare-styleable>
 </resources>

@@ -38,8 +38,8 @@ public class MainBookListFragment extends Fragment {
     private BookListGridListViewAdapter mGridListViewAdapter;
     private BookOnClickListener mListener = new BookOnClickListener() {
         @Override
-        public void onBookClick(View clickedImageView, int book_id) {
-            BookDetailFragment detailFragment = BookDetailFragment.newInstance(book_id);
+        public void onBookClick(View clickedImageView, int book_id, int category_code) {
+            BookDetailFragment detailFragment = BookDetailFragment.newInstance(book_id, category_code);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 detailFragment.setSharedElementEnterTransition(new BookDetailTransition());

@@ -114,7 +114,9 @@ public class BookListGridListViewAdapter extends BaseAdapter {
                 @Override
                 public void onClick(View v) {
                     dataCursor.moveToPosition(0);
-                    mListener.onBookClick(cover1, dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.ID)));
+                    mListener.onBookClick(cover1,
+                            dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.ID)),
+                            dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.CATEGORY_CODE)));
                 }
             });
         } else {
@@ -135,7 +137,9 @@ public class BookListGridListViewAdapter extends BaseAdapter {
                 @Override
                 public void onClick(View v) {
                     dataCursor.moveToPosition(1);
-                    mListener.onBookClick(cover2, dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.ID)));
+                    mListener.onBookClick(cover2,
+                            dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.ID)),
+                            dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.CATEGORY_CODE)));
                 }
             });
         } else {
@@ -156,7 +160,9 @@ public class BookListGridListViewAdapter extends BaseAdapter {
                 @Override
                 public void onClick(View v) {
                     dataCursor.moveToPosition(2);
-                    mListener.onBookClick(cover3, dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.ID)));
+                    mListener.onBookClick(cover3,
+                            dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.ID)),
+                            dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.CATEGORY_CODE)));
                 }
             });
         } else {

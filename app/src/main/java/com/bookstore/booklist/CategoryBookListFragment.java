@@ -35,8 +35,8 @@ public class CategoryBookListFragment extends Fragment {
     private BookListLoadListener mLoadListener = null;
     private BookOnClickListener mListener = new BookOnClickListener() {
         @Override
-        public void onBookClick(View clickedImageView, int book_id) {
-            BookDetailFragment detailFragment = BookDetailFragment.newInstance(book_id);
+        public void onBookClick(View clickedImageView, int book_id, int category_code) {
+            BookDetailFragment detailFragment = BookDetailFragment.newInstance(book_id, category_code);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 detailFragment.setSharedElementEnterTransition(new BookDetailTransition());
@@ -106,7 +106,7 @@ public class CategoryBookListFragment extends Fragment {
                     + "="
                     + mCategoryCode;
         }
-        String[] projection = {DB_Column.BookInfo.ID, DB_Column.BookInfo.IMG_LARGE, DB_Column.BookInfo.TITLE};
+        String[] projection = {DB_Column.BookInfo.ID, DB_Column.BookInfo.IMG_LARGE, DB_Column.BookInfo.TITLE, DB_Column.BookInfo.CATEGORY_CODE};
         //mlistLoader = new BookListLoader(mActivity, BookProvider.BOOKINFO_URI, projection, selection, null, DB_Column.BookInfo.ID + " DESC LIMIT 15");
         mlistLoader = new BookListLoader(mActivity, BookProvider.BOOKINFO_URI, projection, selection, null, DB_Column.BookInfo.ID + " DESC");
         mLoadListener = new BookListLoadListener();

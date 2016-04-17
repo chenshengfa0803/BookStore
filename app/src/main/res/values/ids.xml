@@ -34,4 +34,7 @@
 
     <item name="about_version_code" type="id">false</item>
     <item name="split" type="id">false</item>
+
+    <item name="expandable_text" type="id" />
+    <item name="expand_collapse" type="id" />
 </resources>

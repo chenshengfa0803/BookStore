@@ -31,16 +31,19 @@ import com.nostra13.universalimageloader.core.ImageLoader;
  */
 public class BookDetailFragment extends Fragment {
     public static final String ARGS_BOOK_ID = "book_id";
+    public static final String ARGS_CATEGORY_CODE = "category_code";
     private int mBook_id;
+    private int mCategory_code;
     private Activity mActivity;
     private BookListLoader mlistLoader = null;
     private BookListLoadListener mLoadListener = null;
     private BookDetailListViewAdapter detailListViewAdapter = null;
 
-    public static BookDetailFragment newInstance(int book_id) {
+    public static BookDetailFragment newInstance(int book_id, int category_code) {
         BookDetailFragment fragment = new BookDetailFragment();
         Bundle args = new Bundle();
         args.putInt(ARGS_BOOK_ID, book_id);
+        args.putInt(ARGS_CATEGORY_CODE, category_code);
         fragment.setArguments(args);
 
         return fragment;
@@ -51,6 +54,7 @@ public class BookDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mActivity = getActivity();
         mBook_id = getArguments().getInt(ARGS_BOOK_ID, 0);
+        mCategory_code = getArguments().getInt(ARGS_CATEGORY_CODE, 0);
     }
 
     @Nullable
@@ -126,6 +130,7 @@ public class BookDetailFragment extends Fragment {
             protected void requestPostExecute(String bookInfo) {
                 try {
                     BookData bookData = BookInfoJsonParser.getInstance().getFullBookDataFromJson(bookInfo);
+                    bookData.category_code = mCategory_code;
                     detailListViewAdapter.registerData(bookData);
                     detailListViewAdapter.notifyDataSetChanged();
                 } catch (Exception e) {
