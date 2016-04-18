@@ -35,4 +35,5 @@ dependencies {
     compile files('src/main/libs/zxing.jar')
     compile 'com.android.support:support-v4:22.2.0'
     compile files('src/main/libs/universal-image-loader-1.9.5.jar')
+    compile 'com.android.support:appcompat-v7:22.+'
 }

@@ -2,13 +2,13 @@ package com.bookstore.main;
 
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
-import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -17,7 +17,7 @@ import com.bookstore.main.animation.ViewBlur;
 import com.bookstore.qr_codescan.ScanActivity;
 import com.bookstore.util.SystemBarTintManager;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
     public static final String PREFERENCE_FILE_NAME = "config_preference";
     public static final int MSG_GET_BOOK_CATEGORY = 100;
     private final static int SCANNING_REQUEST_CODE = 1;
@@ -45,7 +45,7 @@ public class MainActivity extends Activity {
 
         MainBookListFragment bookListFragment = MainBookListFragment.newInstance();
         String tag = MainBookListFragment.class.getSimpleName();
-        getFragmentManager().beginTransaction().replace(R.id.container_view, bookListFragment, tag).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.container_view, bookListFragment, tag).commit();
 
         blurFromView = findViewById(R.id.container_view);
         blurToView = (ImageView) findViewById(R.id.blur_view);
@@ -166,7 +166,7 @@ public class MainActivity extends Activity {
     }
 
     public void makeBlurWindow() {
-        Fragment fragment = getFragmentManager().findFragmentByTag(MainBookListFragment.class.getSimpleName());
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(MainBookListFragment.class.getSimpleName());
         if (fragment != null) {
             ((MainBookListFragment) fragment).setListViewVerticalScrollBarEnable(false);//do not show scroll bar
         }
@@ -183,10 +183,10 @@ public class MainActivity extends Activity {
     }
 
     public void replaceFragment(Fragment fragment, String tag) {
-        getFragmentManager().beginTransaction()
+        getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.category_fragment_right_in, R.anim.category_fragment_left_out, R.anim.category_fragment_left_in, R.anim.category_fragment_right_out)
-                .replace(R.id.container_view, fragment, tag)
                 .addToBackStack(null)
+                .replace(R.id.container_view, fragment, tag)
                 .commit();
     }
 

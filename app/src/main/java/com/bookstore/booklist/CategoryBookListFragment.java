@@ -1,12 +1,13 @@
 package com.bookstore.booklist;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.transition.Fade;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,7 +46,7 @@ public class CategoryBookListFragment extends Fragment {
                 detailFragment.setSharedElementReturnTransition(new BookDetailTransition());
             }
 
-            mActivity.getFragmentManager().beginTransaction()
+            ((AppCompatActivity) mActivity).getSupportFragmentManager().beginTransaction()
                     .addSharedElement(clickedImageView, getString(R.string.image_transition))
                     .replace(R.id.container_view, detailFragment)
                     .addToBackStack(null)
