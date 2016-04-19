@@ -6,6 +6,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
+        <item name="android:actionOverflowButtonStyle">@style/MyOverFlowButtonStyle</item>
     </style>
     <style name="AppTheme" parent="AppBaseTheme">
 
@@ -17,9 +18,8 @@
         -->
     </style>
 
-    <style name="MyActionBarStyle" parent="@android:style/Widget.ActionBar">
-        <item name="android:background">@android:color/darker_gray</item>
-        <item name="android:displayOptions">showTitle</item>
+    <style name="MyOverFlowButtonStyle" parent="@android:style/Widget.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_search_white</item>
     </style>
 
 </resources>

@@ -1,14 +1,18 @@
 package com.bookstore.main;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.transition.Fade;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -84,6 +88,17 @@ public class MainBookListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         booklist_fragment = inflater.inflate(R.layout.booklist_fragment, null);
+
+        AppCompatActivity mAppCompatActivity = (AppCompatActivity) mActivity;
+        Toolbar main_toolbar = (Toolbar) booklist_fragment.findViewById(R.id.main_toolbar);
+        if (main_toolbar != null) {
+            mAppCompatActivity.setSupportActionBar(main_toolbar);
+            main_toolbar.setNavigationIcon(R.drawable.ic_drawer_white);
+            main_toolbar.setTitleTextColor(Color.WHITE);
+            main_toolbar.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+            setHasOptionsMenu(true);
+        }
+
         List<View> viewList = new ArrayList<View>();
         View booklist_gridview = inflater.inflate(R.layout.booklist_gridview, null);
         View booklist_listview = inflater.inflate(R.layout.booklist_listview, null);
@@ -118,6 +133,12 @@ public class MainBookListFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.main_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
