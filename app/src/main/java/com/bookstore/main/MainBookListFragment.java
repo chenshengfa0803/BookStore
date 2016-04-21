@@ -1,7 +1,9 @@
 package com.bookstore.main;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.bookstore.bookdetail.BookDetailFragment;
 import com.bookstore.booklist.BookListGridListView;
@@ -28,6 +31,8 @@ import com.bookstore.bookparser.BookCategory;
 import com.bookstore.main.animation.BookDetailTransition;
 import com.bookstore.provider.BookProvider;
 import com.bookstore.provider.DB_Column;
+import com.bookstore.util.BitmapUtil;
+import com.bookstore.util.SystemBarTintManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +52,14 @@ public class MainBookListFragment extends Fragment {
     private BookOnClickListener mListener = new BookOnClickListener() {
         @Override
         public void onBookClick(View clickedImageView, int book_id, int category_code) {
-            BookDetailFragment detailFragment = BookDetailFragment.newInstance(book_id, category_code);
+            Bitmap bitmap = null;
+            int paletteColor = getResources().getColor(android.R.color.darker_gray);
+            BitmapDrawable bd = (BitmapDrawable) ((ImageView) clickedImageView).getDrawable();
+            if (bd != null) {
+                bitmap = bd.getBitmap();
+                paletteColor = BitmapUtil.getPaletteColor(bitmap);
+            }
+            BookDetailFragment detailFragment = BookDetailFragment.newInstance(book_id, category_code, paletteColor);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 detailFragment.setSharedElementEnterTransition(new BookDetailTransition());
@@ -99,6 +111,11 @@ public class MainBookListFragment extends Fragment {
             main_toolbar.setNavigationIcon(R.drawable.ic_drawer_white);
             main_toolbar.setTitleTextColor(Color.WHITE);
             main_toolbar.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                SystemBarTintManager tintManager = new SystemBarTintManager(mActivity);
+                tintManager.setStatusBarTintEnabled(true);
+                tintManager.setTintColor(getResources().getColor(android.R.color.darker_gray));
+            }
             setHasOptionsMenu(true);
         }
 

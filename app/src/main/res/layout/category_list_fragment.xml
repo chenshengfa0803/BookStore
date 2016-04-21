@@ -5,41 +5,39 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin">
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/category_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|center_horizontal">
+        <include
+            android:id="@+id/category_toolbar"
+            layout="@layout/toolbar" />
 
-            <TextView
-                android:id="@+id/book_category_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-
-        <FrameLayout
-            android:id="@+id/category_summary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/category_title"
-            android:visibility="gone" />
-
-        <com.bookstore.booklist.CategoryBookGridView
-            android:id="@+id/category_book_gridview"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/category_summary"
-            android:columnWidth="100dp"
-            android:listSelector="#00000000"
-            android:numColumns="auto_fit"
-            android:stretchMode="columnWidth"
-            android:verticalSpacing="2dp" />
+            android:layout_below="@id/category_toolbar"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin">
 
+            <FrameLayout
+                android:id="@+id/category_summary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <com.bookstore.booklist.CategoryBookGridView
+                android:id="@+id/category_book_gridview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/category_summary"
+                android:columnWidth="100dp"
+                android:listSelector="#00000000"
+                android:numColumns="auto_fit"
+                android:stretchMode="columnWidth"
+                android:verticalSpacing="2dp" />
+
+        </RelativeLayout>
     </RelativeLayout>
+
 </FrameLayout>

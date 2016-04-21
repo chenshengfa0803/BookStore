@@ -9,4 +9,5 @@
     <string name="add_to_bookshelf">保存到书架</string>
     <string name="network_slow">网络缓慢，请重新扫描</string>
     <string name="image_transition">image</string>
+    <string name="detail_bookinfo">图书详情</string>
 </resources>

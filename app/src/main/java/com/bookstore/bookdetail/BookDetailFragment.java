@@ -3,15 +3,20 @@ package com.bookstore.bookdetail;
 import android.app.Activity;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bookstore.booklist.BookListLoader;
 import com.bookstore.bookparser.BookData;
@@ -23,6 +28,7 @@ import com.bookstore.main.R;
 import com.bookstore.provider.BookProvider;
 import com.bookstore.provider.BookSQLiteOpenHelper;
 import com.bookstore.provider.DB_Column;
+import com.bookstore.util.SystemBarTintManager;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -32,18 +38,21 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 public class BookDetailFragment extends Fragment {
     public static final String ARGS_BOOK_ID = "book_id";
     public static final String ARGS_CATEGORY_CODE = "category_code";
+    public static final String ARGS_PALETTE_COLOR = "palette_color";
     private int mBook_id;
     private int mCategory_code;
+    private int mPalette_color;
     private Activity mActivity;
     private BookListLoader mlistLoader = null;
     private BookListLoadListener mLoadListener = null;
     private BookDetailListViewAdapter detailListViewAdapter = null;
 
-    public static BookDetailFragment newInstance(int book_id, int category_code) {
+    public static BookDetailFragment newInstance(int book_id, int category_code, int paletteColor) {
         BookDetailFragment fragment = new BookDetailFragment();
         Bundle args = new Bundle();
         args.putInt(ARGS_BOOK_ID, book_id);
         args.putInt(ARGS_CATEGORY_CODE, category_code);
+        args.putInt(ARGS_PALETTE_COLOR, paletteColor);
         fragment.setArguments(args);
 
         return fragment;
@@ -55,12 +64,39 @@ public class BookDetailFragment extends Fragment {
         mActivity = getActivity();
         mBook_id = getArguments().getInt(ARGS_BOOK_ID, 0);
         mCategory_code = getArguments().getInt(ARGS_CATEGORY_CODE, 0);
+        mPalette_color = getArguments().getInt(ARGS_PALETTE_COLOR, getResources().getColor(android.R.color.darker_gray));
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View detail_fragment = inflater.inflate(R.layout.book_detail_fragment, null);
+
+        AppCompatActivity mAppCompatActivity = (AppCompatActivity) mActivity;
+        Toolbar detail_toolbar = (Toolbar) detail_fragment.findViewById(R.id.detail_toolbar);
+        if (detail_toolbar != null) {
+            mAppCompatActivity.setSupportActionBar(detail_toolbar);
+            detail_toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
+            detail_toolbar.setTitleTextColor(Color.WHITE);
+            detail_toolbar.setBackgroundColor(mPalette_color);
+            detail_toolbar.setTitle("");
+            detail_toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mActivity.onBackPressed();
+                }
+            });
+            TextView detail_middle_title = (TextView) detail_toolbar.findViewById(R.id.detail_toolbar_title);
+            detail_middle_title.setVisibility(View.VISIBLE);
+            detail_middle_title.setText(getString(R.string.detail_bookinfo));
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                SystemBarTintManager tintManager = new SystemBarTintManager(mActivity);
+                tintManager.setStatusBarTintEnabled(true);
+                tintManager.setTintColor(mPalette_color);
+            }
+        }
+
         BookDetailListView detailListView = (BookDetailListView) detail_fragment.findViewById(R.id.book_detail_list_container);
         detailListViewAdapter = new BookDetailListViewAdapter(mActivity);
         detailListView.setAdapter(detailListViewAdapter);

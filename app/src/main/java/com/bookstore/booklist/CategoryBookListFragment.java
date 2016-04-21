@@ -3,18 +3,22 @@ package com.bookstore.booklist;
 import android.app.Activity;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.transition.Fade;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
-import android.widget.TextView;
+import android.widget.ImageView;
 
 import com.bookstore.bookdetail.BookDetailFragment;
 import com.bookstore.bookparser.BookCategory;
@@ -23,6 +27,8 @@ import com.bookstore.main.R;
 import com.bookstore.main.animation.BookDetailTransition;
 import com.bookstore.provider.BookProvider;
 import com.bookstore.provider.DB_Column;
+import com.bookstore.util.BitmapUtil;
+import com.bookstore.util.SystemBarTintManager;
 
 /**
  * Created by Administrator on 2016/4/6.
@@ -37,7 +43,14 @@ public class CategoryBookListFragment extends Fragment {
     private BookOnClickListener mListener = new BookOnClickListener() {
         @Override
         public void onBookClick(View clickedImageView, int book_id, int category_code) {
-            BookDetailFragment detailFragment = BookDetailFragment.newInstance(book_id, category_code);
+            Bitmap bitmap = null;
+            int paletteColor = getResources().getColor(android.R.color.darker_gray);
+            BitmapDrawable bd = (BitmapDrawable) ((ImageView) clickedImageView).getDrawable();
+            if (bd != null) {
+                bitmap = bd.getBitmap();
+                paletteColor = BitmapUtil.getPaletteColor(bitmap);
+            }
+            BookDetailFragment detailFragment = BookDetailFragment.newInstance(book_id, category_code, paletteColor);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 detailFragment.setSharedElementEnterTransition(new BookDetailTransition());
@@ -78,9 +91,27 @@ public class CategoryBookListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View category_fragment = null;
         category_fragment = inflater.inflate(R.layout.category_list_fragment, null);
-        TextView title = (TextView) category_fragment.findViewById(R.id.book_category_name);
-        BookCategory bookCategory = new BookCategory();
-        title.setText(BookCategory.getCategoryName(mCategoryCode));
+
+        AppCompatActivity mAppCompatActivity = (AppCompatActivity) mActivity;
+        Toolbar category_toolbar = (Toolbar) category_fragment.findViewById(R.id.category_toolbar);
+        if (category_toolbar != null) {
+            mAppCompatActivity.setSupportActionBar(category_toolbar);
+            category_toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
+            category_toolbar.setTitleTextColor(Color.WHITE);
+            category_toolbar.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+            category_toolbar.setTitle(BookCategory.getCategoryName(mCategoryCode));
+            category_toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mActivity.onBackPressed();
+                }
+            });
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                SystemBarTintManager tintManager = new SystemBarTintManager(mActivity);
+                tintManager.setStatusBarTintEnabled(true);
+                tintManager.setTintColor(getResources().getColor(android.R.color.darker_gray));
+            }
+        }
 
         GridView gridView = (GridView) category_fragment.findViewById(R.id.category_book_gridview);
         gridViewAdapter = new CategoryBookGridViewAdapter(mActivity, mListener);

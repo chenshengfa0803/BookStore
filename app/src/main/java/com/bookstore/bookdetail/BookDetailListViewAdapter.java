@@ -1,7 +1,7 @@
 package com.bookstore.bookdetail;
 
-import android.app.Activity;
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,7 +55,7 @@ public class BookDetailListViewAdapter extends BaseAdapter {
                     book_cover.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            ((Activity) mContext).getFragmentManager().popBackStack();
+                            ((AppCompatActivity) mContext).getSupportFragmentManager().popBackStack();
                         }
                     });
                 } else {
