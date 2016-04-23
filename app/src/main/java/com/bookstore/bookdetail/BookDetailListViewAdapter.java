@@ -93,7 +93,9 @@ public class BookDetailListViewAdapter extends BaseAdapter {
                     book_title.setText(mBookData.title);
                     ratingBar.setVisibility(View.VISIBLE);
                     ratingBar.setRating(mBookData.rating.average);
-                    book_author.setText(mBookData.authors.get(0));
+                    if (mBookData.authors.size() != 0) {
+                        book_author.setText(mBookData.authors.get(0));
+                    }
                     book_category.setText(BookCategory.getCategoryName(mBookData.category_code));
                 }
                 break;
