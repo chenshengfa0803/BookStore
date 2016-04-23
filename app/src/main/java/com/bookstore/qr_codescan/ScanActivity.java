@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.res.AssetFileDescriptor;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -211,7 +212,11 @@ public class ScanActivity extends Activity implements Callback {
 //        }
         //ScanActivity.this.finish();
         //mDanmu.addDanmuText(false, resultString);
-        getBookData(resultString);
+        if (checkIfExist(resultString)) {
+            mDanmu.addDanmuText(BaseDanmaku.TYPE_FIX_BOTTOM, false, getResources().getString(R.string.repeat_scan));
+        } else {
+            getBookData(resultString);
+        }
         Handler restartHandler = new Handler();
         restartHandler.postDelayed(new Runnable() {
             @Override
@@ -482,5 +487,20 @@ public class ScanActivity extends Activity implements Callback {
                 }
             }
         }).start();
+    }
+
+    public boolean checkIfExist(String isbn) {
+        String projection[] = {DB_Column.BookInfo.ISBN13};
+        String selection = DB_Column.BookInfo.ISBN13 + "=" + isbn;
+        Cursor cursor = getContentResolver().query(BookProvider.BOOKINFO_URI, projection, selection, null, null);
+        if (cursor.getCount() > 0) {
+            return true;
+        }
+        for (BookData data : scanedBookList) {
+            if (isbn.equals(data.isbn13)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
