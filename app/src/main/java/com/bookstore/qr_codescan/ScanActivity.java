@@ -38,7 +38,6 @@ import com.bookstore.qr_codescan.danmakuFlame.master.flame.danmaku.danmaku.model
 import com.bookstore.qr_codescan.zxing.camera.CameraManager;
 import com.bookstore.qr_codescan.zxing.camera.FlashlightManager;
 import com.bookstore.qr_codescan.zxing.decoding.CaptureActivityHandler;
-import com.bookstore.qr_codescan.zxing.decoding.InactivityTimer;
 import com.bookstore.qr_codescan.zxing.view.ViewfinderView;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
@@ -75,7 +74,7 @@ public class ScanActivity extends Activity implements Callback {
     private boolean hasSurface;
     private Vector<BarcodeFormat> decodeFormats;
     private String characterSet;
-    private InactivityTimer inactivityTimer;
+    //private InactivityTimer inactivityTimer;
     private MediaPlayer mediaPlayer;
     private boolean playBeep;
     private boolean vibrate;
@@ -103,7 +102,7 @@ public class ScanActivity extends Activity implements Callback {
         initControlPanel();
 
         hasSurface = false;
-        inactivityTimer = new InactivityTimer(this);
+        //inactivityTimer = new InactivityTimer(this);
 
         final Handler danmuHandler = new Handler();
         danmuHandler.postDelayed(new Runnable() {
@@ -161,7 +160,7 @@ public class ScanActivity extends Activity implements Callback {
 
     @Override
     protected void onDestroy() {
-        inactivityTimer.shutdown();
+        //inactivityTimer.shutdown();
         scanedBookList.clear();
         mDanmu.destroy();
         super.onDestroy();
@@ -198,7 +197,7 @@ public class ScanActivity extends Activity implements Callback {
      * @param result
      */
     public void handleDecode(Result result) {
-        inactivityTimer.onActivity();
+        //inactivityTimer.onActivity();
         playBeepSoundAndVibrate();
         String resultString = result.getText();
 //        if (resultString.equals("")) {
