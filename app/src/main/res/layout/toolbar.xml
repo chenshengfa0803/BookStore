@@ -6,7 +6,7 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
     <TextView
-        android:id="@+id/detail_toolbar_title"
+        android:id="@+id/toolbar_middle_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
