@@ -21,6 +21,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bookstore.bookparser.BookCategory;
@@ -82,8 +84,11 @@ public class ScanActivity extends Activity implements Callback {
     private Danmu mDanmu;
     private IDanmakuView danmu_View;
     private ArrayList<BookData> scanedBookList = new ArrayList<BookData>();
-    private TextView flashlight_btn = null;
-    private TextView save_books_btn = null;
+    private ImageView flashlight_btn = null;
+    private TextView flashlight_text = null;
+    private ImageView save_books_btn = null;
+    private TextView save_book_text = null;
+    private ProgressBar save_book_progress = null;
 
     /**
      * Called when the activity is first created.
@@ -276,8 +281,10 @@ public class ScanActivity extends Activity implements Callback {
     }
 
     private void initControlPanel() {
-        flashlight_btn = (TextView) findViewById(R.id.flash_light);
-        save_books_btn = (TextView) findViewById(R.id.save_books);
+        flashlight_btn = (ImageView) findViewById(R.id.flash_light_image);
+        flashlight_text = (TextView) findViewById(R.id.flash_light_text);
+        save_books_btn = (ImageView) findViewById(R.id.save_books_image);
+        save_book_progress = (ProgressBar) findViewById(R.id.save_book_progress);
 
         flashlight_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -285,17 +292,15 @@ public class ScanActivity extends Activity implements Callback {
                 //flashlight_btn.setTextColor(Color.WHITE);
                 if (flash_light) {
                     flash_light = false;
-                    Drawable top_off = getResources().getDrawable(R.drawable.flashlight_off);
-                    top_off.setBounds(0, 0, top_off.getMinimumWidth(), top_off.getMinimumHeight());
-                    flashlight_btn.setCompoundDrawables(null, top_off, null, null);
-                    flashlight_btn.setText(R.string.flash_light_on);
+                    Drawable light_off = getResources().getDrawable(R.drawable.flashlight_off);
+                    flashlight_btn.setImageDrawable(light_off);
+                    flashlight_text.setText(R.string.flash_light_on);
                     FlashlightManager.enableFlashlight();
                 } else {
                     flash_light = true;
-                    Drawable top_on = getResources().getDrawable(R.drawable.flashlight_on);
-                    top_on.setBounds(0, 0, top_on.getMinimumWidth(), top_on.getMinimumHeight());
-                    flashlight_btn.setCompoundDrawables(null, top_on, null, null);
-                    flashlight_btn.setText(R.string.flash_light_off);
+                    Drawable light_on = getResources().getDrawable(R.drawable.flashlight_on);
+                    flashlight_btn.setImageDrawable(light_on);
+                    flashlight_text.setText(R.string.flash_light_off);
                 }
             }
         });
@@ -351,6 +356,7 @@ public class ScanActivity extends Activity implements Callback {
             return;
         }
         Log.i("BookStore", "isbn is " + isbn);
+        save_book_progress.setVisibility(View.VISIBLE);
         DoubanBookInfoUrl doubanBookUrl = new DoubanBookInfoUrl(isbn);
         BookInfoRequestBase bookRequest = new BookInfoRequestBase(doubanBookUrl) {
             @Override
@@ -363,6 +369,7 @@ public class ScanActivity extends Activity implements Callback {
                 try {
                     if (bookInfo == null) {
                         mDanmu.addDanmuText(BaseDanmaku.TYPE_FIX_BOTTOM, false, getResources().getString(R.string.network_slow));
+                        save_book_progress.setVisibility(View.GONE);
                         return;
                     }
                     BookData bookData = BookInfoJsonParser.getInstance().getSimpleBookDataFromString(bookInfo);
@@ -396,6 +403,7 @@ public class ScanActivity extends Activity implements Callback {
                 bookData.category_code = category;
                 scanedBookList.add(bookData);
                 save_books_btn.setEnabled(true);
+                save_book_progress.setVisibility(View.GONE);
             }
         };
         bookCategoryRequest.requestExcute(BookInfoUrlBase.REQ_CATEGORY);
