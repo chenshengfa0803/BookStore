@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         MainBookListFragment bookListFragment = MainBookListFragment.newInstance();
         String tag = MainBookListFragment.class.getSimpleName();
-        getSupportFragmentManager().beginTransaction().replace(R.id.container_view, bookListFragment, tag).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.container_view, bookListFragment, tag).commit();
 
         blurFromView = findViewById(R.id.container_view);
         blurToView = (ImageView) findViewById(R.id.blur_view);
@@ -185,8 +185,9 @@ public class MainActivity extends AppCompatActivity {
     public void replaceFragment(Fragment fragment, String tag) {
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.category_fragment_right_in, R.anim.category_fragment_left_out, R.anim.category_fragment_left_in, R.anim.category_fragment_right_out)
+                .hide(getSupportFragmentManager().findFragmentByTag(MainBookListFragment.class.getSimpleName()))
                 .addToBackStack(null)
-                .replace(R.id.container_view, fragment, tag)
+                .add(R.id.container_view, fragment, tag)
                 .commit();
     }
 

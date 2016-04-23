@@ -8,6 +8,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -68,10 +70,12 @@ public class MainBookListFragment extends Fragment {
                 detailFragment.setSharedElementReturnTransition(new BookDetailTransition());
             }
 
-            ((AppCompatActivity) mActivity).getSupportFragmentManager().beginTransaction()
-                    .addSharedElement(clickedImageView, getResources().getString(R.string.image_transition))
-                    .replace(R.id.container_view, detailFragment)
+            FragmentManager fragmentManager = ((AppCompatActivity) mActivity).getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.addSharedElement(clickedImageView, getResources().getString(R.string.image_transition))
+                    .add(R.id.container_view, detailFragment)
                     .addToBackStack(null)
+                    .hide(fragmentManager.findFragmentByTag(MainBookListFragment.class.getSimpleName()))
                     .commit();
 
         }
@@ -176,6 +180,18 @@ public class MainBookListFragment extends Fragment {
     public void onResume() {
         super.onResume();
         refreshBookList();
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                SystemBarTintManager tintManager = new SystemBarTintManager(mActivity);
+                tintManager.setStatusBarTintEnabled(true);
+                tintManager.setTintColor(getResources().getColor(android.R.color.darker_gray));
+            }
+        }
     }
 
     @Override
