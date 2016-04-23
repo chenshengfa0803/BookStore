@@ -86,7 +86,7 @@ public class BookDetailFragment extends Fragment {
                     mActivity.onBackPressed();
                 }
             });
-            TextView detail_middle_title = (TextView) detail_toolbar.findViewById(R.id.detail_toolbar_title);
+            TextView detail_middle_title = (TextView) detail_toolbar.findViewById(R.id.toolbar_middle_title);
             detail_middle_title.setVisibility(View.VISIBLE);
             detail_middle_title.setText(getString(R.string.detail_bookinfo));
 

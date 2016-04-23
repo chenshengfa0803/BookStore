@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bookstore.bookdetail.BookDetailFragment;
 import com.bookstore.booklist.BookListGridListView;
@@ -45,6 +46,7 @@ import java.util.List;
 public class MainBookListFragment extends Fragment {
     public DBHandler dbHandler = null;
     public BookCategory mBookCategory = null;
+    Toolbar main_toolbar = null;
     private Activity mActivity;
     private View booklist_fragment = null;
     private ViewPager bookListViewPager;
@@ -109,7 +111,7 @@ public class MainBookListFragment extends Fragment {
         booklist_fragment = inflater.inflate(R.layout.booklist_fragment, null);
 
         AppCompatActivity mAppCompatActivity = (AppCompatActivity) mActivity;
-        Toolbar main_toolbar = (Toolbar) booklist_fragment.findViewById(R.id.main_toolbar);
+        main_toolbar = (Toolbar) booklist_fragment.findViewById(R.id.main_toolbar);
         if (main_toolbar != null) {
             mAppCompatActivity.setSupportActionBar(main_toolbar);
             main_toolbar.setNavigationIcon(R.drawable.ic_drawer_white);
@@ -120,6 +122,17 @@ public class MainBookListFragment extends Fragment {
                 tintManager.setStatusBarTintEnabled(true);
                 tintManager.setTintColor(getResources().getColor(android.R.color.darker_gray));
             }
+            TextView title_middle = (TextView) main_toolbar.findViewById(R.id.toolbar_middle_title);
+            title_middle.setVisibility(View.VISIBLE);
+            title_middle.setText(getResources().getString(R.string.app_name));
+            title_middle.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (gridListView != null) {
+                        gridListView.smoothScrollToPosition(0);
+                    }
+                }
+            });
             setHasOptionsMenu(true);
         }
 
@@ -179,6 +192,9 @@ public class MainBookListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if (main_toolbar != null) {
+            main_toolbar.setTitle("");
+        }
         refreshBookList();
     }
 

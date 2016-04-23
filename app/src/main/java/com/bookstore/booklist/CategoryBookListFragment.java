@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bookstore.bookdetail.BookDetailFragment;
 import com.bookstore.bookparser.BookCategory;
@@ -37,6 +38,7 @@ import com.bookstore.util.SystemBarTintManager;
  */
 public class CategoryBookListFragment extends Fragment {
     public static final String ARGS_CATEGORY_CODE = "category_code";
+    GridView mGridView;
     private Activity mActivity;
     private int mCategoryCode = 0;
     private CategoryBookGridViewAdapter gridViewAdapter = null;
@@ -103,7 +105,6 @@ public class CategoryBookListFragment extends Fragment {
             category_toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
             category_toolbar.setTitleTextColor(Color.WHITE);
             category_toolbar.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
-            category_toolbar.setTitle(BookCategory.getCategoryName(mCategoryCode));
             category_toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -115,11 +116,23 @@ public class CategoryBookListFragment extends Fragment {
                 tintManager.setStatusBarTintEnabled(true);
                 tintManager.setTintColor(getResources().getColor(android.R.color.darker_gray));
             }
+            category_toolbar.setTitle("");
+            TextView title_middle = (TextView) category_toolbar.findViewById(R.id.toolbar_middle_title);
+            title_middle.setVisibility(View.VISIBLE);
+            title_middle.setText(BookCategory.getCategoryName(mCategoryCode));
+            title_middle.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mGridView != null) {
+                        mGridView.smoothScrollToPosition(0);
+                    }
+                }
+            });
         }
 
-        GridView gridView = (GridView) category_fragment.findViewById(R.id.category_book_gridview);
+        mGridView = (GridView) category_fragment.findViewById(R.id.category_book_gridview);
         gridViewAdapter = new CategoryBookGridViewAdapter(mActivity, mListener);
-        gridView.setAdapter(gridViewAdapter);
+        mGridView.setAdapter(gridViewAdapter);
         return category_fragment;
     }
 
