@@ -10,6 +10,7 @@
         android:id="@+id/listheader_waterdrop"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="gone"
         mine:bottomcircle_x="15dp"
         mine:bottomcircle_y="15dp"
         mine:max_circle_radius="15dp"
