@@ -177,11 +177,23 @@ public class MainBookListFragment extends Fragment {
         inflater.inflate(R.menu.main_menu, menu);
         MenuItem menuItem = menu.findItem(R.id.menu_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
-        searchView.setQueryHint("书名/作者");
+        searchView.setQueryHint("书名/作者--未实现");
 
         //searchView.setIconifiedByDefault(false);
         //searchView.setSubmitButtonEnabled(true);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                //Toast.makeText(mActivity, "慢工出细活，未实现", Toast.LENGTH_SHORT).show();
+                MyDialogFragment dialog = new MyDialogFragment();
+                dialog.show(mActivity.getFragmentManager(), "myDialogFragment");
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

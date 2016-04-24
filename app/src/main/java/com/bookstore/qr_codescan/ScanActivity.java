@@ -3,6 +3,7 @@ package com.bookstore.qr_codescan;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
@@ -25,6 +26,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bookstore.bookparser.BookCategory;
 import com.bookstore.bookparser.BookData;
@@ -72,6 +74,7 @@ public class ScanActivity extends Activity implements Callback {
             mediaPlayer.seekTo(0);
         }
     };
+    private Context mContext;
     private CaptureActivityHandler handler;
     private ViewfinderView viewfinderView;
     private boolean hasSurface;
@@ -97,6 +100,7 @@ public class ScanActivity extends Activity implements Callback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = this;
         setContentView(R.layout.activity_scan);
         CameraManager.init(getApplication());
         viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
@@ -302,6 +306,7 @@ public class ScanActivity extends Activity implements Callback {
                     Drawable light_on = getResources().getDrawable(R.drawable.flashlight_on);
                     flashlight_btn.setImageDrawable(light_on);
                     flashlight_text.setText(R.string.flash_light_off);
+                    Toast.makeText(mContext, "慢工出细活，未实现", Toast.LENGTH_SHORT).show();
                 }
             }
         });
