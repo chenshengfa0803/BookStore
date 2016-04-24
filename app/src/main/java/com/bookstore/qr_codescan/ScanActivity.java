@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
@@ -373,12 +374,16 @@ public class ScanActivity extends Activity implements Callback {
                         return;
                     }
                     BookData bookData = BookInfoJsonParser.getInstance().getSimpleBookDataFromString(bookInfo);
-                    //Bitmap bitmap = ((BitmapDrawable) (getResources().getDrawable(R.drawable.downloading_smallcover))).getBitmap();
-                    //mDanmu.addDanmuWithTextAndImage(false, bookData);
-                    //LoadBookSmallImage(bookData);
+
                     getBookCategory(bookData);
-                    mDanmu.addDanmuText(BaseDanmaku.TYPE_FIX_BOTTOM, false, bookData.title);
-                    //mDanmu.addDanmuText(BaseDanmaku.TYPE_SCROLL_LR, false, bookData.title);
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(bookData.title);
+                    if (!TextUtils.isEmpty(bookData.subtitle)) {
+                        sb.append("(");
+                        sb.append(bookData.subtitle);
+                        sb.append(")");
+                    }
+                    mDanmu.addDanmuText(BaseDanmaku.TYPE_FIX_BOTTOM, false, sb.toString());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
