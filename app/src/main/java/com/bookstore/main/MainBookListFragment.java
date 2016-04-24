@@ -75,7 +75,7 @@ public class MainBookListFragment extends Fragment {
             FragmentManager fragmentManager = ((AppCompatActivity) mActivity).getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.addSharedElement(clickedImageView, getResources().getString(R.string.image_transition))
-                    .add(R.id.container_view, detailFragment)
+                    .add(R.id.container_view, detailFragment, BookDetailFragment.class.getSimpleName())
                     .addToBackStack(null)
                     .hide(fragmentManager.findFragmentByTag(MainBookListFragment.class.getSimpleName()))
                     .commit();
@@ -219,6 +219,11 @@ public class MainBookListFragment extends Fragment {
                 tintManager.setStatusBarTintEnabled(true);
                 tintManager.setTintColor(getResources().getColor(android.R.color.darker_gray));
             }
+            ImageView imageView = new ImageView(mActivity);
+            imageView.setImageDrawable(getResources().getDrawable(R.drawable.main_floatbutton_add));
+            View current = ((MainActivity) mActivity).mainFloatButton.getContentView();
+            ((MainActivity) mActivity).mainFloatButton.removeView(current);
+            ((MainActivity) mActivity).mainFloatButton.setContentView(imageView, null);
         }
     }
 

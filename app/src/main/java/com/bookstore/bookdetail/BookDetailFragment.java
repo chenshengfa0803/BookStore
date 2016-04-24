@@ -30,6 +30,7 @@ import com.bookstore.bookparser.BookInfoJsonParser;
 import com.bookstore.connection.BookInfoRequestBase;
 import com.bookstore.connection.BookInfoUrlBase;
 import com.bookstore.connection.douban.DoubanBookInfoUrl;
+import com.bookstore.main.MainActivity;
 import com.bookstore.main.R;
 import com.bookstore.provider.BookProvider;
 import com.bookstore.provider.BookSQLiteOpenHelper;
@@ -157,6 +158,12 @@ public class BookDetailFragment extends Fragment {
 
         item3 = detail_fragment.findViewById(R.id.detail_item3);
         tagGroup = (TagGroup) item3.findViewById(R.id.tag_group);
+
+        ImageView imageView = new ImageView(mActivity);
+        imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_share_black));
+        View add = ((MainActivity) mActivity).mainFloatButton.getContentView();
+        ((MainActivity) mActivity).mainFloatButton.removeView(add);
+        ((MainActivity) mActivity).mainFloatButton.setContentView(imageView, null);
 
         return detail_fragment;
     }

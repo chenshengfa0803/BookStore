@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.bookstore.bookdetail.BookDetailFragment;
 import com.bookstore.bookparser.BookCategory;
 import com.bookstore.main.BookOnClickListener;
+import com.bookstore.main.MainActivity;
 import com.bookstore.main.R;
 import com.bookstore.main.animation.BookDetailTransition;
 import com.bookstore.provider.BookProvider;
@@ -69,7 +70,7 @@ public class CategoryBookListFragment extends Fragment {
             fragmentTransaction.addSharedElement(clickedImageView, getString(R.string.image_transition))
                     .hide(fragmentManager.findFragmentByTag(CategoryBookListFragment.class.getSimpleName()))
                     .addToBackStack(null)
-                    .add(R.id.container_view, detailFragment)
+                    .add(R.id.container_view, detailFragment, BookDetailFragment.class.getSimpleName())
                     .commit();
 
         }
@@ -182,6 +183,11 @@ public class CategoryBookListFragment extends Fragment {
                 tintManager.setStatusBarTintEnabled(true);
                 tintManager.setTintColor(getResources().getColor(android.R.color.darker_gray));
             }
+            ImageView imageView = new ImageView(mActivity);
+            imageView.setImageDrawable(getResources().getDrawable(R.drawable.main_floatbutton_add));
+            View current = ((MainActivity) mActivity).mainFloatButton.getContentView();
+            ((MainActivity) mActivity).mainFloatButton.removeView(current);
+            ((MainActivity) mActivity).mainFloatButton.setContentView(imageView, null);
         }
     }
 

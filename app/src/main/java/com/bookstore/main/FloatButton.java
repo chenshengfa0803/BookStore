@@ -12,6 +12,9 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -20,7 +23,9 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.bookstore.bookdetail.BookDetailFragment;
 import com.bookstore.main.animation.FloatButtonAnimationHandler;
 
 import java.util.ArrayList;
@@ -123,6 +128,7 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
         this.addView(contentView, params);
         int width = contentView.getWidth();
         int height = contentView.getHeight();
+        floatButtonIcon = (ImageView) contentView;
     }
 
     public View getContentView() {
@@ -192,6 +198,14 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+        FragmentManager fragmentManager = ((AppCompatActivity) mContext).getSupportFragmentManager();
+        Fragment detail_fragment = fragmentManager.findFragmentByTag(BookDetailFragment.class.getSimpleName());
+        if (detail_fragment != null) {
+            if (detail_fragment.isAdded()) {
+                Toast.makeText(mContext, "客官，再给我一点时间来实现分享功能", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
         if (menuOpened) {
             closeMenu();
         } else {
