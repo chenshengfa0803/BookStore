@@ -121,7 +121,7 @@ public class BookDetailFragment extends Fragment {
         String selection = DB_Column.BookInfo.ID
                 + "="
                 + mBook_id;
-        String[] projection = {DB_Column.BookInfo.IMG_LARGE, DB_Column.BookInfo.ISBN10};
+        String[] projection = {DB_Column.BookInfo.IMG_LARGE, DB_Column.BookInfo.ISBN13};
         //mlistLoader = new BookListLoader(mActivity, BookProvider.BOOKINFO_URI, projection, selection, null, null);
         mlistLoader = new BookListLoader(mActivity, uri, projection, null, null, null);
         mLoadListener = new BookListLoadListener();
@@ -167,9 +167,11 @@ public class BookDetailFragment extends Fragment {
                 try {
                     BookData bookData = BookInfoJsonParser.getInstance().getFullBookDataFromJson(bookInfo);
                     bookData.category_code = mCategory_code;
-                    detailListViewAdapter.registerData(bookData);
+                    detailListViewAdapter.registerData(bookData, true);
                     detailListViewAdapter.notifyDataSetChanged();
                 } catch (Exception e) {
+                    detailListViewAdapter.registerData(null, true);
+                    detailListViewAdapter.notifyDataSetChanged();
                     e.printStackTrace();
                 }
             }
@@ -194,7 +196,7 @@ public class BookDetailFragment extends Fragment {
                             .build();
 
                     ImageLoader.getInstance().displayImage(cover, image, options);
-                    String isbn = data.getString(data.getColumnIndex(DB_Column.BookInfo.ISBN10));
+                    String isbn = data.getString(data.getColumnIndex(DB_Column.BookInfo.ISBN13));
                     getBookDetailInfo(isbn);
                 }
             }

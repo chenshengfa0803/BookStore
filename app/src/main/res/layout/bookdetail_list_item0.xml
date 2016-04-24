@@ -48,4 +48,11 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
+    <ViewStub
+        android:id="@+id/load_bookdetail_fail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toEndOf="@id/detail_book_cover"
+        android:layout="@layout/load_detail_fail_viewstub" />
+
 </RelativeLayout>

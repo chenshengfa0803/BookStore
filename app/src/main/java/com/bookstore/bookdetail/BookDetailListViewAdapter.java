@@ -6,6 +6,7 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -22,6 +23,7 @@ public class BookDetailListViewAdapter extends BaseAdapter {
     private final SparseBooleanArray mCollapsedStatus;
     private Context mContext;
     private BookData mBookData = null;
+    private boolean mLoaded = false;
 
     public BookDetailListViewAdapter(Context context) {
         mContext = context;
@@ -97,6 +99,11 @@ public class BookDetailListViewAdapter extends BaseAdapter {
                         book_author.setText(mBookData.authors.get(0));
                     }
                     book_category.setText(BookCategory.getCategoryName(mBookData.category_code));
+                } else {
+                    if (mLoaded == true) {
+                        ViewStub stub = (ViewStub) detail_item_view.findViewById(R.id.load_bookdetail_fail);
+                        stub.inflate();
+                    }
                 }
                 break;
             case 1:
@@ -118,7 +125,8 @@ public class BookDetailListViewAdapter extends BaseAdapter {
         }
     }
 
-    public void registerData(BookData bookData) {
+    public void registerData(BookData bookData, boolean loaded) {
         mBookData = bookData;
+        mLoaded = loaded;
     }
 }

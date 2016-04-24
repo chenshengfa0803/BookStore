@@ -7,8 +7,9 @@
     <string name="flash_light_on">开灯</string>
     <string name="flash_light_off">关灯</string>
     <string name="add_to_bookshelf">保存到书架</string>
-    <string name="network_slow">网络缓慢，请重新扫描</string>
+    <string name="network_slow">网络错误，请重新扫描</string>
     <string name="image_transition">image</string>
     <string name="detail_bookinfo">图书详情</string>
     <string name="repeat_scan">图书已存在</string>
+    <string name="load_detail_error">加载失败</string>
 </resources>

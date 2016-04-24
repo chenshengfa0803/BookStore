@@ -13,7 +13,7 @@ public class BookInfoConnection {
 
     private static final String prefix_http = "http://";
     private static final String prefix_https = "https://";
-    private static final int timeout = 3000;
+    private static final int timeout = 5000;
 
     public String doRequestFromUrl(String urlString) throws Exception {
         String url = simpleCheckUrl(urlString);
@@ -31,8 +31,8 @@ public class BookInfoConnection {
             HttpURLConnection httpConnection = (HttpURLConnection) requestUrl.openConnection();
             httpConnection.setConnectTimeout(timeout);
             httpConnection.setReadTimeout(timeout);
-
-            if(httpConnection.getResponseCode() > 200) {
+            int code = httpConnection.getResponseCode();
+            if (code != 200) {
                 throw new Exception("HTTP request failed, code is " + httpConnection.getResponseCode());
             }
 
