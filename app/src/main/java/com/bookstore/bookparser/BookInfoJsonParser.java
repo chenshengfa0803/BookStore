@@ -39,6 +39,7 @@ public class BookInfoJsonParser {
         getBookAuthorIntro(bookData, JsObj);
         getBookCatalog(bookData, JsObj);
         getBookRating(bookData, JsObj);
+        getBookTags(bookData, JsObj);
 
         //TODO:Detail parser
         return bookData;
@@ -168,6 +169,22 @@ public class BookInfoJsonParser {
             bookData.rating.num_raters = ratingJson.getInt("numRaters");
             String average = ratingJson.getString("average");
             bookData.rating.average = Float.parseFloat(average);
+        }
+    }
+
+    public void getBookTags(BookData bookData, JSONObject json) throws JSONException {
+        if (json.has("tags")) {
+            JSONArray jsonArray = json.getJSONArray("tags");
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject tagJson = jsonArray.getJSONObject(i);
+                if (tagJson != null) {
+                    BookData.Tag tag = new BookData.Tag();
+                    tag.count = tagJson.getInt("count");
+                    tag.name = tagJson.getString("name");
+                    tag.title = tagJson.getString("title");
+                    bookData.tags.add(tag);
+                }
+            }
         }
     }
 }

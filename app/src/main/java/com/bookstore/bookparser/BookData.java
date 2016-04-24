@@ -25,7 +25,7 @@ final public class BookData {
     public String publisher = null;
     public String pub_date = null;
     public Rating rating = null;
-    public List<Tags> tag;
+    public List<Tag> tags;
     public String binding = null;
     public String price = null;
     public int series_id = -1;
@@ -42,21 +42,21 @@ final public class BookData {
     public BookData() {
         authors = new ArrayList<String>();
         translator = new ArrayList<String>();
-        tag = new ArrayList<Tags>();
+        tags = new ArrayList<Tag>();
         rating = new Rating();
         detail = new Detail();
         ebook = new EBook();
     }
 
-    final public class Rating {
-        public int num_raters = -1;
-        public float average;
-    }
-
-    final public class Tags {
+    final static public class Tag {
         public int count = -1;
         public String name;
         public String title;
+    }
+
+    final public class Rating {
+        public int num_raters = -1;
+        public float average;
     }
 
     final public class Detail {

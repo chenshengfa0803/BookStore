@@ -2,6 +2,7 @@ package com.bookstore.bookdetail;
 
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,11 @@ import android.widget.TextView;
 import com.bookstore.bookparser.BookCategory;
 import com.bookstore.bookparser.BookData;
 import com.bookstore.main.R;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import me.gujun.android.taggroup.TagGroup;
 
 /**
  * Created by Administrator on 2016/4/13.
@@ -31,7 +37,7 @@ public class BookDetailListViewAdapter extends BaseAdapter {
     }
     @Override
     public int getCount() {
-        return 3;
+        return 4;
     }
 
     @Override
@@ -78,6 +84,13 @@ public class BookDetailListViewAdapter extends BaseAdapter {
                     detail_item_view = convertView;
                 }
                 break;
+            case 3:
+                if (convertView == null) {
+                    detail_item_view = mInflater.inflate(R.layout.bookdetail_list_item3, null);
+                } else {
+                    detail_item_view = convertView;
+                }
+                break;
         }
         bindView(detail_item_view, position);
         return detail_item_view;
@@ -110,16 +123,30 @@ public class BookDetailListViewAdapter extends BaseAdapter {
                 if (mBookData != null) {
                     TextView summary_header = (TextView) detail_item_view.findViewById(R.id.detail_book_summary_header);
                     ExpandableTextView book_summary = (ExpandableTextView) detail_item_view.findViewById(R.id.detail_expanded_book_summary);
-                    summary_header.setText("简介");
-                    book_summary.setText(mBookData.detail.summary, mCollapsedStatus, position);
+                    if (!TextUtils.isEmpty(mBookData.detail.summary)) {
+                        summary_header.setText("简介");
+                        book_summary.setText(mBookData.detail.summary, mCollapsedStatus, position);
+                    }
                 }
                 break;
             case 2:
                 if (mBookData != null) {
                     TextView catalog_header = (TextView) detail_item_view.findViewById(R.id.catalog_header);
                     ExpandableTextView book_catalog = (ExpandableTextView) detail_item_view.findViewById(R.id.detail_expanded_book_catalog);
-                    catalog_header.setText("目录");
-                    book_catalog.setText(mBookData.detail.catalog, mCollapsedStatus, position);
+                    if (!TextUtils.isEmpty(mBookData.detail.catalog)) {
+                        catalog_header.setText("目录");
+                        book_catalog.setText(mBookData.detail.catalog, mCollapsedStatus, position);
+                    }
+                }
+                break;
+            case 3:
+                if (mBookData != null) {
+                    TagGroup tagGroup = (TagGroup) detail_item_view.findViewById(R.id.tag_group);
+                    List<String> tagList = new ArrayList<>();
+                    for (BookData.Tag tag : mBookData.tags) {
+                        tagList.add(tag.name);
+                    }
+                    tagGroup.setTags(tagList);
                 }
                 break;
         }

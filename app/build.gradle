@@ -37,4 +37,5 @@ dependencies {
     compile files('src/main/libs/universal-image-loader-1.9.5.jar')
     compile 'com.android.support:appcompat-v7:22.+'
     compile 'com.android.support:palette-v7:22.+'
+    compile 'me.gujun.android.taggroup:library:1.4@aar'
 }
