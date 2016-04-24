@@ -2,6 +2,7 @@ package com.bookstore.booklist;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,7 +74,9 @@ public class CategoryBookGridViewAdapter extends BaseAdapter {
             String book_name = dataCursor.getString(dataCursor.getColumnIndex(DB_Column.BookInfo.TITLE));
             ImageLoader.getInstance().displayImage(coverUrl, book_cover, options);
             book_title.setText(book_name);
-            book_cover.setTransitionName("image" + position);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                book_cover.setTransitionName("image" + position);
+            }
             gridItemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

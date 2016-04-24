@@ -3,6 +3,7 @@ package com.bookstore.booklist;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.Cursor;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -109,7 +110,9 @@ public class BookListGridListViewAdapter extends BaseAdapter {
                 ImageLoader.getInstance().displayImage(cover1Url, cover1, options);
             }
             cover1.setTag(cover1Url);
-            cover1.setTransitionName("item" + position + "cover1");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                cover1.setTransitionName("item" + position + "cover1");
+            }
             cover1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -132,7 +135,9 @@ public class BookListGridListViewAdapter extends BaseAdapter {
                 ImageLoader.getInstance().displayImage(cover2Url, cover2, options);
             }
             cover2.setTag(cover2Url);
-            cover2.setTransitionName("item" + position + "cover2");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                cover2.setTransitionName("item" + position + "cover2");
+            }
             cover2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -155,7 +160,9 @@ public class BookListGridListViewAdapter extends BaseAdapter {
                 ImageLoader.getInstance().displayImage(cover3Url, cover3, options);
             }
             cover3.setTag(cover3Url);
-            cover3.setTransitionName("item" + position + "cover3");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                cover3.setTransitionName("item" + position + "cover3");
+            }
             cover3.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
