@@ -52,6 +52,7 @@ public class BookInfoJsonParser {
         try {
             getBookId(bookData, JsObj);
             getBookTitle(bookData, JsObj);
+            getBookSubTitle(bookData, JsObj);
             getBookAuthors(bookData, JsObj);
             getBookTranslator(bookData, JsObj);
             getBookPubDate(bookData, JsObj);
@@ -76,6 +77,12 @@ public class BookInfoJsonParser {
     public void getBookTitle(BookData bookData, JSONObject json) throws JSONException {
         if (json.has("title")) {
             bookData.title = json.getString("title");
+        }
+    }
+
+    public void getBookSubTitle(BookData bookData, JSONObject json) throws JSONException {
+        if (json.has("subtitle")) {
+            bookData.subtitle = json.getString("subtitle");
         }
     }
 

@@ -26,13 +26,19 @@
         <TextView
             android:id="@+id/detail_book_title"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="1dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
         <RatingBar
             android:id="@+id/detail_book_rating"
             style="?android:attr/ratingBarStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="1dp"
             android:isIndicator="true"
             android:max="10"
             android:numStars="10"
@@ -42,12 +48,36 @@
         <TextView
             android:id="@+id/detail_book_author"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="1dp"
+            android:ellipsize="end"
+            android:singleLine="true" />
+
+        <TextView
+            android:id="@+id/detail_book_translator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="1dp"
+            android:ellipsize="end"
+            android:singleLine="true" />
 
         <TextView
             android:id="@+id/detail_book_category"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="1dp" />
+
+        <TextView
+            android:id="@+id/detail_book_pages"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="1dp" />
+
+        <TextView
+            android:id="@+id/detail_book_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="1dp" />
     </LinearLayout>
 
     <ViewStub

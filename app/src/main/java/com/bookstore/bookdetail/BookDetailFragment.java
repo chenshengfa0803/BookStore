@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bookstore.booklist.BookListLoader;
@@ -49,6 +50,7 @@ public class BookDetailFragment extends Fragment {
     public static final String ARGS_BOOK_ID = "book_id";
     public static final String ARGS_CATEGORY_CODE = "category_code";
     public static final String ARGS_PALETTE_COLOR = "palette_color";
+    ScrollView detail_scroll = null;
     private int mBook_id;
     private int mCategory_code;
     private int mPalette_color;
@@ -56,12 +58,14 @@ public class BookDetailFragment extends Fragment {
     private BookListLoader mlistLoader = null;
     private BookListLoadListener mLoadListener = null;
     private SparseBooleanArray mCollapsedStatus;
-
     private View item0;
     private TextView book_title = null;
     private RatingBar ratingBar = null;
     private TextView book_author = null;
+    private TextView book_translator = null;
     private TextView book_category = null;
+    private TextView book_pages = null;
+    private TextView book_price = null;
 
     private View item1;
     private TextView summary_header = null;
@@ -117,6 +121,14 @@ public class BookDetailFragment extends Fragment {
             TextView detail_middle_title = (TextView) detail_toolbar.findViewById(R.id.toolbar_middle_title);
             detail_middle_title.setVisibility(View.VISIBLE);
             detail_middle_title.setText(getString(R.string.detail_bookinfo));
+            detail_middle_title.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (detail_scroll != null) {
+                        detail_scroll.smoothScrollTo(0, 0);
+                    }
+                }
+            });
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 SystemBarTintManager tintManager = new SystemBarTintManager(mActivity);
@@ -124,12 +136,16 @@ public class BookDetailFragment extends Fragment {
                 tintManager.setTintColor(mPalette_color);
             }
         }
+        detail_scroll = (ScrollView) detail_fragment.findViewById(R.id.scroll_detail);
 
         item0 = detail_fragment.findViewById(R.id.detail_item0);
         book_title = (TextView) item0.findViewById(R.id.detail_book_title);
         ratingBar = (RatingBar) item0.findViewById(R.id.detail_book_rating);
         book_author = (TextView) item0.findViewById(R.id.detail_book_author);
+        book_translator = (TextView) item0.findViewById(R.id.detail_book_translator);
         book_category = (TextView) item0.findViewById(R.id.detail_book_category);
+        book_pages = (TextView) item0.findViewById(R.id.detail_book_pages);
+        book_price = (TextView) item0.findViewById(R.id.detail_book_price);
 
         item1 = detail_fragment.findViewById(R.id.detail_item1);
         summary_header = (TextView) item1.findViewById(R.id.detail_book_summary_header);
@@ -223,13 +239,74 @@ public class BookDetailFragment extends Fragment {
     }
 
     public void bindView0(BookData bookData) {
-        book_title.setText(bookData.title);
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(bookData.title);
+        if (!TextUtils.isEmpty(bookData.subtitle)) {
+            stringBuilder.append("(");
+            stringBuilder.append(bookData.subtitle);
+            stringBuilder.append(")");
+        }
+        book_title.setText(stringBuilder.toString());
+
         ratingBar.setVisibility(View.VISIBLE);
         ratingBar.setRating(bookData.rating.average);
+
         if (bookData.authors.size() != 0) {
-            book_author.setText(bookData.authors.get(0));
+            StringBuilder sb = new StringBuilder();
+            sb.append(mActivity.getResources().getString(R.string.authors));
+            sb.append(": ");
+            String suffix = "";
+            for (String author : bookData.authors) {
+                sb.append(suffix);
+                suffix = "、";
+                sb.append(author);
+            }
+            book_author.setText(sb.toString());
+        } else {
+            book_author.setVisibility(View.GONE);
         }
-        book_category.setText(BookCategory.getCategoryName(bookData.category_code));
+
+        if (bookData.translator.size() != 0) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(mActivity.getResources().getString(R.string.translators));
+            sb.append(": ");
+            String suffix = "";
+            for (String translator : bookData.translator) {
+                sb.append(suffix);
+                suffix = "、";
+                sb.append(translator);
+            }
+            book_translator.setText(sb.toString());
+        } else {
+            book_translator.setVisibility(View.GONE);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(mActivity.getResources().getString(R.string.category));
+        sb.append(": ");
+        sb.append(BookCategory.getCategoryName(bookData.category_code));
+        book_category.setText(sb.toString());
+
+        if (bookData.pages != null) {
+            StringBuilder sb1 = new StringBuilder();
+            sb1.append(mActivity.getResources().getString(R.string.pages));
+            sb1.append(": ");
+            sb1.append(bookData.pages);
+            sb1.append(mActivity.getResources().getString(R.string.pages_unit));
+            book_pages.setText(sb1.toString());
+        } else {
+            book_pages.setVisibility(View.GONE);
+        }
+
+        if (bookData.price != null) {
+            StringBuilder sb1 = new StringBuilder();
+            sb1.append(mActivity.getResources().getString(R.string.price));
+            sb1.append(": ");
+            sb1.append(bookData.price);
+            book_price.setText(sb1.toString());
+        } else {
+            book_price.setVisibility(View.GONE);
+        }
     }
 
     public void bindView1(BookData bookData) {

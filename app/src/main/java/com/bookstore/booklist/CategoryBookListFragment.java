@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -128,6 +129,15 @@ public class CategoryBookListFragment extends Fragment {
                     }
                 }
             });
+        }
+        if (mCategoryCode == 0) {
+            TextView textView = new TextView(mActivity);
+            textView.setTextColor(Color.RED);
+            textView.setText(R.string.category_error);
+            FrameLayout frameLayout = (FrameLayout) category_fragment.findViewById(R.id.category_summary);
+            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            frameLayout.addView(textView, lp);
+            frameLayout.setVisibility(View.VISIBLE);
         }
 
         mGridView = (GridView) category_fragment.findViewById(R.id.category_book_gridview);

@@ -12,4 +12,11 @@
     <string name="detail_bookinfo">图书详情</string>
     <string name="repeat_scan">图书已存在</string>
     <string name="load_detail_error">加载失败</string>
+    <string name="category_error">由于网络原因，没有获取到图书的分类，后续改善</string>
+    <string name="authors">作者</string>
+    <string name="translators">译者</string>
+    <string name="category">分类</string>
+    <string name="pages">页数</string>
+    <string name="pages_unit">页</string>
+    <string name="price">价格</string>
 </resources>
