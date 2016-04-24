@@ -11,14 +11,19 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.bookstore.booklist.BookListLoader;
+import com.bookstore.bookparser.BookCategory;
 import com.bookstore.bookparser.BookData;
 import com.bookstore.bookparser.BookInfoJsonParser;
 import com.bookstore.connection.BookInfoRequestBase;
@@ -31,6 +36,11 @@ import com.bookstore.provider.DB_Column;
 import com.bookstore.util.SystemBarTintManager;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import me.gujun.android.taggroup.TagGroup;
 
 /**
  * Created by Administrator on 2016/4/11.
@@ -45,7 +55,24 @@ public class BookDetailFragment extends Fragment {
     private Activity mActivity;
     private BookListLoader mlistLoader = null;
     private BookListLoadListener mLoadListener = null;
-    private BookDetailListViewAdapter detailListViewAdapter = null;
+    private SparseBooleanArray mCollapsedStatus;
+
+    private View item0;
+    private TextView book_title = null;
+    private RatingBar ratingBar = null;
+    private TextView book_author = null;
+    private TextView book_category = null;
+
+    private View item1;
+    private TextView summary_header = null;
+    private ExpandableTextView book_summary = null;
+
+    private View item2;
+    private TextView catalog_header = null;
+    private ExpandableTextView book_catalog = null;
+
+    private View item3;
+    private TagGroup tagGroup = null;
 
     public static BookDetailFragment newInstance(int book_id, int category_code, int paletteColor) {
         BookDetailFragment fragment = new BookDetailFragment();
@@ -65,6 +92,7 @@ public class BookDetailFragment extends Fragment {
         mBook_id = getArguments().getInt(ARGS_BOOK_ID, 0);
         mCategory_code = getArguments().getInt(ARGS_CATEGORY_CODE, 0);
         mPalette_color = getArguments().getInt(ARGS_PALETTE_COLOR, getResources().getColor(android.R.color.darker_gray));
+        mCollapsedStatus = new SparseBooleanArray();
     }
 
     @Nullable
@@ -97,9 +125,22 @@ public class BookDetailFragment extends Fragment {
             }
         }
 
-        BookDetailListView detailListView = (BookDetailListView) detail_fragment.findViewById(R.id.book_detail_list_container);
-        detailListViewAdapter = new BookDetailListViewAdapter(mActivity);
-        detailListView.setAdapter(detailListViewAdapter);
+        item0 = detail_fragment.findViewById(R.id.detail_item0);
+        book_title = (TextView) item0.findViewById(R.id.detail_book_title);
+        ratingBar = (RatingBar) item0.findViewById(R.id.detail_book_rating);
+        book_author = (TextView) item0.findViewById(R.id.detail_book_author);
+        book_category = (TextView) item0.findViewById(R.id.detail_book_category);
+
+        item1 = detail_fragment.findViewById(R.id.detail_item1);
+        summary_header = (TextView) item1.findViewById(R.id.detail_book_summary_header);
+        book_summary = (ExpandableTextView) item1.findViewById(R.id.detail_expanded_book_summary);
+
+        item2 = detail_fragment.findViewById(R.id.detail_item2);
+        catalog_header = (TextView) item2.findViewById(R.id.catalog_header);
+        book_catalog = (ExpandableTextView) item2.findViewById(R.id.detail_expanded_book_catalog);
+
+        item3 = detail_fragment.findViewById(R.id.detail_item3);
+        tagGroup = (TagGroup) item3.findViewById(R.id.tag_group);
 
         return detail_fragment;
     }
@@ -167,16 +208,58 @@ public class BookDetailFragment extends Fragment {
                 try {
                     BookData bookData = BookInfoJsonParser.getInstance().getFullBookDataFromJson(bookInfo);
                     bookData.category_code = mCategory_code;
-                    detailListViewAdapter.registerData(bookData, true);
-                    detailListViewAdapter.notifyDataSetChanged();
+                    bindView0(bookData);
+                    bindView1(bookData);
+                    bindView2(bookData);
+                    bindView3(bookData);
                 } catch (Exception e) {
-                    detailListViewAdapter.registerData(null, true);
-                    detailListViewAdapter.notifyDataSetChanged();
+                    ViewStub stub = (ViewStub) item0.findViewById(R.id.load_bookdetail_fail);
+                    stub.inflate();
                     e.printStackTrace();
                 }
             }
         };
         bookRequest.requestExcute(BookInfoUrlBase.REQ_ISBN);
+    }
+
+    public void bindView0(BookData bookData) {
+        book_title.setText(bookData.title);
+        ratingBar.setVisibility(View.VISIBLE);
+        ratingBar.setRating(bookData.rating.average);
+        if (bookData.authors.size() != 0) {
+            book_author.setText(bookData.authors.get(0));
+        }
+        book_category.setText(BookCategory.getCategoryName(bookData.category_code));
+    }
+
+    public void bindView1(BookData bookData) {
+        if (!TextUtils.isEmpty(bookData.detail.summary)) {
+            summary_header.setText("简介");
+            book_summary.setText(bookData.detail.summary, mCollapsedStatus, 0);
+        } else {
+            item1.setVisibility(View.GONE);
+        }
+    }
+
+    public void bindView2(BookData bookData) {
+        if (!TextUtils.isEmpty(bookData.detail.catalog)) {
+            catalog_header.setText("目录");
+            book_catalog.setText(bookData.detail.catalog, mCollapsedStatus, 1);
+        } else {
+            item2.setVisibility(View.GONE);
+        }
+    }
+
+    public void bindView3(BookData bookData) {
+        List<String> tagList = new ArrayList<>();
+        for (BookData.Tag tag : bookData.tags) {
+            tagList.add(tag.name);
+        }
+        if (tagList.size() > 0) {
+            tagGroup.setTags(tagList);
+        } else {
+            item3.setVisibility(View.GONE);
+        }
     }
 
     private class BookListLoadListener implements Loader.OnLoadCompleteListener<Cursor> {

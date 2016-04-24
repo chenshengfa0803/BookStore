@@ -2,6 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginEnd="@dimen/detail_listview_horizontal_padding"
+    android:layout_marginStart="@dimen/detail_listview_horizontal_padding"
     android:paddingTop="@dimen/detail_listview_vertical_padding">
 
     <ImageView
