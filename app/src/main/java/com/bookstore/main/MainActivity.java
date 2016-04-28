@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
@@ -183,7 +184,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void replaceFragment(Fragment fragment, String tag) {
-        getSupportFragmentManager().beginTransaction()
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentManager.enableDebugLogging(true);
+        manager.beginTransaction()
                 .setCustomAnimations(R.anim.category_fragment_right_in, R.anim.category_fragment_left_out, R.anim.category_fragment_left_in, R.anim.category_fragment_right_out)
                 .hide(getSupportFragmentManager().findFragmentByTag(MainBookListFragment.class.getSimpleName()))
                 .addToBackStack(null)
