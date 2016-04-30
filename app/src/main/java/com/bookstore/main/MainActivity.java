@@ -185,7 +185,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void replaceFragment(Fragment fragment, String tag) {
         FragmentManager manager = getSupportFragmentManager();
-        FragmentManager.enableDebugLogging(true);
         manager.beginTransaction()
                 .setCustomAnimations(R.anim.category_fragment_right_in, R.anim.category_fragment_left_out, R.anim.category_fragment_left_in, R.anim.category_fragment_right_out)
                 .hide(getSupportFragmentManager().findFragmentByTag(MainBookListFragment.class.getSimpleName()))

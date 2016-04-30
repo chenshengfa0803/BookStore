@@ -214,6 +214,7 @@ public class MainBookListFragment extends Fragment {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
+            setExitTransition(null);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 SystemBarTintManager tintManager = new SystemBarTintManager(mActivity);
                 tintManager.setStatusBarTintEnabled(true);
