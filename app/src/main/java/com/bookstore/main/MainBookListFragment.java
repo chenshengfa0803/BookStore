@@ -32,6 +32,7 @@ import com.bookstore.booklist.BookListViewPagerAdapter;
 import com.bookstore.booklist.ListViewListener;
 import com.bookstore.bookparser.BookCategory;
 import com.bookstore.main.animation.BookDetailTransition;
+import com.bookstore.main.residemenu.ResideMenu;
 import com.bookstore.provider.BookProvider;
 import com.bookstore.provider.DB_Column;
 import com.bookstore.util.BitmapUtil;
@@ -141,6 +142,7 @@ public class MainBookListFragment extends Fragment {
         View booklist_listview = inflater.inflate(R.layout.booklist_listview, null);
         viewList.add(booklist_gridview);
         viewList.add(booklist_listview);
+        ((MainActivity) mActivity).getResideMenu().addIgnoredView(booklist_listview);
 
         bookListViewPager = (ViewPager) booklist_fragment.findViewById(R.id.bookListPager);
         pagerAdapter = new BookListViewPagerAdapter(mActivity, viewList);
@@ -177,7 +179,7 @@ public class MainBookListFragment extends Fragment {
         inflater.inflate(R.menu.main_menu, menu);
         MenuItem menuItem = menu.findItem(R.id.menu_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
-        searchView.setQueryHint("书名/作者--未实现");
+        searchView.setQueryHint("书名/作者");
 
         //searchView.setIconifiedByDefault(false);
         //searchView.setSubmitButtonEnabled(true);
@@ -189,8 +191,9 @@ public class MainBookListFragment extends Fragment {
         switch (item.getItemId()) {
             case android.R.id.home:
                 //Toast.makeText(mActivity, "慢工出细活，未实现", Toast.LENGTH_SHORT).show();
-                MyDialogFragment dialog = new MyDialogFragment();
-                dialog.show(mActivity.getFragmentManager(), "myDialogFragment");
+                //MyDialogFragment dialog = new MyDialogFragment();
+                //dialog.show(mActivity.getFragmentManager(), "myDialogFragment");
+                ((MainActivity) mActivity).getResideMenu().openMenu(ResideMenu.DIRECTION_LEFT);
                 break;
         }
         return super.onOptionsItemSelected(item);

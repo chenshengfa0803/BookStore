@@ -10,11 +10,14 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.bookstore.main.animation.ViewBlur;
+import com.bookstore.main.residemenu.ResideMenu;
+import com.bookstore.main.residemenu.ResideMenuItem;
 import com.bookstore.qr_codescan.ScanActivity;
 import com.bookstore.util.SystemBarTintManager;
 
@@ -26,6 +29,12 @@ public class MainActivity extends AppCompatActivity {
 
     View blurFromView = null;
     ImageView blurToView = null;
+
+    private ResideMenu resideMenu;
+    private ResideMenuItem itemHome;
+    private ResideMenuItem itemProfile;
+    private ResideMenuItem itemCalendar;
+    private ResideMenuItem itemSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        setUpResideMenu();
         createFloatButtonMenu();
     }
 
@@ -92,6 +102,11 @@ public class MainActivity extends AppCompatActivity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        return resideMenu.dispatchTouchEvent(ev);
     }
 
     @Override
@@ -191,6 +206,31 @@ public class MainActivity extends AppCompatActivity {
                 .addToBackStack(null)
                 .add(R.id.container_view, fragment, tag)
                 .commit();
+    }
+
+    private void setUpResideMenu() {
+        resideMenu = new ResideMenu(this);
+        resideMenu.setUse3D(true);
+        resideMenu.setBackground(R.drawable.menu_background);
+        resideMenu.attachToActivity(this);
+        resideMenu.setScaleValue(0.8f);
+
+        // create menu items;
+        itemProfile = new ResideMenuItem(this, R.drawable.icon_profile, "账号");
+        itemHome = new ResideMenuItem(this, R.drawable.icon_home, "图书世界");
+        itemCalendar = new ResideMenuItem(this, R.drawable.icon_calendar, "深度好文");
+        itemSettings = new ResideMenuItem(this, R.drawable.icon_settings, "设置");
+
+        resideMenu.addMenuItem(itemProfile, ResideMenu.DIRECTION_LEFT);
+        resideMenu.addMenuItem(itemHome, ResideMenu.DIRECTION_LEFT);
+        resideMenu.addMenuItem(itemCalendar, ResideMenu.DIRECTION_LEFT);
+        resideMenu.addMenuItem(itemSettings, ResideMenu.DIRECTION_LEFT);
+
+        resideMenu.setSwipeDirectionDisable(ResideMenu.DIRECTION_RIGHT);
+    }
+
+    public ResideMenu getResideMenu() {
+        return resideMenu;
     }
 
 
