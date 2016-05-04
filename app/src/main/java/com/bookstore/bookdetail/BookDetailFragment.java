@@ -159,13 +159,15 @@ public class BookDetailFragment extends Fragment {
         item3 = detail_fragment.findViewById(R.id.detail_item3);
         tagGroup = (TagGroup) item3.findViewById(R.id.tag_group);
 
-        ImageView imageView = new ImageView(mActivity);
-        imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_share_black));
-        View add = ((MainActivity) mActivity).mainFloatButton.getContentView();
-        ((MainActivity) mActivity).mainFloatButton.removeView(add);
-        ((MainActivity) mActivity).mainFloatButton.setContentView(imageView, null);
+        initFloatButton();
 
         return detail_fragment;
+    }
+
+    public void initFloatButton() {
+        ImageView imageView = new ImageView(mActivity);
+        imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_share_black));
+        ((MainActivity) mActivity).getFloatButton().setFloatButtonIcon(imageView);
     }
 
     @Override

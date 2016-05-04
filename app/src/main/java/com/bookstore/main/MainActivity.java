@@ -1,7 +1,5 @@
 package com.bookstore.main;
 
-import android.animation.ObjectAnimator;
-import android.animation.PropertyValuesHolder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,7 +16,6 @@ import android.widget.ImageView;
 import com.bookstore.main.animation.ViewBlur;
 import com.bookstore.main.residemenu.ResideMenu;
 import com.bookstore.main.residemenu.ResideMenuItem;
-import com.bookstore.qr_codescan.ScanActivity;
 import com.bookstore.util.SystemBarTintManager;
 
 public class MainActivity extends AppCompatActivity {
@@ -69,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         setUpResideMenu();
-        createFloatButtonMenu();
+        mainFloatButton = (FloatButton) findViewById(R.id.FloatActionButton);
     }
 
     @Override
@@ -140,49 +137,8 @@ public class MainActivity extends AppCompatActivity {
         return isFirstLaunch;
     }
 
-    public void createFloatButtonMenu() {
-        SubFloatButton subFab_camera = new SubFloatButton(this, getResources().getDrawable(R.drawable.sub_floatbutton_camera), null);
-        SubFloatButton subFab_chat = new SubFloatButton(this, getResources().getDrawable(R.drawable.sub_floatbutton_chat), null);
-        SubFloatButton subFab_location = new SubFloatButton(this, getResources().getDrawable(R.drawable.sub_floatbutton_location), null);
-        subFab_camera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setClass(MainActivity.this, ScanActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivityForResult(intent, SCANNING_REQUEST_CODE);
-                mainFloatButton.closeMenu();
-            }
-        });
-        int startAngle = 270;//270 degree
-        int endAngle = 360;//360 degree
-        int menu_radio = getResources().getDimensionPixelSize(R.dimen.action_menu_radius);
-        int menu_duration = 500;//500 ms
-
-        mainFloatButton = (FloatButton) findViewById(R.id.FloatActionButton);
-        mainFloatButton.addSubFloatButton(subFab_camera)
-                .addSubFloatButton(subFab_chat)
-                .addSubFloatButton(subFab_location)
-                .createFloatButtonMenu(startAngle, endAngle, menu_radio, menu_duration);
-        mainFloatButton.addMenuStateListener(new FloatButton.MenuStateListener() {
-            @Override
-            public void onMenuOpened(FloatButton fb) {
-                makeBlurWindow();
-                fb.getContentView().setRotation(0);
-                PropertyValuesHolder rotation = PropertyValuesHolder.ofFloat(View.ROTATION, 45);
-                ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(fb.getContentView(), rotation);
-                animator.start();
-            }
-
-            @Override
-            public void onMenuClosed(FloatButton fb) {
-                fb.getContentView().setRotation(45);
-                PropertyValuesHolder rotation = PropertyValuesHolder.ofFloat(View.ROTATION, 0);
-                ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(fb.getContentView(), rotation);
-                animator.start();
-                disappearBlurWindow();
-            }
-        });
+    public FloatButton getFloatButton() {
+        return mainFloatButton;
     }
 
     public void makeBlurWindow() {

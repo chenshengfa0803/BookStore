@@ -12,9 +12,6 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -23,9 +20,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.bookstore.bookdetail.BookDetailFragment;
 import com.bookstore.main.animation.FloatButtonAnimationHandler;
 
 import java.util.ArrayList;
@@ -46,6 +41,7 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
     private int menu_duration;
     private FloatButtonAnimationHandler animationHandler;
     private MenuStateListener menuStateListener;
+    private FloatButtonClickListener mFloatButtonClickListener;
     private Context mContext;
 
     public FloatButton(Context context) {
@@ -74,12 +70,12 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
         pen.setShadowLayer(radius, dx, dy, shadowColor);
 
         drawable = a.getDrawable(R.styleable.FloatingActionButton_drawable);
-        floatButtonIcon = new ImageView(context);
-        floatButtonIcon.setImageDrawable(drawable);
-        //floatButtonIcon.setImageResource(R.drawable.main_floatbutton_add);
+        ImageView buttonIcon = new ImageView(context);
+        buttonIcon.setImageDrawable(drawable);
         a.recycle();
 
-        addView(floatButtonIcon);
+        setFloatButtonIcon(buttonIcon);
+
         //setClickable(true);
         setOnClickListener(this);
         menuOpened = false;
@@ -117,18 +113,15 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
         canvas.drawCircle(getWidth() / 2, getHeight() / 2, (float) (getWidth() / 2.6), pen);
     }
 
-    public void setContentView(View contentView, LayoutParams contentParams) {
-        LayoutParams params;
-        if (contentParams == null) {
-            int size = getContext().getResources().getDimensionPixelSize(R.dimen.main_float_button_icon_size);
-            params = new LayoutParams(size, size);
-        } else {
-            params = contentParams;
+    public void setFloatButtonIcon(ImageView buttonIcon) {
+        int size = getContext().getResources().getDimensionPixelSize(R.dimen.main_float_button_icon_size);
+        LayoutParams params = new LayoutParams(size, size);
+
+        if (floatButtonIcon != null) {
+            this.removeView(floatButtonIcon);
         }
-        this.addView(contentView, params);
-        int width = contentView.getWidth();
-        int height = contentView.getHeight();
-        floatButtonIcon = (ImageView) contentView;
+        this.addView(buttonIcon, params);
+        floatButtonIcon = buttonIcon;
     }
 
     public View getContentView() {
@@ -198,7 +191,7 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        FragmentManager fragmentManager = ((AppCompatActivity) mContext).getSupportFragmentManager();
+        /*FragmentManager fragmentManager = ((AppCompatActivity) mContext).getSupportFragmentManager();
         Fragment detail_fragment = fragmentManager.findFragmentByTag(BookDetailFragment.class.getSimpleName());
         if (detail_fragment != null) {
             if (detail_fragment.isAdded()) {
@@ -210,7 +203,14 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
             closeMenu();
         } else {
             openMenu();
+        }*/
+        if (mFloatButtonClickListener != null) {
+            mFloatButtonClickListener.onFloatButtonClick(v);
         }
+    }
+
+    public void registerClickListener(FloatButtonClickListener listener) {
+        mFloatButtonClickListener = listener;
     }
 
     public boolean isMenuOpened() {
@@ -303,6 +303,10 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
         void onMenuOpened(FloatButton fb);
 
         void onMenuClosed(FloatButton fb);
+    }
+
+    public interface FloatButtonClickListener {
+        void onFloatButtonClick(View floatButton);
     }
 
     public static class subItem {

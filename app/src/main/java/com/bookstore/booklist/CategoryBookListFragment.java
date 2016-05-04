@@ -185,9 +185,7 @@ public class CategoryBookListFragment extends Fragment {
             }
             ImageView imageView = new ImageView(mActivity);
             imageView.setImageDrawable(getResources().getDrawable(R.drawable.main_floatbutton_add));
-            View current = ((MainActivity) mActivity).mainFloatButton.getContentView();
-            ((MainActivity) mActivity).mainFloatButton.removeView(current);
-            ((MainActivity) mActivity).mainFloatButton.setContentView(imageView, null);
+            ((MainActivity) mActivity).getFloatButton().setFloatButtonIcon(imageView);
         }
     }
 
