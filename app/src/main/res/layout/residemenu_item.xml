@@ -19,7 +19,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-        android:textColor="@android:color/white"
-        android:textSize="18sp" />
+        android:textColor="@android:color/holo_blue_light"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
 </LinearLayout>

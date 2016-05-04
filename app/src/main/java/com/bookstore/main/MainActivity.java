@@ -97,6 +97,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        if (resideMenu.isOpened()) {
+            resideMenu.closeMenu();
+            return;
+        }
         if (mainFloatButton.isMenuOpened()) {
             mainFloatButton.closeMenu();
         } else {
