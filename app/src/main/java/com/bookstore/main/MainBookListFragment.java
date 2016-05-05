@@ -173,7 +173,7 @@ public class MainBookListFragment extends Fragment {
         dbHandler = new DBHandler(mGridListViewAdapter);
 
 
-        updateFloatButtonMenu(((MainActivity) mActivity).getFloatButton());
+        updateFloatButton();
 
         return booklist_fragment;
     }
@@ -232,9 +232,7 @@ public class MainBookListFragment extends Fragment {
                 tintManager.setStatusBarTintEnabled(true);
                 tintManager.setTintColor(getResources().getColor(android.R.color.darker_gray));
             }
-            ImageView imageView = new ImageView(mActivity);
-            imageView.setImageDrawable(getResources().getDrawable(R.drawable.main_floatbutton_add));
-            ((MainActivity) mActivity).getFloatButton().setFloatButtonIcon(imageView);
+            updateFloatButton();
         }
     }
 
@@ -292,10 +290,20 @@ public class MainBookListFragment extends Fragment {
         gridListView.setVerticalScrollBarEnabled(enable);
     }
 
-    public void updateFloatButtonMenu(final FloatButton mainFloatButton) {
-        SubFloatButton subFab_camera = new SubFloatButton(mActivity, getResources().getDrawable(R.drawable.sub_floatbutton_camera), null);
-        SubFloatButton subFab_chat = new SubFloatButton(mActivity, getResources().getDrawable(R.drawable.sub_floatbutton_chat), null);
-        SubFloatButton subFab_location = new SubFloatButton(mActivity, getResources().getDrawable(R.drawable.sub_floatbutton_location), null);
+    public void updateFloatButton() {
+        final FloatButton mainFloatButton = ((MainActivity) mActivity).getFloatButton();
+
+        ImageView imageView = new ImageView(mActivity);
+        imageView.setImageDrawable(getResources().getDrawable(R.drawable.main_floatbutton_add));
+        mainFloatButton.setFloatButtonIcon(imageView);
+
+        int size = getResources().getDimensionPixelSize(R.dimen.sub_float_button_icon_size);
+        ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(size, size);
+        params.leftMargin = getResources().getDimensionPixelSize(R.dimen.sub_float_button_margin_left);
+        params.topMargin = getResources().getDimensionPixelSize(R.dimen.sub_float_button_margin_top);
+        SubFloatButton subFab_camera = new SubFloatButton(mActivity, getResources().getDrawable(R.drawable.sub_floatbutton_camera), params);
+        SubFloatButton subFab_chat = new SubFloatButton(mActivity, getResources().getDrawable(R.drawable.sub_floatbutton_chat), params);
+        SubFloatButton subFab_location = new SubFloatButton(mActivity, getResources().getDrawable(R.drawable.sub_floatbutton_location), params);
         subFab_camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -311,10 +319,11 @@ public class MainBookListFragment extends Fragment {
         int menu_radio = getResources().getDimensionPixelSize(R.dimen.action_menu_radius);
         int menu_duration = 500;//500 ms
 
-        mainFloatButton.addSubFloatButton(subFab_camera)
+        mainFloatButton.createFloatButtonMenu(startAngle, endAngle, menu_radio, menu_duration)
+                .addSubFloatButton(subFab_camera)
                 .addSubFloatButton(subFab_chat)
-                .addSubFloatButton(subFab_location)
-                .createFloatButtonMenu(startAngle, endAngle, menu_radio, menu_duration);
+                .addSubFloatButton(subFab_location);
+
         mainFloatButton.addMenuStateListener(new FloatButton.MenuStateListener() {
             @Override
             public void onMenuOpened(FloatButton fb) {

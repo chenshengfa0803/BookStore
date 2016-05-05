@@ -1,5 +1,7 @@
 package com.bookstore.bookdetail;
 
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.app.Activity;
 import android.content.Loader;
 import android.database.Cursor;
@@ -30,8 +32,10 @@ import com.bookstore.bookparser.BookInfoJsonParser;
 import com.bookstore.connection.BookInfoRequestBase;
 import com.bookstore.connection.BookInfoUrlBase;
 import com.bookstore.connection.douban.DoubanBookInfoUrl;
+import com.bookstore.main.FloatButton;
 import com.bookstore.main.MainActivity;
 import com.bookstore.main.R;
+import com.bookstore.main.SubFloatButton;
 import com.bookstore.provider.BookProvider;
 import com.bookstore.provider.BookSQLiteOpenHelper;
 import com.bookstore.provider.DB_Column;
@@ -159,15 +163,76 @@ public class BookDetailFragment extends Fragment {
         item3 = detail_fragment.findViewById(R.id.detail_item3);
         tagGroup = (TagGroup) item3.findViewById(R.id.tag_group);
 
-        initFloatButton();
+        updateFloatButton();
 
         return detail_fragment;
     }
 
-    public void initFloatButton() {
+    public void updateFloatButton() {
+        final FloatButton mainFloatButton = ((MainActivity) mActivity).getFloatButton();
+
         ImageView imageView = new ImageView(mActivity);
         imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_share_black));
-        ((MainActivity) mActivity).getFloatButton().setFloatButtonIcon(imageView);
+        mainFloatButton.setFloatButtonIcon(imageView);
+
+        int size = getResources().getDimensionPixelSize(R.dimen.sub_float_button_size);
+        ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(size, size);
+        params.leftMargin = 0;
+        params.topMargin = 0;
+        params.rightMargin = 0;
+        params.bottomMargin = 0;
+        SubFloatButton subFab_wechat = new SubFloatButton(mActivity, getResources().getDrawable(R.drawable.share_wechat_selector), params);
+        SubFloatButton subFab_friend = new SubFloatButton(mActivity, getResources().getDrawable(R.drawable.share_friend_selector), params);
+        SubFloatButton subFab_sina = new SubFloatButton(mActivity, getResources().getDrawable(R.drawable.share_sina_selector), params);
+        SubFloatButton subFab_qzone = new SubFloatButton(mActivity, getResources().getDrawable(R.drawable.share_qzone_selector), params);
+        SubFloatButton subFab_qq = new SubFloatButton(mActivity, getResources().getDrawable(R.drawable.share_qq_selector), params);
+
+        int startAngle = 270;//270 degree
+        int endAngle = 360;//360 degree
+        int menu_radio = getResources().getDimensionPixelSize(R.dimen.action_menu_radius);
+        int menu_duration = 500;//500 ms
+
+        mainFloatButton.createFloatButtonMenu(startAngle, endAngle, menu_radio, menu_duration)
+                .addSubFloatButton(subFab_wechat)
+                .addSubFloatButton(subFab_friend)
+                .addSubFloatButton(subFab_sina)
+                .addSubFloatButton(subFab_qzone)
+                .addSubFloatButton(subFab_qq);
+
+        mainFloatButton.addMenuStateListener(new FloatButton.MenuStateListener() {
+            @Override
+            public void onMenuOpened(FloatButton fb) {
+                ((MainActivity) mActivity).makeBlurWindow();
+                fb.getContentView().setScaleX(0.8f);
+                fb.getContentView().setScaleY(0.8f);
+                PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1);
+                PropertyValuesHolder scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1);
+                ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(fb.getContentView(), scaleX, scaleY);
+                animator.start();
+            }
+
+            @Override
+            public void onMenuClosed(FloatButton fb) {
+                fb.getContentView().setScaleX(0.8f);
+                fb.getContentView().setScaleY(0.8f);
+                PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1);
+                PropertyValuesHolder scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1);
+                ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(fb.getContentView(), scaleX, scaleY);
+                animator.start();
+                ((MainActivity) mActivity).disappearBlurWindow();
+            }
+        });
+
+        mainFloatButton.registerClickListener(new FloatButton.FloatButtonClickListener() {
+            @Override
+            public void onFloatButtonClick(View floatButton) {
+                if (mainFloatButton.isMenuOpened()) {
+                    mainFloatButton.closeMenu();
+                } else {
+                    mainFloatButton.openMenu();
+                }
+            }
+        });
     }
 
     @Override

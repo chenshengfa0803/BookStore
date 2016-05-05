@@ -86,7 +86,6 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int width = MeasureSpec.getSize(widthMeasureSpec);
         int size = getContext().getResources().getDimensionPixelSize(R.dimen.main_float_button_icon_size);
         for (int index = 0; index < getChildCount(); index++) {
             getChildAt(index).measure(MeasureSpec.makeMeasureSpec(size, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(size, MeasureSpec.AT_MOST));
@@ -158,12 +157,14 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
         return this;
     }
 
-    public void createFloatButtonMenu(int startAngle, int endAngle, int radio, int duration) {
+    public FloatButton createFloatButtonMenu(int startAngle, int endAngle, int radio, int duration) {
+        subFloatButtonItems.clear();
         this.subItemStartAngle = startAngle;
         this.subItemEndAngle = endAngle;
         this.menu_radio = radio;
         this.animationHandler = new FloatButtonAnimationHandler(this);
         this.menu_duration = duration;
+        return this;
     }
 
     public int makePressColor(int color) {
@@ -191,19 +192,6 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        /*FragmentManager fragmentManager = ((AppCompatActivity) mContext).getSupportFragmentManager();
-        Fragment detail_fragment = fragmentManager.findFragmentByTag(BookDetailFragment.class.getSimpleName());
-        if (detail_fragment != null) {
-            if (detail_fragment.isAdded()) {
-                Toast.makeText(mContext, "客官，再给我一点时间来实现分享功能", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }
-        if (menuOpened) {
-            closeMenu();
-        } else {
-            openMenu();
-        }*/
         if (mFloatButtonClickListener != null) {
             mFloatButtonClickListener.onFloatButtonClick(v);
         }

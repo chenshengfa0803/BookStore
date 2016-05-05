@@ -19,6 +19,11 @@ public class SubFloatButton extends ViewGroup {
     ImageView subfloatButtonIcon = null;
     private int mColor = -1;
 
+    private int left = 0;
+    private int right = 0;
+    private int top = 0;
+    private int bottom = 0;
+
     public SubFloatButton(Context context) {
         this(context,null);
     }
@@ -47,13 +52,17 @@ public class SubFloatButton extends ViewGroup {
 
     }
 
-    public SubFloatButton(Context context, Drawable drawable, ViewGroup.LayoutParams params)
+    public SubFloatButton(Context context, Drawable drawable, ViewGroup.MarginLayoutParams params)
     {
         this(context);
         if(drawable != null) {
             subfloatButtonIcon = new ImageView(context);
             subfloatButtonIcon.setImageDrawable(drawable);
             addView(subfloatButtonIcon);
+            left = params.leftMargin;
+            top = params.topMargin;
+            right = left + params.width;
+            bottom = top + params.height;
         }
     }
 
@@ -62,16 +71,20 @@ public class SubFloatButton extends ViewGroup {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int size = getContext().getResources().getDimensionPixelSize(R.dimen.sub_float_button_size);
         setMeasuredDimension(size, size);
+        for (int index = 0; index < getChildCount(); index++) {
+            View v = getChildAt(index);
+            v.setLeft(left);
+            v.setRight(right);
+            v.setTop(top);
+            v.setBottom(bottom);
+        }
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         for (int i = 0; i < getChildCount(); i++) {
             View v = getChildAt(i);
-            int margin_left = getResources().getDimensionPixelSize(R.dimen.sub_float_button_margin_left);
-            int margin_top = getResources().getDimensionPixelSize(R.dimen.sub_float_button_margin_top);
-            int size = getResources().getDimensionPixelSize(R.dimen.sub_float_button_icon_size);
-            v.layout(margin_left, margin_top, margin_left + size, margin_top + size);
+            v.layout(v.getLeft(), v.getTop(), v.getLeft() + v.getWidth(), v.getTop() + v.getHeight());
         }
     }
 
@@ -81,9 +94,6 @@ public class SubFloatButton extends ViewGroup {
         setLayerType(LAYER_TYPE_SOFTWARE, null);
         canvas.drawCircle(getWidth()/2, getHeight()/2, (float)(getWidth()/2.6), pen);
 
-        //if(mBitmap != null) {
-        //    canvas.drawBitmap(mBitmap,(getWidth() - mBitmap.getWidth())/2, (getHeight() - mBitmap.getHeight())/2, pen);
-        //}
     }
 
     public void setContentView(final Drawable contentView) {
