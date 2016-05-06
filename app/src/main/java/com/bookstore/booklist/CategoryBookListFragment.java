@@ -2,6 +2,7 @@ package com.bookstore.booklist;
 
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.Loader;
@@ -9,6 +10,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -41,6 +43,8 @@ import com.bookstore.qr_codescan.ScanActivity;
 import com.bookstore.util.BitmapUtil;
 import com.bookstore.util.SystemBarTintManager;
 
+import java.util.ArrayList;
+
 /**
  * Created by Administrator on 2016/4/6.
  */
@@ -53,6 +57,8 @@ public class CategoryBookListFragment extends Fragment {
     private CategoryBookGridViewAdapter gridViewAdapter = null;
     private BookListLoader mlistLoader = null;
     private BookListLoadListener mLoadListener = null;
+    private UpdateBookCategoryTask updateTask = null;
+
     private BookOnClickListener mListener = new BookOnClickListener() {
         @Override
         public void onBookClick(View clickedImageView, int book_id, int category_code) {
@@ -280,7 +286,7 @@ public class CategoryBookListFragment extends Fragment {
             @Override
             public void onFloatButtonClick(View floatButton) {
                 if (mCategoryCode == 0) {
-
+                    updateBookCategory();
                 } else {
                     if (mainFloatButton.isMenuOpened()) {
                         mainFloatButton.closeMenu();
@@ -294,6 +300,11 @@ public class CategoryBookListFragment extends Fragment {
 
     }
 
+    public void updateBookCategory() {
+        updateTask = new UpdateBookCategoryTask();
+        updateTask.execute(gridViewAdapter.getDataList());
+    }
+
     private class BookListLoadListener implements Loader.OnLoadCompleteListener<Cursor> {
         public BookListLoadListener() {
         }
@@ -302,6 +313,32 @@ public class CategoryBookListFragment extends Fragment {
         public void onLoadComplete(Loader<Cursor> loader, Cursor data) {
             gridViewAdapter.registerDataCursor(data);
             gridViewAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private class UpdateBookCategoryTask extends AsyncTask<ArrayList<CategoryBookGridViewAdapter.Item>, Void, Boolean> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            FloatButton mainFloatButton = ((MainActivity) mActivity).getFloatButton();
+            mainFloatButton.getContentView().setRotation(0);
+            PropertyValuesHolder rotation = PropertyValuesHolder.ofFloat(View.ROTATION, 360);
+            ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(mainFloatButton.getContentView(), rotation);
+            animator.setRepeatMode(ValueAnimator.RESTART);
+            animator.setRepeatCount(ValueAnimator.INFINITE);
+            animator.setDuration(1000);
+            animator.start();
+        }
+
+        @Override
+        protected Boolean doInBackground(ArrayList<CategoryBookGridViewAdapter.Item>... params) {
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
         }
     }
 }
