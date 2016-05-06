@@ -186,9 +186,14 @@ public class BookDetailFragment extends Fragment {
         SubFloatButton subFab_sina = new SubFloatButton(mActivity, getResources().getDrawable(R.drawable.share_sina_selector), params);
         SubFloatButton subFab_qzone = new SubFloatButton(mActivity, getResources().getDrawable(R.drawable.share_qzone_selector), params);
         SubFloatButton subFab_qq = new SubFloatButton(mActivity, getResources().getDrawable(R.drawable.share_qq_selector), params);
+        subFab_wechat.setClickable(true);
+        subFab_friend.setClickable(true);
+        subFab_sina.setClickable(true);
+        subFab_qzone.setClickable(true);
+        subFab_qq.setClickable(true);
 
-        int startAngle = 270;//270 degree
-        int endAngle = 360;//360 degree
+        int startAngle = 260;//270 degree
+        int endAngle = 370;//360 degree
         int menu_radio = getResources().getDimensionPixelSize(R.dimen.action_menu_radius);
         int menu_duration = 500;//500 ms
 

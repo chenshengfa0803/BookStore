@@ -1,6 +1,9 @@
 package com.bookstore.booklist;
 
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -27,11 +30,14 @@ import android.widget.TextView;
 import com.bookstore.bookdetail.BookDetailFragment;
 import com.bookstore.bookparser.BookCategory;
 import com.bookstore.main.BookOnClickListener;
+import com.bookstore.main.FloatButton;
 import com.bookstore.main.MainActivity;
 import com.bookstore.main.R;
+import com.bookstore.main.SubFloatButton;
 import com.bookstore.main.animation.BookDetailTransition;
 import com.bookstore.provider.BookProvider;
 import com.bookstore.provider.DB_Column;
+import com.bookstore.qr_codescan.ScanActivity;
 import com.bookstore.util.BitmapUtil;
 import com.bookstore.util.SystemBarTintManager;
 
@@ -40,6 +46,7 @@ import com.bookstore.util.SystemBarTintManager;
  */
 public class CategoryBookListFragment extends Fragment {
     public static final String ARGS_CATEGORY_CODE = "category_code";
+    private final static int SCANNING_REQUEST_CODE = 1;
     GridView mGridView;
     private Activity mActivity;
     private int mCategoryCode = 0;
@@ -144,6 +151,8 @@ public class CategoryBookListFragment extends Fragment {
         mGridView = (GridView) category_fragment.findViewById(R.id.category_book_gridview);
         gridViewAdapter = new CategoryBookGridViewAdapter(mActivity, mListener);
         mGridView.setAdapter(gridViewAdapter);
+
+        updateFloatButton();
         return category_fragment;
     }
 
@@ -183,9 +192,7 @@ public class CategoryBookListFragment extends Fragment {
                 tintManager.setStatusBarTintEnabled(true);
                 tintManager.setTintColor(getResources().getColor(android.R.color.darker_gray));
             }
-            ImageView imageView = new ImageView(mActivity);
-            imageView.setImageDrawable(getResources().getDrawable(R.drawable.main_floatbutton_add));
-            ((MainActivity) mActivity).getFloatButton().setFloatButtonIcon(imageView);
+            updateFloatButton();
         }
     }
 
@@ -207,6 +214,84 @@ public class CategoryBookListFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    public void updateFloatButton() {
+        final FloatButton mainFloatButton = ((MainActivity) mActivity).getFloatButton();
+
+        ImageView imageView = new ImageView(mActivity);
+        if (mCategoryCode == 0) {
+            imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_autorenew_black));
+        } else {
+            imageView.setImageDrawable(getResources().getDrawable(R.drawable.main_floatbutton_add));
+        }
+        mainFloatButton.setFloatButtonIcon(imageView);
+
+        if (mCategoryCode != 0) {
+            int size = getResources().getDimensionPixelSize(R.dimen.sub_float_button_icon_size);
+            ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(size, size);
+            params.leftMargin = getResources().getDimensionPixelSize(R.dimen.sub_float_button_margin_left);
+            params.topMargin = getResources().getDimensionPixelSize(R.dimen.sub_float_button_margin_top);
+            SubFloatButton subFab_camera = new SubFloatButton(mActivity, getResources().getDrawable(R.drawable.sub_floatbutton_camera), params);
+            SubFloatButton subFab_chat = new SubFloatButton(mActivity, getResources().getDrawable(R.drawable.sub_floatbutton_chat), params);
+            SubFloatButton subFab_location = new SubFloatButton(mActivity, getResources().getDrawable(R.drawable.sub_floatbutton_location), params);
+            subFab_camera.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent();
+                    intent.setClass(mActivity, ScanActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivityForResult(intent, SCANNING_REQUEST_CODE);
+                    mainFloatButton.closeMenu();
+                }
+            });
+            int startAngle = 270;//270 degree
+            int endAngle = 360;//360 degree
+            int menu_radio = getResources().getDimensionPixelSize(R.dimen.action_menu_radius);
+            int menu_duration = 500;//500 ms
+
+            mainFloatButton.createFloatButtonMenu(startAngle, endAngle, menu_radio, menu_duration)
+                    .addSubFloatButton(subFab_camera)
+                    .addSubFloatButton(subFab_chat)
+                    .addSubFloatButton(subFab_location);
+
+            mainFloatButton.addMenuStateListener(new FloatButton.MenuStateListener() {
+                @Override
+                public void onMenuOpened(FloatButton fb) {
+                    ((MainActivity) mActivity).makeBlurWindow();
+                    fb.getContentView().setRotation(0);
+                    PropertyValuesHolder rotation = PropertyValuesHolder.ofFloat(View.ROTATION, 45);
+                    ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(fb.getContentView(), rotation);
+                    animator.start();
+                }
+
+                @Override
+                public void onMenuClosed(FloatButton fb) {
+                    fb.getContentView().setRotation(45);
+                    PropertyValuesHolder rotation = PropertyValuesHolder.ofFloat(View.ROTATION, 0);
+                    ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(fb.getContentView(), rotation);
+                    animator.start();
+                    ((MainActivity) mActivity).disappearBlurWindow();
+                }
+            });
+        }
+
+        mainFloatButton.registerClickListener(new FloatButton.FloatButtonClickListener() {
+            @Override
+            public void onFloatButtonClick(View floatButton) {
+                if (mCategoryCode == 0) {
+
+                } else {
+                    if (mainFloatButton.isMenuOpened()) {
+                        mainFloatButton.closeMenu();
+                    } else {
+                        mainFloatButton.openMenu();
+                    }
+                }
+            }
+        });
+
+
     }
 
     private class BookListLoadListener implements Loader.OnLoadCompleteListener<Cursor> {

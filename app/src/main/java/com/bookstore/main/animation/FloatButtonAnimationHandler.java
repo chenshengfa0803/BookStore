@@ -52,6 +52,7 @@ public class FloatButtonAnimationHandler {
             animator.setDuration(mainFloatButton.getDuration());
             animator.setInterpolator(new AnticipateOvershootInterpolator());
             animator.addListener(new SubFloatButtonAnimationListener(subFloatButtonItems.get(i), ActionType.OPENING));
+            animator.setStartDelay(50 * i);
             animator.start();
         }
     }
