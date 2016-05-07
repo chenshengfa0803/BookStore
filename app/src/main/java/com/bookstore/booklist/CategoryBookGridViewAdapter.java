@@ -44,6 +44,10 @@ public class CategoryBookGridViewAdapter extends BaseAdapter {
         return mDataList;
     }
 
+    public void removeData(int pos) {
+        mDataList.remove(pos);
+    }
+
     @Override
     public Object getItem(int position) {
         return null;

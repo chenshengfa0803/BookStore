@@ -4,12 +4,14 @@ import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,6 +33,9 @@ import android.widget.TextView;
 
 import com.bookstore.bookdetail.BookDetailFragment;
 import com.bookstore.bookparser.BookCategory;
+import com.bookstore.connection.BookInfoConnection;
+import com.bookstore.connection.BookInfoUrlBase;
+import com.bookstore.connection.ChineseLibraryURL;
 import com.bookstore.main.BookOnClickListener;
 import com.bookstore.main.FloatButton;
 import com.bookstore.main.MainActivity;
@@ -38,6 +43,7 @@ import com.bookstore.main.R;
 import com.bookstore.main.SubFloatButton;
 import com.bookstore.main.animation.BookDetailTransition;
 import com.bookstore.provider.BookProvider;
+import com.bookstore.provider.BookSQLiteOpenHelper;
 import com.bookstore.provider.DB_Column;
 import com.bookstore.qr_codescan.ScanActivity;
 import com.bookstore.util.BitmapUtil;
@@ -58,6 +64,7 @@ public class CategoryBookListFragment extends Fragment {
     private BookListLoader mlistLoader = null;
     private BookListLoadListener mLoadListener = null;
     private UpdateBookCategoryTask updateTask = null;
+    private ObjectAnimator refreshAnimator;
 
     private BookOnClickListener mListener = new BookOnClickListener() {
         @Override
@@ -220,6 +227,9 @@ public class CategoryBookListFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (updateTask != null && updateTask.getStatus() == AsyncTask.Status.RUNNING) {
+            updateTask.cancel(true);
+        }
     }
 
     public void updateFloatButton() {
@@ -301,6 +311,11 @@ public class CategoryBookListFragment extends Fragment {
     }
 
     public void updateBookCategory() {
+        if (updateTask != null) {
+            if (updateTask.getStatus() == AsyncTask.Status.RUNNING) {
+                return;
+            }
+        }
         updateTask = new UpdateBookCategoryTask();
         updateTask.execute(gridViewAdapter.getDataList());
     }
@@ -316,29 +331,68 @@ public class CategoryBookListFragment extends Fragment {
         }
     }
 
-    private class UpdateBookCategoryTask extends AsyncTask<ArrayList<CategoryBookGridViewAdapter.Item>, Void, Boolean> {
-
+    private class UpdateBookCategoryTask extends AsyncTask<ArrayList<CategoryBookGridViewAdapter.Item>, Integer, Void> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             FloatButton mainFloatButton = ((MainActivity) mActivity).getFloatButton();
             mainFloatButton.getContentView().setRotation(0);
             PropertyValuesHolder rotation = PropertyValuesHolder.ofFloat(View.ROTATION, 360);
-            ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(mainFloatButton.getContentView(), rotation);
-            animator.setRepeatMode(ValueAnimator.RESTART);
-            animator.setRepeatCount(ValueAnimator.INFINITE);
-            animator.setDuration(1000);
-            animator.start();
+            refreshAnimator = ObjectAnimator.ofPropertyValuesHolder(mainFloatButton.getContentView(), rotation);
+            refreshAnimator.setRepeatMode(ValueAnimator.RESTART);
+            refreshAnimator.setRepeatCount(ValueAnimator.INFINITE);
+            refreshAnimator.setDuration(1000);
+            refreshAnimator.start();
         }
 
         @Override
-        protected Boolean doInBackground(ArrayList<CategoryBookGridViewAdapter.Item>... params) {
+        protected Void doInBackground(ArrayList<CategoryBookGridViewAdapter.Item>... params) {
+            ArrayList<CategoryBookGridViewAdapter.Item> dataList = params[0];
+            for (int pos = 0; pos < dataList.size(); pos++) {
+                CategoryBookGridViewAdapter.Item item = dataList.get(pos);
+                Uri uri = Uri.parse("content://" + BookProvider.AUTHORITY + "/" + BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME + "/" + item.book_id);
+                String[] projection = {DB_Column.BookInfo.ISBN13};
+                Cursor cursor = mActivity.getContentResolver().query(uri, projection, null, null, null);
+                cursor.moveToFirst();
+                String isbn13 = cursor.getString(0);
+                cursor.close();
+
+                ChineseLibraryURL clc_url = new ChineseLibraryURL(isbn13);
+                String url = clc_url.getRequestUrl(BookInfoUrlBase.REQ_CATEGORY);
+                BookInfoConnection connection = new BookInfoConnection();
+                try {
+                    String clcStr = connection.doRequestFromUrl(url);
+
+                    String clcNum = BookCategory.getClcNumber(clcStr);
+                    int category_code = BookCategory.getCategoryByClcNum(clcNum);
+
+                    if (category_code != mCategoryCode) {
+                        ContentValues contentValues = new ContentValues();
+                        contentValues.put(DB_Column.BookInfo.CATEGORY_CODE, category_code);
+                        contentValues.put(DB_Column.BookInfo.CLC_NUMBER, clcNum);
+                        mActivity.getContentResolver().update(uri, contentValues, null, null);
+                        publishProgress(pos);
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
             return null;
         }
 
         @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            super.onPostExecute(aBoolean);
+        protected void onProgressUpdate(Integer... values) {
+            gridViewAdapter.removeData(values[0]);
+            gridViewAdapter.notifyDataSetChanged();
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            if (refreshAnimator != null) {
+                refreshAnimator.cancel();
+            }
         }
     }
 }
