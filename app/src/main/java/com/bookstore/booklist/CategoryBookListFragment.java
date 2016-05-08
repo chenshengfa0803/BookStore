@@ -26,6 +26,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -163,8 +164,22 @@ public class CategoryBookListFragment extends Fragment {
         }
 
         mGridView = (GridView) category_fragment.findViewById(R.id.category_book_gridview);
-        gridViewAdapter = new CategoryBookGridViewAdapter(mActivity, mListener);
+        gridViewAdapter = new CategoryBookGridViewAdapter(mActivity);
         mGridView.setAdapter(gridViewAdapter);
+        mGridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                return true;
+            }
+        });
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final ImageView book_cover = (ImageView) view.findViewById(R.id.book_cover);
+                ArrayList<CategoryBookGridViewAdapter.Item> list = gridViewAdapter.getDataList();
+                mListener.onBookClick(book_cover, list.get(position).book_id, list.get(position).category_code);
+            }
+        });
 
         updateFloatButton();
         return category_fragment;

@@ -10,7 +10,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bookstore.main.BookOnClickListener;
 import com.bookstore.main.R;
 import com.bookstore.provider.DB_Column;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -23,12 +22,10 @@ import java.util.ArrayList;
  */
 public class CategoryBookGridViewAdapter extends BaseAdapter {
     private Context mContext;
-    private BookOnClickListener mListener = null;
     private ArrayList<Item> mDataList = null;
 
-    public CategoryBookGridViewAdapter(Context context, BookOnClickListener listener) {
+    public CategoryBookGridViewAdapter(Context context) {
         mContext = context;
-        mListener = listener;
     }
 
     @Override
@@ -87,14 +84,6 @@ public class CategoryBookGridViewAdapter extends BaseAdapter {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             book_cover.setTransitionName("image" + position);
         }
-        gridItemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.onBookClick(book_cover,
-                        mDataList.get(position).book_id, mDataList.get(position).category_code);
-            }
-        });
-
     }
 
     public void registerDataCursor(Cursor dataCursor) {
