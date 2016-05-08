@@ -3,6 +3,8 @@ package com.bookstore.bookdetail;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -432,9 +434,25 @@ public class BookDetailFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.item_delete:
-                Uri uri = Uri.parse("content://" + BookProvider.AUTHORITY + "/" + BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME + "/" + mBook_id);
-                mActivity.getContentResolver().delete(uri, null, null);
-                getActivity().getSupportFragmentManager().popBackStack();
+                AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+                String alertTitle = getResources().getString(R.string.delete_alert_title);
+                builder.setTitle(alertTitle);
+                builder.setPositiveButton(R.string.positive_OK, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        Uri uri = Uri.parse("content://" + BookProvider.AUTHORITY + "/" + BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME + "/" + mBook_id);
+                        mActivity.getContentResolver().delete(uri, null, null);
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    }
+                });
+                builder.setNegativeButton(R.string.negative_cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.show();
         }
         return super.onOptionsItemSelected(item);
     }

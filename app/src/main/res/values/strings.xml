@@ -20,4 +20,5 @@
     <string name="pages_unit">页</string>
     <string name="price">价格</string>
     <string name="dialog_text">客官打赏一个，让哥哥有动力继续开发，哈哈哈哈</string>
+    <string name="delete_alert_title">删除图书？</string>
 </resources>
