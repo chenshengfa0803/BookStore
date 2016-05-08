@@ -2,6 +2,7 @@ package com.bookstore.bookdetail;
 
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -61,6 +62,7 @@ public class BookDetailFragment extends Fragment {
     public static final String ARGS_CATEGORY_CODE = "category_code";
     public static final String ARGS_PALETTE_COLOR = "palette_color";
     ScrollView detail_scroll = null;
+    ObjectAnimator loadAnimator = null;
     private int mBook_id;
     private int mCategory_code;
     private int mPalette_color;
@@ -76,15 +78,12 @@ public class BookDetailFragment extends Fragment {
     private TextView book_category = null;
     private TextView book_pages = null;
     private TextView book_price = null;
-
     private View item1;
     private TextView summary_header = null;
     private ExpandableTextView book_summary = null;
-
     private View item2;
     private TextView catalog_header = null;
     private ExpandableTextView book_catalog = null;
-
     private View item3;
     private TagGroup tagGroup = null;
 
@@ -169,9 +168,32 @@ public class BookDetailFragment extends Fragment {
         item3 = detail_fragment.findViewById(R.id.detail_item3);
         tagGroup = (TagGroup) item3.findViewById(R.id.tag_group);
 
-        updateFloatButton();
+        floatButtonLoadAnimation();
 
         return detail_fragment;
+    }
+
+    private void floatButtonLoadAnimation() {
+        final FloatButton mainFloatButton = ((MainActivity) mActivity).getFloatButton();
+        ImageView imageView = new ImageView(mActivity);
+        imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_autorenew_black));
+        mainFloatButton.setFloatButtonIcon(imageView);
+        mainFloatButton.registerClickListener(new FloatButton.FloatButtonClickListener() {
+            @Override
+            public void onFloatButtonClick(View floatButton) {
+                floatButtonLoadAnimation();
+                loadBookDetail();
+            }
+        });
+        mainFloatButton.setEnabled(false);
+
+        mainFloatButton.getContentView().setRotation(0);
+        PropertyValuesHolder rotation = PropertyValuesHolder.ofFloat(View.ROTATION, 360);
+        loadAnimator = ObjectAnimator.ofPropertyValuesHolder(mainFloatButton.getContentView(), rotation);
+        loadAnimator.setRepeatMode(ValueAnimator.RESTART);
+        loadAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        loadAnimator.setDuration(1000);
+        loadAnimator.start();
     }
 
     public void updateFloatButton() {
@@ -259,18 +281,17 @@ public class BookDetailFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        loadBookDetail();
+    }
+
+    private void loadBookDetail() {
         Uri uri = Uri.parse("content://" + BookProvider.AUTHORITY + "/" + BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME + "/" + mBook_id);
-        String selection = DB_Column.BookInfo.ID
-                + "="
-                + mBook_id;
         String[] projection = {DB_Column.BookInfo.IMG_LARGE, DB_Column.BookInfo.ISBN13};
-        //mlistLoader = new BookListLoader(mActivity, BookProvider.BOOKINFO_URI, projection, selection, null, null);
         mlistLoader = new BookListLoader(mActivity, uri, projection, null, null, null);
         mLoadListener = new BookListLoadListener();
         mlistLoader.registerListener(0, mLoadListener);
         mlistLoader.startLoading();
     }
-
     @Override
     public void onPause() {
         super.onPause();
@@ -313,9 +334,18 @@ public class BookDetailFragment extends Fragment {
                     bindView1(bookData);
                     bindView2(bookData);
                     bindView3(bookData);
+                    updateFloatButton();
                 } catch (Exception e) {
-                    ViewStub stub = (ViewStub) item0.findViewById(R.id.load_bookdetail_fail);
-                    stub.inflate();
+                    TextView load_fail_text = (TextView) item0.findViewById(R.id.loadfail_text);
+                    if (load_fail_text == null) {
+                        ViewStub stub = (ViewStub) item0.findViewById(R.id.load_bookdetail_fail);
+                        stub.inflate();
+                    }
+                    if (loadAnimator != null) {
+                        loadAnimator.setRepeatCount(0);
+                    }
+                    FloatButton mainFloatButton = ((MainActivity) mActivity).getFloatButton();
+                    mainFloatButton.setEnabled(true);
                     e.printStackTrace();
                 }
             }
@@ -324,6 +354,11 @@ public class BookDetailFragment extends Fragment {
     }
 
     public void bindView0(BookData bookData) {
+        TextView load_fail_text = (TextView) item0.findViewById(R.id.loadfail_text);
+        if (load_fail_text != null) {
+            load_fail_text.setVisibility(View.GONE);
+        }
+
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(bookData.title);
         if (!TextUtils.isEmpty(bookData.subtitle)) {
@@ -477,6 +512,7 @@ public class BookDetailFragment extends Fragment {
                     String isbn = data.getString(data.getColumnIndex(DB_Column.BookInfo.ISBN13));
                     getBookDetailInfo(isbn);
                 }
+                data.close();
             }
         }
     }

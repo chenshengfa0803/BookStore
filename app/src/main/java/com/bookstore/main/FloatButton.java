@@ -121,6 +121,7 @@ public class FloatButton extends ViewGroup implements View.OnClickListener {
         }
         this.addView(buttonIcon, params);
         floatButtonIcon = buttonIcon;
+        setEnabled(true);
     }
 
     public View getContentView() {
