@@ -17,6 +17,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
@@ -140,6 +143,7 @@ public class BookDetailFragment extends Fragment {
                 tintManager.setStatusBarTintEnabled(true);
                 tintManager.setTintColor(mPalette_color);
             }
+            setHasOptionsMenu(true);
         }
         detail_scroll = (ScrollView) detail_fragment.findViewById(R.id.scroll_detail);
 
@@ -416,6 +420,23 @@ public class BookDetailFragment extends Fragment {
         } else {
             item3.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.detail_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.item_delete:
+                Uri uri = Uri.parse("content://" + BookProvider.AUTHORITY + "/" + BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME + "/" + mBook_id);
+                mActivity.getContentResolver().delete(uri, null, null);
+                getActivity().getSupportFragmentManager().popBackStack();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private class BookListLoadListener implements Loader.OnLoadCompleteListener<Cursor> {

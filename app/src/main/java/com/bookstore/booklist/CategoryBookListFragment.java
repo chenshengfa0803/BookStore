@@ -30,6 +30,7 @@ import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bookstore.bookdetail.BookDetailFragment;
 import com.bookstore.bookparser.BookCategory;
@@ -181,8 +182,12 @@ public class CategoryBookListFragment extends Fragment {
 
     @Override
     public void onResume() {
-        String selection = null;
         super.onResume();
+        refreshList();
+    }
+
+    private void refreshList() {
+        String selection = null;
         if (mCategoryCode != 'a') {
             selection = DB_Column.BookInfo.CATEGORY_CODE
                     + "="
@@ -205,6 +210,7 @@ public class CategoryBookListFragment extends Fragment {
                 tintManager.setStatusBarTintEnabled(true);
                 tintManager.setTintColor(getResources().getColor(android.R.color.darker_gray));
             }
+            refreshList();
             updateFloatButton();
         }
     }
@@ -326,6 +332,11 @@ public class CategoryBookListFragment extends Fragment {
 
         @Override
         public void onLoadComplete(Loader<Cursor> loader, Cursor data) {
+            if (data.getCount() == 0) {
+                data.close();
+                getActivity().getSupportFragmentManager().popBackStack();
+                return;
+            }
             gridViewAdapter.registerDataCursor(data);
             gridViewAdapter.notifyDataSetChanged();
         }
@@ -391,7 +402,8 @@ public class CategoryBookListFragment extends Fragment {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
             if (refreshAnimator != null) {
-                refreshAnimator.cancel();
+                refreshAnimator.setRepeatCount(0);
+                Toast.makeText(mActivity, "刷新完成", Toast.LENGTH_SHORT).show();
             }
         }
     }
