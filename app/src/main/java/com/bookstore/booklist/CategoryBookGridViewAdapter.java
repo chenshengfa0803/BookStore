@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 public class CategoryBookGridViewAdapter extends BaseAdapter {
     private Context mContext;
     private ArrayList<Item> mDataList = null;
+    private boolean mIsSelectionMode = false;
 
     public CategoryBookGridViewAdapter(Context context) {
         mContext = context;
@@ -76,6 +78,12 @@ public class CategoryBookGridViewAdapter extends BaseAdapter {
                 .build();
         final ImageView book_cover = (ImageView) gridItemView.findViewById(R.id.book_cover);
         TextView book_title = (TextView) gridItemView.findViewById(R.id.book_name);
+        CheckBox cb = (CheckBox) gridItemView.findViewById(R.id.book_check);
+        if (mIsSelectionMode) {
+            cb.setVisibility(View.VISIBLE);
+        } else {
+            cb.setVisibility(View.GONE);
+        }
 
         String coverUrl = mDataList.get(position).img_larg;
         String book_name = mDataList.get(position).title;
@@ -102,6 +110,13 @@ public class CategoryBookGridViewAdapter extends BaseAdapter {
         } while (dataCursor.moveToNext());
 
         dataCursor.close();
+    }
+
+    public void setSelectionMode(boolean isSelectionMode) {
+        if (mIsSelectionMode != isSelectionMode) {
+            mIsSelectionMode = isSelectionMode;
+            notifyDataSetChanged();
+        }
     }
 
     public class Item {

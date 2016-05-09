@@ -20,10 +20,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.Toolbar;
 import android.transition.Fade;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -67,6 +71,7 @@ public class CategoryBookListFragment extends Fragment {
     private BookListLoadListener mLoadListener = null;
     private UpdateBookCategoryTask updateTask = null;
     private ObjectAnimator refreshAnimator;
+    private boolean isSelectionMode = false;
 
     private BookOnClickListener mListener = new BookOnClickListener() {
         @Override
@@ -95,6 +100,36 @@ public class CategoryBookListFragment extends Fragment {
                     .add(R.id.container_view, detailFragment, BookDetailFragment.class.getSimpleName())
                     .commit();
 
+        }
+    };
+    private ActionMode.Callback mCallback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            isSelectionMode = true;
+            MenuInflater inflater = mActivity.getMenuInflater();
+            inflater.inflate(R.menu.selection_actionmode_delete, menu);
+
+            View actionModeView = LayoutInflater.from(mActivity).inflate(R.layout.selection_actionmode_view, null, false);
+            View select_all = actionModeView.findViewById(R.id.select_all);
+            mode.setCustomView(select_all);
+
+            gridViewAdapter.setSelectionMode(true);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            gridViewAdapter.setSelectionMode(false);
         }
     };
 
@@ -169,6 +204,7 @@ public class CategoryBookListFragment extends Fragment {
         mGridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                toggleSelection(position);
                 return true;
             }
         });
@@ -339,6 +375,15 @@ public class CategoryBookListFragment extends Fragment {
         }
         updateTask = new UpdateBookCategoryTask();
         updateTask.execute(gridViewAdapter.getDataList());
+    }
+
+    public boolean isSelectionMode() {
+        return isSelectionMode;
+    }
+
+    private void toggleSelection(int position) {
+        AppCompatActivity compatActivity = (AppCompatActivity) mActivity;
+        compatActivity.startSupportActionMode(mCallback);
     }
 
     private class BookListLoadListener implements Loader.OnLoadCompleteListener<Cursor> {
