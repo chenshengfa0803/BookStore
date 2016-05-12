@@ -23,7 +23,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
+            android:clickable="false"
+            android:focusable="false"
             android:visibility="gone" />
+        <!--CheckBox has to be set focusable as false, otherwise, parent can not recieve onClick event-->
     </FrameLayout>
 
     <TextView

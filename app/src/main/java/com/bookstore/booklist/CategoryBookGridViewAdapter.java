@@ -17,6 +17,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Created by Administrator on 2016/4/6.
@@ -25,6 +26,7 @@ public class CategoryBookGridViewAdapter extends BaseAdapter {
     private Context mContext;
     private ArrayList<Item> mDataList = null;
     private boolean mIsSelectionMode = false;
+    private HashSet<Long> mSelectedItems = new HashSet<Long>();
 
     public CategoryBookGridViewAdapter(Context context) {
         mContext = context;
@@ -79,6 +81,11 @@ public class CategoryBookGridViewAdapter extends BaseAdapter {
         final ImageView book_cover = (ImageView) gridItemView.findViewById(R.id.book_cover);
         TextView book_title = (TextView) gridItemView.findViewById(R.id.book_name);
         CheckBox cb = (CheckBox) gridItemView.findViewById(R.id.book_check);
+        if (mSelectedItems.contains((long) position)) {
+            cb.setChecked(true);
+        } else {
+            cb.setChecked(false);
+        }
         if (mIsSelectionMode) {
             cb.setVisibility(View.VISIBLE);
         } else {
@@ -117,6 +124,18 @@ public class CategoryBookGridViewAdapter extends BaseAdapter {
             mIsSelectionMode = isSelectionMode;
             notifyDataSetChanged();
         }
+    }
+
+    public void updateSelectedItems(int pos) {
+        if (mSelectedItems.contains((long) pos)) {
+            mSelectedItems.remove((long) pos);
+        } else {
+            mSelectedItems.add((long) pos);
+        }
+    }
+
+    public void clearSelectedItems() {
+        mSelectedItems.clear();
     }
 
     public class Item {

@@ -119,7 +119,7 @@ public class CategoryBookListFragment extends Fragment {
 
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false;
+            return true;
         }
 
         @Override
@@ -129,7 +129,9 @@ public class CategoryBookListFragment extends Fragment {
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
+            gridViewAdapter.clearSelectedItems();
             gridViewAdapter.setSelectionMode(false);
+            isSelectionMode = false;
         }
     };
 
@@ -156,6 +158,7 @@ public class CategoryBookListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View category_fragment = null;
         category_fragment = inflater.inflate(R.layout.category_list_fragment, null);
+        //((MainActivity) mActivity).getResideMenu().addIgnoredView(category_fragment);
 
         AppCompatActivity mAppCompatActivity = (AppCompatActivity) mActivity;
         Toolbar category_toolbar = (Toolbar) category_fragment.findViewById(R.id.category_toolbar);
@@ -211,12 +214,15 @@ public class CategoryBookListFragment extends Fragment {
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (isSelectionMode()) {
+                    toggleSelection(position);
+                    return;
+                }
                 final ImageView book_cover = (ImageView) view.findViewById(R.id.book_cover);
                 ArrayList<CategoryBookGridViewAdapter.Item> list = gridViewAdapter.getDataList();
                 mListener.onBookClick(book_cover, list.get(position).book_id, list.get(position).category_code);
             }
         });
-
         updateFloatButton();
         return category_fragment;
     }
@@ -382,8 +388,13 @@ public class CategoryBookListFragment extends Fragment {
     }
 
     private void toggleSelection(int position) {
-        AppCompatActivity compatActivity = (AppCompatActivity) mActivity;
-        compatActivity.startSupportActionMode(mCallback);
+        gridViewAdapter.updateSelectedItems(position);
+        if (isSelectionMode()) {
+            gridViewAdapter.notifyDataSetChanged();
+        } else {
+            AppCompatActivity compatActivity = (AppCompatActivity) mActivity;
+            compatActivity.startSupportActionMode(mCallback);
+        }
     }
 
     private class BookListLoadListener implements Loader.OnLoadCompleteListener<Cursor> {

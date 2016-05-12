@@ -141,6 +141,7 @@ public class MainBookListFragment extends Fragment {
                 }
             });
             setHasOptionsMenu(true);
+            ((MainActivity) mActivity).getResideMenu().addIgnoredView(main_toolbar);
         }
 
         List<View> viewList = new ArrayList<View>();
