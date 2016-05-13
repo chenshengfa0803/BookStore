@@ -138,6 +138,17 @@ public class CategoryBookGridViewAdapter extends BaseAdapter {
         mSelectedItems.clear();
     }
 
+    public void selectAllItems() {
+        clearSelectedItems();
+        for (int i = 0; i < getCount(); i++) {
+            mSelectedItems.add((long) i);
+        }
+    }
+
+    public int getSelectedCount() {
+        return mSelectedItems.size();
+    }
+
     public class Item {
         int book_id;
         String img_larg;

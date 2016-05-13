@@ -31,6 +31,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -72,6 +73,8 @@ public class CategoryBookListFragment extends Fragment {
     private UpdateBookCategoryTask updateTask = null;
     private ObjectAnimator refreshAnimator;
     private boolean isSelectionMode = false;
+    private TextView selectedText = null;
+    private CheckBox checkAll = null;
 
     private BookOnClickListener mListener = new BookOnClickListener() {
         @Override
@@ -111,6 +114,20 @@ public class CategoryBookListFragment extends Fragment {
 
             View actionModeView = LayoutInflater.from(mActivity).inflate(R.layout.selection_actionmode_view, null, false);
             View select_all = actionModeView.findViewById(R.id.select_all);
+            selectedText = (TextView) select_all.findViewById(R.id.select_count);
+            checkAll = (CheckBox) select_all.findViewById(R.id.select_all_checkbox);
+            checkAll.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (checkAll.isChecked()) {
+                        gridViewAdapter.selectAllItems();
+                    } else {
+                        gridViewAdapter.clearSelectedItems();
+                    }
+                    selectedText.setText(gridViewAdapter.getSelectedCount() + "");
+                    gridViewAdapter.notifyDataSetChanged();
+                }
+            });
             mode.setCustomView(select_all);
 
             gridViewAdapter.setSelectionMode(true);
@@ -119,6 +136,12 @@ public class CategoryBookListFragment extends Fragment {
 
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            selectedText.setText(gridViewAdapter.getSelectedCount() + "");
+            if (gridViewAdapter.getCount() == gridViewAdapter.getSelectedCount()) {
+                if (checkAll != null) {
+                    checkAll.setChecked(true);
+                }
+            }
             return true;
         }
 
@@ -389,7 +412,17 @@ public class CategoryBookListFragment extends Fragment {
 
     private void toggleSelection(int position) {
         gridViewAdapter.updateSelectedItems(position);
+        if (gridViewAdapter.getCount() == gridViewAdapter.getSelectedCount()) {
+            if (checkAll != null) {
+                checkAll.setChecked(true);
+            }
+        } else {
+            if (checkAll != null) {
+                checkAll.setChecked(false);
+            }
+        }
         if (isSelectionMode()) {
+            selectedText.setText(gridViewAdapter.getSelectedCount() + "");
             gridViewAdapter.notifyDataSetChanged();
         } else {
             AppCompatActivity compatActivity = (AppCompatActivity) mActivity;
