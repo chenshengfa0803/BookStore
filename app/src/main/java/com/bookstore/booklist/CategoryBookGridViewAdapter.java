@@ -138,6 +138,10 @@ public class CategoryBookGridViewAdapter extends BaseAdapter {
         mSelectedItems.clear();
     }
 
+    public HashSet<Long> getSelectedItems() {
+        return mSelectedItems;
+    }
+
     public void selectAllItems() {
         clearSelectedItems();
         for (int i = 0; i < getCount(); i++) {

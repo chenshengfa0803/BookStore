@@ -4,7 +4,9 @@ import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -57,6 +59,8 @@ import com.bookstore.util.BitmapUtil;
 import com.bookstore.util.SystemBarTintManager;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * Created by Administrator on 2016/4/6.
@@ -146,8 +150,29 @@ public class CategoryBookListFragment extends Fragment {
         }
 
         @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            return false;
+        public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.select_delete:
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+                    String alertTitle = getResources().getString(R.string.delete_selected_alert_title);
+                    builder.setTitle(alertTitle);
+                    builder.setPositiveButton(R.string.positive_OK, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            DeteleSelectedBooksTask deleteTask = new DeteleSelectedBooksTask(mode);
+                            deleteTask.execute();
+                        }
+                    });
+                    builder.setNegativeButton(R.string.negative_cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    builder.show();
+            }
+            return true;
         }
 
         @Override
@@ -509,6 +534,39 @@ public class CategoryBookListFragment extends Fragment {
                 refreshAnimator.setRepeatCount(0);
                 Toast.makeText(mActivity, "刷新完成", Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+
+    private class DeteleSelectedBooksTask extends AsyncTask<Void, Integer, Integer> {
+        private ActionMode actionMode;
+
+        public DeteleSelectedBooksTask(ActionMode actionMode) {
+            this.actionMode = actionMode;
+        }
+
+        @Override
+        protected Integer doInBackground(Void... params) {
+            HashSet<Long> selectItems = new HashSet<>();
+            selectItems = gridViewAdapter.getSelectedItems();
+            int count = gridViewAdapter.getSelectedCount();
+            Iterator<Long> iterator = selectItems.iterator();
+            while (iterator.hasNext()) {
+                long itemPos = iterator.next();
+                ArrayList<CategoryBookGridViewAdapter.Item> list = gridViewAdapter.getDataList();
+                CategoryBookGridViewAdapter.Item item = list.get((int) itemPos);
+                Uri uri = Uri.parse("content://" + BookProvider.AUTHORITY + "/" + BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME + "/" + item.book_id);
+                mActivity.getContentResolver().delete(uri, null, null);
+            }
+            return count;
+        }
+
+        @Override
+        protected void onPostExecute(Integer deletedCount) {
+            super.onPostExecute(deletedCount);
+            String deletedInfo = getResources().getString(R.string.deleted_books_toast, gridViewAdapter.getSelectedCount());
+            Toast.makeText(mActivity, deletedInfo, Toast.LENGTH_SHORT).show();
+            actionMode.finish();
+            refreshList();
         }
     }
 }
