@@ -110,6 +110,7 @@ public class CategoryBookListFragment extends Fragment {
         }
     };
     private ActionMode.Callback mCallback = new ActionMode.Callback() {
+        DeteleSelectedBooksTask deleteTask = null;
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             isSelectionMode = true;
@@ -160,7 +161,7 @@ public class CategoryBookListFragment extends Fragment {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
-                            DeteleSelectedBooksTask deleteTask = new DeteleSelectedBooksTask(mode);
+                            deleteTask = new DeteleSelectedBooksTask(mode);
                             deleteTask.execute();
                         }
                     });
@@ -177,9 +178,12 @@ public class CategoryBookListFragment extends Fragment {
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-            gridViewAdapter.clearSelectedItems();
             gridViewAdapter.setSelectionMode(false);
             isSelectionMode = false;
+            if (deleteTask != null && deleteTask.getStatus() == AsyncTask.Status.RUNNING) {
+            } else {
+                gridViewAdapter.clearSelectedItems();
+            }
         }
     };
 
@@ -546,8 +550,7 @@ public class CategoryBookListFragment extends Fragment {
 
         @Override
         protected Integer doInBackground(Void... params) {
-            HashSet<Long> selectItems = new HashSet<>();
-            selectItems = gridViewAdapter.getSelectedItems();
+            HashSet<Long> selectItems = gridViewAdapter.getSelectedItems();
             int count = gridViewAdapter.getSelectedCount();
             Iterator<Long> iterator = selectItems.iterator();
             while (iterator.hasNext()) {

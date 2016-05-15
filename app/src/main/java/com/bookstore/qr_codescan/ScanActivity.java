@@ -65,7 +65,6 @@ public class ScanActivity extends Activity implements Callback {
 
     private static final float BEEP_VOLUME = 0.10f;
     private static final long VIBRATE_DURATION = 200L;
-    private static int pos = 0;
     /**
      * When the beep has finished playing, rewind to queue up another one.
      */
@@ -74,6 +73,7 @@ public class ScanActivity extends Activity implements Callback {
             mediaPlayer.seekTo(0);
         }
     };
+    private int pos = 0;
     private Context mContext;
     private CaptureActivityHandler handler;
     private ViewfinderView viewfinderView;
