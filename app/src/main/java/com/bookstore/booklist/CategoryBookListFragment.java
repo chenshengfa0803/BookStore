@@ -568,6 +568,7 @@ public class CategoryBookListFragment extends Fragment {
             super.onPostExecute(deletedCount);
             String deletedInfo = getResources().getString(R.string.deleted_books_toast, gridViewAdapter.getSelectedCount());
             Toast.makeText(mActivity, deletedInfo, Toast.LENGTH_SHORT).show();
+            gridViewAdapter.clearSelectedItems();
             actionMode.finish();
             refreshList();
         }
