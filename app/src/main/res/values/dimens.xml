@@ -31,4 +31,9 @@
     <dimen name="scan_control_panel_margin">20dp</dimen>
     <dimen name="detail_listview_horizontal_padding">10dp</dimen>
     <dimen name="detail_listview_vertical_padding">10dp</dimen>
+    <dimen name="search_view_padding">16dp</dimen>
+    <dimen name="search_icon_size">24dp</dimen>
+    <dimen name="search_view_edittext_margin">24dp</dimen>
+    <dimen name="search_text_spacing">6dp</dimen>
+    <dimen name="search_text_size">16sp</dimen>
 </resources>
