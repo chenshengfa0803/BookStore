@@ -13,10 +13,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.transition.Fade;
 import android.view.LayoutInflater;
@@ -34,6 +32,7 @@ import com.bookstore.booklist.BookListGridListViewAdapter;
 import com.bookstore.booklist.BookListViewPagerAdapter;
 import com.bookstore.booklist.ListViewListener;
 import com.bookstore.bookparser.BookCategory;
+import com.bookstore.main.SearchView.SearchView;
 import com.bookstore.main.animation.BookDetailTransition;
 import com.bookstore.main.residemenu.ResideMenu;
 import com.bookstore.provider.BookProvider;
@@ -60,6 +59,8 @@ public class MainBookListFragment extends Fragment {
     private BookListViewPagerAdapter pagerAdapter;
     private BookListGridListView gridListView = null;
     private BookListGridListViewAdapter mGridListViewAdapter;
+    private SearchView mSearchView = null;
+
     private BookOnClickListener mListener = new BookOnClickListener() {
         @Override
         public void onBookClick(View clickedImageView, int book_id, int category_code) {
@@ -170,9 +171,9 @@ public class MainBookListFragment extends Fragment {
 
             }
         });
+        mSearchView = (SearchView) booklist_fragment.findViewById(R.id.searchView);
 
         dbHandler = new DBHandler(mGridListViewAdapter);
-
 
         updateFloatButton();
 
@@ -188,12 +189,16 @@ public class MainBookListFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.main_menu, menu);
         MenuItem menuItem = menu.findItem(R.id.menu_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
-        searchView.setQueryHint("书名/作者");
+        //SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
+        //searchView.setQueryHint("书名/作者");
 
         //searchView.setIconifiedByDefault(false);
         //searchView.setSubmitButtonEnabled(true);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    private void showSearchView() {
+        mSearchView.show();
     }
 
     @Override
@@ -204,6 +209,9 @@ public class MainBookListFragment extends Fragment {
                 //MyDialogFragment dialog = new MyDialogFragment();
                 //dialog.show(mActivity.getFragmentManager(), "myDialogFragment");
                 ((MainActivity) mActivity).getResideMenu().openMenu(ResideMenu.DIRECTION_LEFT);
+                break;
+            case R.id.menu_search:
+                showSearchView();
                 break;
         }
         return super.onOptionsItemSelected(item);

@@ -36,4 +36,5 @@
     <dimen name="search_view_edittext_margin">24dp</dimen>
     <dimen name="search_text_spacing">6dp</dimen>
     <dimen name="search_text_size">16sp</dimen>
+    <dimen name="search_animation_dx">24dp</dimen>
 </resources>

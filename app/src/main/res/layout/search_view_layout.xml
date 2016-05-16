@@ -56,7 +56,7 @@
                 android:layout_height="wrap_content">
 
                 <ImageView
-                    android:id="@+id/search_view_mic"
+                    android:id="@+id/search_view_voice"
                     android:layout_width="@dimen/search_icon_size"
                     android:layout_height="@dimen/search_icon_size" />
 
