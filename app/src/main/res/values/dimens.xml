@@ -37,4 +37,11 @@
     <dimen name="search_text_spacing">6dp</dimen>
     <dimen name="search_text_size">16sp</dimen>
     <dimen name="search_animation_dx">24dp</dimen>
+    <!-- Arrow -->
+    <dimen name="arrow_thickness">2dp</dimen>
+    <dimen name="arrow_arrowHeadLength">8dp</dimen>
+    <dimen name="arrow_arrowShaftLength">16dp</dimen>
+    <dimen name="arrow_barLength">18dp</dimen>
+    <dimen name="arrow_gapBetweenBars">3dp</dimen>
+    <dimen name="arrow_drawableSize">24dp</dimen>
 </resources>

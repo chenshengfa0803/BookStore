@@ -12,11 +12,15 @@
     <android.support.v7.widget.CardView
         android:id="@+id/search_card_view"
         android:layout_width="match_parent"
-        android:layout_height="?actionBarSize">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="1dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_marginTop="5dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="46dp"
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:gravity="start|center_vertical"
@@ -29,42 +33,42 @@
             <ImageView
                 android:id="@+id/searchView_navi_back"
                 android:layout_width="@dimen/search_icon_size"
-                android:layout_height="@dimen/search_icon_size" />
-
-            <EditText
-                android:id="@+id/editText_input"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start|center_vertical"
-                android:layout_marginEnd="@dimen/search_view_edittext_margin"
-                android:layout_marginLeft="@dimen/search_view_edittext_margin"
-                android:layout_marginRight="@dimen/search_view_edittext_margin"
-                android:layout_marginStart="@dimen/search_view_edittext_margin"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:gravity="start|center_vertical"
-                android:imeOptions="actionSearch|flagNoFullscreen"
-                android:inputType="textNoSuggestions"
-                android:paddingBottom="@dimen/search_text_spacing"
-                android:paddingTop="@dimen/search_text_spacing"
-                android:singleLine="true"
-                android:textSize="@dimen/search_text_size"
-                android:windowSoftInputMode="stateAlwaysHidden"></EditText>
+                android:layout_height="@dimen/search_icon_size"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/icon_back" />
 
             <FrameLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <ImageView
-                    android:id="@+id/search_view_voice"
-                    android:layout_width="@dimen/search_icon_size"
-                    android:layout_height="@dimen/search_icon_size" />
+                <EditText
+                    android:id="@+id/editText_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
+                    android:layout_marginLeft="@dimen/search_view_edittext_margin"
+                    android:layout_marginStart="@dimen/search_view_edittext_margin"
+                    android:layout_weight="1"
+                    android:background="@drawable/search_background_shape"
+                    android:gravity="start|center_vertical"
+                    android:imeOptions="actionSearch|flagNoFullscreen"
+                    android:inputType="textNoSuggestions"
+                    android:paddingBottom="@dimen/search_text_spacing"
+                    android:paddingEnd="15dp"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:paddingStart="15dp"
+                    android:paddingTop="@dimen/search_text_spacing"
+                    android:singleLine="true"
+                    android:textSize="@dimen/search_text_size"
+                    android:windowSoftInputMode="stateAlwaysHidden" />
 
                 <ImageView
                     android:id="@+id/search_view_clear"
                     android:layout_width="@dimen/search_icon_size"
                     android:layout_height="@dimen/search_icon_size"
-                    android:visibility="gone" />
+                    android:background="@drawable/search_ic_clear_black_24dp"
+                    android:visibility="visible" />
             </FrameLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>

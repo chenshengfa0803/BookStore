@@ -25,7 +25,6 @@ public class SearchView extends FrameLayout implements View.OnClickListener {
     private static int ANIMATION_DURATION = 300;
     private Context mContext;
     private ImageView mBackImageView;
-    private ImageView mVoiceImageView;
     private ImageView mClearImageView;
     private View mBackGroundView;
     private CardView mCardView;
@@ -49,12 +48,8 @@ public class SearchView extends FrameLayout implements View.OnClickListener {
 
     private void initView() {
         LayoutInflater.from(mContext).inflate((R.layout.search_view_layout), this, true);
-
         mBackImageView = (ImageView) findViewById(R.id.searchView_navi_back);
         mBackImageView.setOnClickListener(this);
-
-        mVoiceImageView = (ImageView) findViewById(R.id.search_view_voice);
-        mVoiceImageView.setOnClickListener(this);
 
         mClearImageView = (ImageView) findViewById(R.id.search_view_clear);
         mClearImageView.setOnClickListener(this);
