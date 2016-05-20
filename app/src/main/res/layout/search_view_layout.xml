@@ -35,7 +35,7 @@
                 android:layout_width="@dimen/search_icon_size"
                 android:layout_height="@dimen/search_icon_size"
                 android:layout_gravity="center_vertical"
-                android:background="@drawable/icon_back" />
+                android:src="@drawable/icon_back" />
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -54,9 +54,9 @@
                     android:imeOptions="actionSearch|flagNoFullscreen"
                     android:inputType="textNoSuggestions"
                     android:paddingBottom="@dimen/search_text_spacing"
-                    android:paddingEnd="15dp"
+                    android:paddingEnd="40dp"
                     android:paddingLeft="15dp"
-                    android:paddingRight="15dp"
+                    android:paddingRight="40dp"
                     android:paddingStart="15dp"
                     android:paddingTop="@dimen/search_text_spacing"
                     android:singleLine="true"
@@ -67,7 +67,12 @@
                     android:id="@+id/search_view_clear"
                     android:layout_width="@dimen/search_icon_size"
                     android:layout_height="@dimen/search_icon_size"
-                    android:background="@drawable/search_ic_clear_black_24dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginStart="15dp"
+                    android:src="@drawable/delete_search"
                     android:visibility="visible" />
             </FrameLayout>
         </LinearLayout>

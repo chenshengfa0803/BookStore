@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Build;
 import android.support.v7.widget.CardView;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
@@ -57,7 +58,7 @@ public class SearchView extends FrameLayout implements View.OnClickListener {
 
         mBackGroundView = findViewById(R.id.search_background);
         mBackGroundView.setOnClickListener(this);
-        mBackGroundView.setVisibility(View.GONE);
+        //mBackGroundView.setVisibility(View.GONE);
 
         mCardView = (CardView) findViewById(R.id.search_card_view);
 
@@ -77,7 +78,14 @@ public class SearchView extends FrameLayout implements View.OnClickListener {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                CharSequence text = mEditText.getText();
+                boolean hasText = !TextUtils.isEmpty(text);
 
+                if (hasText) {
+                    mClearImageView.setVisibility(VISIBLE);
+                } else {
+                    mClearImageView.setVisibility(GONE);
+                }
             }
 
             @Override
@@ -96,7 +104,11 @@ public class SearchView extends FrameLayout implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-
+        if (v == mBackImageView || v == mBackGroundView) {
+            hide();
+        } else if (v == mClearImageView) {
+            mEditText.setText(null);
+        }
     }
 
     public void show() {
