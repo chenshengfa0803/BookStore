@@ -12,6 +12,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -96,9 +97,14 @@ public class SearchView extends FrameLayout implements View.OnClickListener {
         mEditText.setOnFocusChangeListener(new OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-
+                if (hasFocus) {
+                    showKeyboard();
+                } else {
+                    hideKeyboard();
+                }
             }
         });
+        mEditText.requestFocus();
         setVisibility(View.GONE);
     }
 
@@ -109,6 +115,10 @@ public class SearchView extends FrameLayout implements View.OnClickListener {
         } else if (v == mClearImageView) {
             mEditText.setText(null);
         }
+    }
+
+    public boolean isSearchOpen() {
+        return mIsSearchOpen;
     }
 
     public void show() {
@@ -158,6 +168,20 @@ public class SearchView extends FrameLayout implements View.OnClickListener {
                 SearchAnimator.expandInAnimation(mContext, mCardView, ANIMATION_DURATION);
             }
         });
+    }
+
+    public void registerSearchViewStateListener(SearchViewListener listener) {
+        mSearchViewListener = listener;
+    }
+
+    private void showKeyboard() {
+        InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(mEditText, 0);
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
     }
 
     public interface SearchViewListener {

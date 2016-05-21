@@ -92,10 +92,23 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    private boolean isSearchViewOpened() {
+        MainBookListFragment fragment = (MainBookListFragment) getSupportFragmentManager().findFragmentByTag(MainBookListFragment.class.getSimpleName());
+        return fragment.isSearchOpened();
+    }
+
+    private void hideSearchView() {
+        MainBookListFragment fragment = (MainBookListFragment) getSupportFragmentManager().findFragmentByTag(MainBookListFragment.class.getSimpleName());
+        fragment.hideSearchView();
+    }
     @Override
     public void onBackPressed() {
         if (resideMenu.isOpened()) {
             resideMenu.closeMenu();
+            return;
+        }
+        if (isSearchViewOpened()) {
+            hideSearchView();
             return;
         }
         if (mainFloatButton.isMenuOpened()) {

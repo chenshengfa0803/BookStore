@@ -172,6 +172,19 @@ public class MainBookListFragment extends Fragment {
             }
         });
         mSearchView = (SearchView) booklist_fragment.findViewById(R.id.searchView);
+        mSearchView.registerSearchViewStateListener(new SearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+                FloatButton mainFloatButton = ((MainActivity) mActivity).getFloatButton();
+                mainFloatButton.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+                FloatButton mainFloatButton = ((MainActivity) mActivity).getFloatButton();
+                mainFloatButton.setVisibility(View.VISIBLE);
+            }
+        });
 
         dbHandler = new DBHandler(mGridListViewAdapter);
 
@@ -197,8 +210,16 @@ public class MainBookListFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    private void showSearchView() {
+    public void showSearchView() {
         mSearchView.show();
+    }
+
+    public void hideSearchView() {
+        mSearchView.hide();
+    }
+
+    public boolean isSearchOpened() {
+        return mSearchView.isSearchOpen();
     }
 
     @Override
