@@ -2,8 +2,13 @@ package com.bookstore.main.SearchView;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Loader;
+import android.database.Cursor;
 import android.os.Build;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -14,16 +19,20 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.Filter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bookstore.booklist.BookListLoader;
 import com.bookstore.main.R;
+import com.bookstore.provider.BookProvider;
+import com.bookstore.provider.DB_Column;
 
 /**
  * Created by Administrator on 2016/5/16.
  */
-public class SearchView extends FrameLayout implements View.OnClickListener {
+public class SearchView extends FrameLayout implements View.OnClickListener, Filter.FilterListener {
     private static int ANIMATION_DURATION = 300;
     private Context mContext;
     private ImageView mBackImageView;
@@ -31,8 +40,10 @@ public class SearchView extends FrameLayout implements View.OnClickListener {
     private View mBackGroundView;
     private CardView mCardView;
     private EditText mEditText;
+    private RecyclerView mRecyclerView;
     private SearchViewListener mSearchViewListener;
     private boolean mIsSearchOpen = false;
+    private SearchAdapter mSearchAdapter;
 
     public SearchView(Context context) {
         this(context, null);
@@ -63,6 +74,11 @@ public class SearchView extends FrameLayout implements View.OnClickListener {
 
         mCardView = (CardView) findViewById(R.id.search_card_view);
 
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_result);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
         mEditText = (EditText) findViewById(R.id.editText_input);
         mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             //be called when press search button on the soft keyboard
@@ -79,6 +95,7 @@ public class SearchView extends FrameLayout implements View.OnClickListener {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                startFilter(s);
                 CharSequence text = mEditText.getText();
                 boolean hasText = !TextUtils.isEmpty(text);
 
@@ -136,6 +153,8 @@ public class SearchView extends FrameLayout implements View.OnClickListener {
         if (mSearchViewListener != null) {
             mSearchViewListener.onSearchViewShown();
         }
+
+        getBookList();
     }
 
     public void hide() {
@@ -184,9 +203,44 @@ public class SearchView extends FrameLayout implements View.OnClickListener {
         imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
     }
 
+    @Override
+    public void onFilterComplete(int count) {
+
+    }
+
+    private void startFilter(CharSequence s) {
+        if (mSearchAdapter != null) {
+            mSearchAdapter.getFilter().filter(s, this);
+        }
+    }
+
+    public void setAdapter(SearchAdapter adapter) {
+        mSearchAdapter = adapter;
+        mRecyclerView.setAdapter(adapter);
+        startFilter(mEditText.getText());
+    }
+
+    public void getBookList() {
+        String[] projection = {DB_Column.BookInfo.ID, DB_Column.BookInfo.IMG_SMALL, DB_Column.BookInfo.TITLE, DB_Column.BookInfo.AUTHOR, DB_Column.BookInfo.CATEGORY_CODE};
+        BookListLoader mlistLoader = new BookListLoader(mContext, BookProvider.BOOKINFO_URI, projection, null, null, DB_Column.BookInfo.ID + " DESC");
+        BookListLoadListener mLoadListener = new BookListLoadListener();
+        mlistLoader.registerListener(0, mLoadListener);
+        mlistLoader.startLoading();
+    }
+
     public interface SearchViewListener {
         void onSearchViewShown();
 
         void onSearchViewClosed();
+    }
+
+    private class BookListLoadListener implements Loader.OnLoadCompleteListener<Cursor> {
+        public BookListLoadListener() {
+        }
+
+        @Override
+        public void onLoadComplete(Loader<Cursor> loader, Cursor data) {
+            mSearchAdapter.registerDataCursor(data);
+        }
     }
 }

@@ -32,6 +32,7 @@ import com.bookstore.booklist.BookListGridListViewAdapter;
 import com.bookstore.booklist.BookListViewPagerAdapter;
 import com.bookstore.booklist.ListViewListener;
 import com.bookstore.bookparser.BookCategory;
+import com.bookstore.main.SearchView.SearchAdapter;
 import com.bookstore.main.SearchView.SearchView;
 import com.bookstore.main.animation.BookDetailTransition;
 import com.bookstore.main.residemenu.ResideMenu;
@@ -185,6 +186,8 @@ public class MainBookListFragment extends Fragment {
                 mainFloatButton.setVisibility(View.VISIBLE);
             }
         });
+        SearchAdapter adapter = new SearchAdapter(mActivity);
+        mSearchView.setAdapter(adapter);
 
         dbHandler = new DBHandler(mGridListViewAdapter);
 

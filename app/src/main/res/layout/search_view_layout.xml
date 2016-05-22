@@ -20,62 +20,80 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="46dp"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:gravity="start|center_vertical"
-            android:orientation="horizontal"
-            android:paddingEnd="@dimen/search_view_padding"
-            android:paddingLeft="@dimen/search_view_padding"
-            android:paddingRight="@dimen/search_view_padding"
-            android:paddingStart="@dimen/search_view_padding">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/searchView_navi_back"
-                android:layout_width="@dimen/search_icon_size"
-                android:layout_height="@dimen/search_icon_size"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/icon_back" />
-
-            <FrameLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/editText_input"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_marginLeft="@dimen/search_view_edittext_margin"
-                    android:layout_marginStart="@dimen/search_view_edittext_margin"
-                    android:layout_weight="1"
-                    android:background="@drawable/search_background_shape"
-                    android:gravity="start|center_vertical"
-                    android:hint="书名/作者"
-                    android:imeOptions="actionSearch|flagNoFullscreen"
-                    android:inputType="textNoSuggestions"
-                    android:paddingBottom="@dimen/search_text_spacing"
-                    android:paddingEnd="40dp"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="40dp"
-                    android:paddingStart="15dp"
-                    android:paddingTop="@dimen/search_text_spacing"
-                    android:singleLine="true"
-                    android:textSize="@dimen/search_text_size"
-                    android:windowSoftInputMode="stateAlwaysHidden" />
+                android:layout_height="46dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="start|center_vertical"
+                android:orientation="horizontal"
+                android:paddingEnd="@dimen/search_view_padding"
+                android:paddingLeft="@dimen/search_view_padding"
+                android:paddingRight="@dimen/search_view_padding"
+                android:paddingStart="@dimen/search_view_padding">
 
                 <ImageView
-                    android:id="@+id/search_view_clear"
+                    android:id="@+id/searchView_navi_back"
                     android:layout_width="@dimen/search_icon_size"
                     android:layout_height="@dimen/search_icon_size"
-                    android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginStart="15dp"
-                    android:src="@drawable/delete_search"
-                    android:visibility="visible" />
-            </FrameLayout>
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/icon_back" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/editText_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start|center_vertical"
+                        android:layout_marginLeft="@dimen/search_view_edittext_margin"
+                        android:layout_marginStart="@dimen/search_view_edittext_margin"
+                        android:layout_weight="1"
+                        android:background="@drawable/search_background_shape"
+                        android:gravity="start|center_vertical"
+                        android:hint="书名/作者"
+                        android:imeOptions="actionSearch|flagNoFullscreen"
+                        android:inputType="textNoSuggestions"
+                        android:paddingBottom="@dimen/search_text_spacing"
+                        android:paddingEnd="40dp"
+                        android:paddingLeft="15dp"
+                        android:paddingRight="40dp"
+                        android:paddingStart="15dp"
+                        android:paddingTop="@dimen/search_text_spacing"
+                        android:singleLine="true"
+                        android:textSize="@dimen/search_text_size"
+                        android:windowSoftInputMode="stateAlwaysHidden" />
+
+                    <ImageView
+                        android:id="@+id/search_view_clear"
+                        android:layout_width="@dimen/search_icon_size"
+                        android:layout_height="@dimen/search_icon_size"
+                        android:layout_gravity="end|center_vertical"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginStart="15dp"
+                        android:src="@drawable/delete_search"
+                        android:visibility="visible" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <View
+                android:id="@+id/view_divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider"
+                android:gravity="start|center_vertical" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView_result"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </android.support.v7.widget.CardView>
 </merge>
