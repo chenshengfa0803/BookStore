@@ -98,6 +98,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultView
         if (dataCursor == null) {
             return;
         }
+        mDataList.clear();
         dataCursor.moveToFirst();
         do {
             int id = dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.ID));

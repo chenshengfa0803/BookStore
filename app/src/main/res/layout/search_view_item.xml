@@ -14,8 +14,8 @@
 
     <ImageView
         android:id="@+id/search_item_bookcover"
-        android:layout_width="24dp"
-        android:layout_height="24dp" />
+        android:layout_width="45dp"
+        android:layout_height="45dp" />
 
     <TextView
         android:id="@+id/search_item_booktitle"

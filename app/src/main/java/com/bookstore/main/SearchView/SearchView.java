@@ -40,6 +40,7 @@ public class SearchView extends FrameLayout implements View.OnClickListener, Fil
     private View mBackGroundView;
     private CardView mCardView;
     private EditText mEditText;
+    private View mDivider;
     private RecyclerView mRecyclerView;
     private SearchViewListener mSearchViewListener;
     private boolean mIsSearchOpen = false;
@@ -78,6 +79,9 @@ public class SearchView extends FrameLayout implements View.OnClickListener, Fil
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        mDivider = findViewById(R.id.view_divider);
+        mDivider.setVisibility(View.GONE);
 
         mEditText = (EditText) findViewById(R.id.editText_input);
         mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -205,7 +209,27 @@ public class SearchView extends FrameLayout implements View.OnClickListener, Fil
 
     @Override
     public void onFilterComplete(int count) {
+        if (count > 0) {
+            showSearchResult();
+        } else {
+            hideSearchResult();
+        }
+    }
 
+    private void showSearchResult() {
+        if (mSearchAdapter != null && mSearchAdapter.getItemCount() > 0 && mRecyclerView.getVisibility() == GONE) {
+            mDivider.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(VISIBLE);
+            mRecyclerView.setAlpha(0.0f);
+            mRecyclerView.animate().alpha(1.0f);
+        }
+    }
+
+    private void hideSearchResult() {
+        if (mRecyclerView.getVisibility() == View.VISIBLE) {
+            mRecyclerView.setVisibility(View.GONE);
+            mDivider.setVisibility(View.GONE);
+        }
     }
 
     private void startFilter(CharSequence s) {

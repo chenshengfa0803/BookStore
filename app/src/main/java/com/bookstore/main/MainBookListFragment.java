@@ -188,6 +188,7 @@ public class MainBookListFragment extends Fragment {
         });
         SearchAdapter adapter = new SearchAdapter(mActivity);
         mSearchView.setAdapter(adapter);
+        ((MainActivity) mActivity).getResideMenu().addIgnoredView(mSearchView);
 
         dbHandler = new DBHandler(mGridListViewAdapter);
 
