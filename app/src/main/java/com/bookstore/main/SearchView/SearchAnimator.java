@@ -21,10 +21,10 @@ public class SearchAnimator {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static void expandInAnimation(final Context context, final View view, int duration) {
         int centerX = view.getWidth() - context.getResources().getDimensionPixelOffset(R.dimen.search_animation_dx);
-        int centerY = view.getHeight() / 2;
+        int centerY = context.getResources().getDimensionPixelOffset(R.dimen.search_animation_dy);
 
         if (centerX != 0 && centerY != 0) {
-            float endRadius = (float) Math.hypot(centerX, centerY);
+            float endRadius = (float) Math.hypot(centerX, view.getHeight() - centerY);
             Animator animator = ViewAnimationUtils.createCircularReveal(view, centerX, centerY, 0.0f, endRadius);
             animator.setInterpolator(new AccelerateDecelerateInterpolator());
             animator.setDuration(duration);
@@ -36,10 +36,10 @@ public class SearchAnimator {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static void collaspeOutAnimation(final Context context, final View view, int duration) {
         int centerX = view.getWidth() - context.getResources().getDimensionPixelOffset(R.dimen.search_animation_dx);
-        int centerY = view.getHeight() / 2;
+        int centerY = context.getResources().getDimensionPixelOffset(R.dimen.search_animation_dy);
 
         if (centerX != 0 && centerY != 0) {
-            float startRadius = (float) Math.hypot(centerX, centerY);
+            float startRadius = (float) Math.hypot(centerX, view.getHeight() - centerY);
 
             Animator animator = ViewAnimationUtils.createCircularReveal(view, centerX, centerY, startRadius, 0.0f);
             animator.setInterpolator(new AccelerateDecelerateInterpolator());

@@ -217,19 +217,19 @@ public class SearchView extends FrameLayout implements View.OnClickListener, Fil
     }
 
     private void showSearchResult() {
-        if (mSearchAdapter != null && mSearchAdapter.getItemCount() > 0 && mRecyclerView.getVisibility() == GONE) {
+/*        if (mSearchAdapter != null && mSearchAdapter.getItemCount() > 0 && mRecyclerView.getVisibility() == GONE) {
             mDivider.setVisibility(View.VISIBLE);
             mRecyclerView.setVisibility(VISIBLE);
             mRecyclerView.setAlpha(0.0f);
             mRecyclerView.animate().alpha(1.0f);
-        }
+        }*/
     }
 
     private void hideSearchResult() {
-        if (mRecyclerView.getVisibility() == View.VISIBLE) {
+/*        if (mRecyclerView.getVisibility() == View.VISIBLE) {
             mRecyclerView.setVisibility(View.GONE);
             mDivider.setVisibility(View.GONE);
-        }
+        }*/
     }
 
     private void startFilter(CharSequence s) {
