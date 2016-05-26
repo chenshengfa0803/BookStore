@@ -3,6 +3,7 @@ package com.bookstore.main;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -80,6 +81,11 @@ public class MainActivity extends AppCompatActivity {
 //                handler.postDelayed(this, 5000);
 //            }
 //        }, 5000);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
     }
 
     @Override
