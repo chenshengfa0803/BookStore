@@ -3,17 +3,15 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="result_view">#b0000000</color>
+    <color name="result_view">#B0000000</color>
     <color name="viewfinder_mask">#60000000</color>
-    <color name="possible_result_points">#c0ffff00</color>
+    <color name="possible_result_points">#C0FFFF00</color>
     <color name="search_background_color">#80000000</color>
-    <!-- Arrow @android:color/black -->
-    <color name="search_arrow_color">#ff000000</color>
 
     <!-- Light Theme -->
-    <color name="search_light_background">#fffafafa</color>
-    <color name="search_light_icon">#ff616161</color>
-    <color name="search_light_text">#ff212121</color>
-    <color name="search_light_text_hint">#8a000000</color>
-    <color name="search_light_text_highlight">#61000000</color>
+    <color name="search_light_background">#FFFAFAFA</color>
+    <color name="search_light_icon">#FF616161</color>
+    <color name="search_light_text">#FF212121</color>
+    <color name="search_light_text_hint">#8A000000</color>
+    <color name="search_light_text_highlight">#60FF0000</color>
 </resources>

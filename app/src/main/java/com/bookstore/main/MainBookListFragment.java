@@ -33,6 +33,7 @@ import com.bookstore.booklist.BookListViewPagerAdapter;
 import com.bookstore.booklist.ListViewListener;
 import com.bookstore.bookparser.BookCategory;
 import com.bookstore.main.SearchView.SearchAdapter;
+import com.bookstore.main.SearchView.SearchItem;
 import com.bookstore.main.SearchView.SearchView;
 import com.bookstore.main.animation.BookDetailTransition;
 import com.bookstore.main.residemenu.ResideMenu;
@@ -116,7 +117,7 @@ public class MainBookListFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         booklist_fragment = inflater.inflate(R.layout.booklist_fragment, null);
 
         AppCompatActivity mAppCompatActivity = (AppCompatActivity) mActivity;
@@ -186,7 +187,24 @@ public class MainBookListFragment extends Fragment {
                 mainFloatButton.setVisibility(View.VISIBLE);
             }
         });
-        SearchAdapter adapter = new SearchAdapter(mActivity);
+        final SearchAdapter adapter = new SearchAdapter(mActivity);
+        adapter.setOnItemClickListener(new SearchAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                mSearchView.hide();
+                List<SearchItem> list = adapter.getSearchList();
+                SearchItem item = list.get(position);
+                ImageView book_cover = (ImageView) view.findViewById(R.id.search_item_bookcover);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    book_cover.setTransitionName("item" + position + "small_cover");
+                }
+                int book_id = item.getBook_id();
+                int category_code = item.getCategory_code();
+                if (mListener != null) {
+                    mListener.onBookClick(book_cover, book_id, category_code);
+                }
+            }
+        });
         mSearchView.setAdapter(adapter);
         ((MainActivity) mActivity).getResideMenu().addIgnoredView(mSearchView);
 

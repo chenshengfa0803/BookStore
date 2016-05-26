@@ -3,7 +3,10 @@ package com.bookstore.main.SearchView;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,9 +28,12 @@ import java.util.Locale;
  * Created by Administrator on 2016/5/22.
  */
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultViewHolder> implements Filterable {
+    private final List<Integer> mStartList = new ArrayList<>();
     private Context mContext;
+    private OnItemClickListener mItemClickListener;
     private List<SearchItem> mDataList = new ArrayList<>();
     private List<SearchItem> mSearchList = new ArrayList<>();
+    private int mKeyLength = 0;
 
     public SearchAdapter(Context mContext) {
         this.mContext = mContext;
@@ -48,12 +54,21 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultView
                 .cacheOnDisk(true)
                 .build();
         ImageLoader.getInstance().displayImage(item.getBook_cover(), holder.book_cover, options);
-        holder.book_title.setText(item.getBook_title());
+
+        int key_start = mStartList.get(position);
+        int key_end = key_start + mKeyLength;
+        holder.book_title.setText(item.getBook_title(), TextView.BufferType.SPANNABLE);
+        Spannable spannable = (Spannable) holder.book_title.getText();
+        spannable.setSpan(new ForegroundColorSpan(mContext.getResources().getColor(R.color.search_light_text_highlight)), key_start, key_end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
     @Override
     public int getItemCount() {
         return mSearchList.size();
+    }
+
+    public List<SearchItem> getSearchList() {
+        return mSearchList;
     }
 
     @Override
@@ -65,11 +80,14 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultView
                 if (!TextUtils.isEmpty(constraint)) {
                     List<SearchItem> searchData = new ArrayList<>();
 
+                    mStartList.clear();
                     String key = constraint.toString().toLowerCase(Locale.getDefault());
                     for (SearchItem item : mDataList) {
                         String title = item.getBook_title().toLowerCase(Locale.getDefault());
                         if (title.contains(key)) {
                             searchData.add(item);
+                            mStartList.add(title.indexOf(key));
+                            mKeyLength = key.length();
                         }
                     }
                     filterResults.values = searchData;
@@ -113,6 +131,14 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultView
         dataCursor.close();
     }
 
+    public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
+        this.mItemClickListener = mItemClickListener;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View view, int position);
+    }
+
     public class ResultViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final ImageView book_cover;
         private final TextView book_title;
@@ -121,11 +147,14 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultView
             super(itemView);
             book_cover = (ImageView) itemView.findViewById(R.id.search_item_bookcover);
             book_title = (TextView) itemView.findViewById(R.id.search_item_booktitle);
+            itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-
+            if (mItemClickListener != null) {
+                mItemClickListener.onItemClick(v, getLayoutPosition());
+            }
         }
     }
 }

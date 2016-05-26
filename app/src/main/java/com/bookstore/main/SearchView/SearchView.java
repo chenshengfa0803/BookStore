@@ -79,6 +79,7 @@ public class SearchView extends FrameLayout implements View.OnClickListener, Fil
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.addItemDecoration(new SearchDivider(mContext));
 
         mDivider = findViewById(R.id.view_divider);
         mDivider.setVisibility(View.GONE);
@@ -162,8 +163,8 @@ public class SearchView extends FrameLayout implements View.OnClickListener, Fil
     }
 
     public void hide() {
-        mEditText.clearFocus();
-        mEditText.setText(null);
+        //mEditText.clearFocus();
+        //mEditText.setText(null);
         mIsSearchOpen = false;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
