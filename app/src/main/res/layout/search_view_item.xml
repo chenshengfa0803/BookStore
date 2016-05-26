@@ -27,7 +27,10 @@
         android:layout_marginRight="24dp"
         android:layout_marginStart="24dp"
         android:layout_weight="1"
+        android:ellipsize="marquee"
         android:gravity="start|center_vertical"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
         android:singleLine="true"
         android:textSize="14sp" />
 

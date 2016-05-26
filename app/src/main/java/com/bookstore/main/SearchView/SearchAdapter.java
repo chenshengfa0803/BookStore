@@ -57,9 +57,11 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultView
 
         int key_start = mStartList.get(position);
         int key_end = key_start + mKeyLength;
-        holder.book_title.setText(item.getBook_title(), TextView.BufferType.SPANNABLE);
+        String text = item.getAuthor() + " : " + item.getBook_title();
+        holder.book_title.setText(text, TextView.BufferType.SPANNABLE);
         Spannable spannable = (Spannable) holder.book_title.getText();
         spannable.setSpan(new ForegroundColorSpan(mContext.getResources().getColor(R.color.search_light_text_highlight)), key_start, key_end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        holder.book_title.setSelected(true);
     }
 
     @Override
@@ -84,9 +86,11 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultView
                     String key = constraint.toString().toLowerCase(Locale.getDefault());
                     for (SearchItem item : mDataList) {
                         String title = item.getBook_title().toLowerCase(Locale.getDefault());
-                        if (title.contains(key)) {
+                        String author = item.getAuthor().toLowerCase(Locale.getDefault());
+                        String all = author + " : " + title;
+                        if (all.contains(key)) {
                             searchData.add(item);
-                            mStartList.add(title.indexOf(key));
+                            mStartList.add(all.indexOf(key));
                             mKeyLength = key.length();
                         }
                     }
