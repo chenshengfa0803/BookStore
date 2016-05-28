@@ -52,10 +52,11 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultView
     @Override
     public void onBindViewHolder(ResultViewHolder holder, int position) {
         if (position == getItemCount() - 1) {
-            LinearLayout parent = (LinearLayout) holder.book_cover.getParent();
-            View history_tag = parent.findViewWithTag("history");
+            LinearLayout container = (LinearLayout) holder.item_container;
+            container.setClickable(false);
+            View history_tag = container.findViewWithTag("history");
             if (history_tag != null) {
-                parent.removeView(history_tag);
+                container.removeView(history_tag);
             }
             holder.book_title.setVisibility(View.GONE);
             holder.book_cover.setVisibility(View.GONE);
@@ -68,13 +69,14 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultView
             }
             tagGroup.setTags(tagList);
             tagGroup.setTag("history");
-            parent.addView(tagGroup);
+            container.addView(tagGroup);
             return;
         }
-        LinearLayout item_view = (LinearLayout) holder.book_cover.getParent();
-        View history_tag = item_view.findViewWithTag("history");
+        LinearLayout item_container = (LinearLayout) holder.item_container;
+        item_container.setClickable(true);
+        View history_tag = item_container.findViewWithTag("history");
         if (history_tag != null) {
-            item_view.removeView(history_tag);
+            item_container.removeView(history_tag);
         }
         holder.book_title.setVisibility(View.VISIBLE);
         holder.book_cover.setVisibility(View.VISIBLE);
@@ -88,7 +90,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultView
 
         int key_start = mStartList.get(position);
         int key_end = key_start + mKeyLength;
-        String text = item.getAuthor() + " : " + item.getBook_title();
+        String text = item.getBook_title() + " 【" + item.getAuthor() + "】";
         holder.book_title.setText(text, TextView.BufferType.SPANNABLE);
         Spannable spannable = (Spannable) holder.book_title.getText();
         spannable.setSpan(new ForegroundColorSpan(mContext.getResources().getColor(R.color.search_light_text_highlight)), key_start, key_end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -118,7 +120,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultView
                     for (SearchItem item : mDataList) {
                         String title = item.getBook_title().toLowerCase(Locale.getDefault());
                         String author = item.getAuthor().toLowerCase(Locale.getDefault());
-                        String all = author + " : " + title;
+                        String all = (title + " 【" + author + "】").toLowerCase(Locale.getDefault());
                         if (all.contains(key)) {
                             searchData.add(item);
                             mStartList.add(all.indexOf(key));
@@ -178,13 +180,15 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultView
         private final ImageView book_cover;
         private final TextView book_title;
         private final TextView search_history_text;
+        private final View item_container;
 
         public ResultViewHolder(View itemView) {
             super(itemView);
             book_cover = (ImageView) itemView.findViewById(R.id.search_item_bookcover);
             book_title = (TextView) itemView.findViewById(R.id.search_item_booktitle);
             search_history_text = (TextView) itemView.findViewById(R.id.search_history_text);
-            itemView.setOnClickListener(this);
+            item_container = itemView.findViewById(R.id.search_view_item_container);
+            item_container.setOnClickListener(this);
         }
 
         @Override
