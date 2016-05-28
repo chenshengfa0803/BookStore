@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bookstore.main.R;
@@ -23,6 +24,8 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import me.gujun.android.taggroup.TagGroup;
 
 /**
  * Created by Administrator on 2016/5/22.
@@ -48,6 +51,34 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultView
 
     @Override
     public void onBindViewHolder(ResultViewHolder holder, int position) {
+        if (position == getItemCount() - 1) {
+            LinearLayout parent = (LinearLayout) holder.book_cover.getParent();
+            View history_tag = parent.findViewWithTag("history");
+            if (history_tag != null) {
+                parent.removeView(history_tag);
+            }
+            holder.book_title.setVisibility(View.GONE);
+            holder.book_cover.setVisibility(View.GONE);
+            holder.search_history_text.setVisibility(View.VISIBLE);
+
+            TagGroup tagGroup = new TagGroup(mContext);
+            List<String> tagList = new ArrayList<>();
+            for (int i = 0; i < 20; i++) {
+                tagList.add("item" + i);
+            }
+            tagGroup.setTags(tagList);
+            tagGroup.setTag("history");
+            parent.addView(tagGroup);
+            return;
+        }
+        LinearLayout item_view = (LinearLayout) holder.book_cover.getParent();
+        View history_tag = item_view.findViewWithTag("history");
+        if (history_tag != null) {
+            item_view.removeView(history_tag);
+        }
+        holder.book_title.setVisibility(View.VISIBLE);
+        holder.book_cover.setVisibility(View.VISIBLE);
+        holder.search_history_text.setVisibility(View.GONE);
         SearchItem item = mSearchList.get(position);
         DisplayImageOptions options = new DisplayImageOptions.Builder()
                 .cacheInMemory(true)
@@ -66,7 +97,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultView
 
     @Override
     public int getItemCount() {
-        return mSearchList.size();
+        return mSearchList.size() + 1;
     }
 
     public List<SearchItem> getSearchList() {
@@ -146,18 +177,23 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultView
     public class ResultViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final ImageView book_cover;
         private final TextView book_title;
+        private final TextView search_history_text;
 
         public ResultViewHolder(View itemView) {
             super(itemView);
             book_cover = (ImageView) itemView.findViewById(R.id.search_item_bookcover);
             book_title = (TextView) itemView.findViewById(R.id.search_item_booktitle);
+            search_history_text = (TextView) itemView.findViewById(R.id.search_history_text);
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
             if (mItemClickListener != null) {
-                mItemClickListener.onItemClick(v, getLayoutPosition());
+                int pos = getLayoutPosition();
+                if (pos != getItemCount() - 1) {
+                    mItemClickListener.onItemClick(v, pos);
+                }
             }
         }
     }
