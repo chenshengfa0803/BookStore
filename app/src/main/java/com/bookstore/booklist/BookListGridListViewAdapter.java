@@ -30,8 +30,8 @@ public class BookListGridListViewAdapter extends BaseAdapter {
     BookCategory bookCategory;
     private Context mContext;
     private TypedArray mColor_list;
-    private ArrayList<AdapterItem> dataList = null;
-    private ArrayList<AdapterItem> adapterList = null;
+    private ArrayList<ArrayList<AdapterItem>> dataList = null;
+    private ArrayList<ArrayList<AdapterItem>> adapterList = null;
     private BookOnClickListener mListener = null;
 
     public BookListGridListViewAdapter(Context context, BookOnClickListener listener) {
@@ -39,7 +39,7 @@ public class BookListGridListViewAdapter extends BaseAdapter {
         mListener = listener;
         mColor_list = mContext.getResources().obtainTypedArray(R.array.color_list);
         bookCategory = new BookCategory();
-        dataList = new ArrayList<AdapterItem>();
+        dataList = new ArrayList<ArrayList<AdapterItem>>();
     }
 
     @Override
@@ -80,8 +80,8 @@ public class BookListGridListViewAdapter extends BaseAdapter {
     }
 
     public void bindView(View listItemView, int position) {
-        final int category_code = adapterList.get(position).category_code;
-        final Cursor dataCursor = adapterList.get(position).dataCursor;
+        ArrayList<AdapterItem> rowList = adapterList.get(position);
+        final int category_code = rowList.get(0).category_code;
 
         LinearLayout category_line = (LinearLayout) listItemView.findViewById(R.id.book_category);
         category_line.setOnClickListener(new View.OnClickListener() {
@@ -103,9 +103,9 @@ public class BookListGridListViewAdapter extends BaseAdapter {
 
         //show cover1
         final ImageView cover1 = (ImageView) listItemView.findViewById(R.id.cover1);
-        if (dataCursor.moveToPosition(0)) {
-            //String cover1Url = mDataCursor.getString(Projection.BookInfo.COLUMN_IMG_LARGE);
-            String cover1Url = dataCursor.getString(dataCursor.getColumnIndex(DB_Column.BookInfo.IMG_LARGE));
+        if (rowList.size() > 0) {
+            final AdapterItem item1 = rowList.get(0);
+            String cover1Url = item1.img_large;
             if (!cover1Url.equals(cover1.getTag())) {
                 ImageLoader.getInstance().displayImage(cover1Url, cover1, options);
             }
@@ -116,10 +116,7 @@ public class BookListGridListViewAdapter extends BaseAdapter {
             cover1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    dataCursor.moveToPosition(0);
-                    mListener.onBookClick(cover1,
-                            dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.ID)),
-                            dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.CATEGORY_CODE)));
+                    mListener.onBookClick(cover1, item1.book_id, item1.category_code);
                 }
             });
         } else {
@@ -128,9 +125,9 @@ public class BookListGridListViewAdapter extends BaseAdapter {
         }
         //show cover2
         final ImageView cover2 = (ImageView) listItemView.findViewById(R.id.cover2);
-        if (dataCursor.moveToPosition(1)) {
-            //String cover2Url = mDataCursor.getString(Projection.BookInfo.COLUMN_IMG_LARGE);
-            String cover2Url = dataCursor.getString(dataCursor.getColumnIndex(DB_Column.BookInfo.IMG_LARGE));
+        if (rowList.size() > 1) {
+            final AdapterItem item2 = rowList.get(1);
+            String cover2Url = item2.img_large;
             if (!cover2Url.equals(cover2.getTag())) {
                 ImageLoader.getInstance().displayImage(cover2Url, cover2, options);
             }
@@ -141,10 +138,7 @@ public class BookListGridListViewAdapter extends BaseAdapter {
             cover2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    dataCursor.moveToPosition(1);
-                    mListener.onBookClick(cover2,
-                            dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.ID)),
-                            dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.CATEGORY_CODE)));
+                    mListener.onBookClick(cover2, item2.book_id, item2.category_code);
                 }
             });
         } else {
@@ -153,9 +147,9 @@ public class BookListGridListViewAdapter extends BaseAdapter {
         }
         //show cover3
         final ImageView cover3 = (ImageView) listItemView.findViewById(R.id.cover3);
-        if (dataCursor.moveToPosition(2)) {
-            //String cover3Url = mDataCursor.getString(Projection.BookInfo.COLUMN_IMG_LARGE);
-            String cover3Url = dataCursor.getString(dataCursor.getColumnIndex(DB_Column.BookInfo.IMG_LARGE));
+        if (rowList.size() > 2) {
+            final AdapterItem item3 = rowList.get(2);
+            String cover3Url = item3.img_large;
             if (!cover3Url.equals(cover3.getTag())) {
                 ImageLoader.getInstance().displayImage(cover3Url, cover3, options);
             }
@@ -166,17 +160,13 @@ public class BookListGridListViewAdapter extends BaseAdapter {
             cover3.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    dataCursor.moveToPosition(2);
-                    mListener.onBookClick(cover3,
-                            dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.ID)),
-                            dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.CATEGORY_CODE)));
+                    mListener.onBookClick(cover3, item3.book_id, item3.category_code);
                 }
             });
         } else {
             cover3.setImageBitmap(null);
             cover3.setTag(null);
         }
-        //dataCursor.close();
     }
 
     public int getColor(int position) {
@@ -188,38 +178,45 @@ public class BookListGridListViewAdapter extends BaseAdapter {
             return;
         }
         int index = bookCategory.getIndexByCategoryCode(category_code);
-        //dataList.add(index, new AdapterItem(category_code, dataCursor));
-        dataList.set(index, new AdapterItem(category_code, dataCursor));
+
+        ArrayList<AdapterItem> dataOneRow = new ArrayList<>();
+        dataCursor.moveToFirst();
+        do {
+            int id = dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.ID));
+            String img_large = dataCursor.getString(dataCursor.getColumnIndex(DB_Column.BookInfo.IMG_LARGE));
+            dataOneRow.add(new AdapterItem(category_code, id, img_large));
+        } while (dataCursor.moveToNext());
+
+        dataList.set(index, dataOneRow);
+        dataCursor.close();
     }
 
     public void buildAdapterList() {
-        adapterList = new ArrayList<AdapterItem>();
-        for (AdapterItem item : dataList) {
-            if (item.category_code != -1) {
+        adapterList = new ArrayList<ArrayList<AdapterItem>>();
+        for (ArrayList<AdapterItem> item : dataList) {
+            if (item.size() != 0) {
                 adapterList.add(item);
             }
         }
     }
 
     public void reset() {
-        for (AdapterItem item : dataList) {
-            if (item.dataCursor != null && !item.dataCursor.isClosed()) {
-                item.dataCursor.close();
-            }
-        }
         dataList.clear();
+        ArrayList<AdapterItem> list = new ArrayList<>();
         for (int i = 0; i < bookCategory.getCategoryCount(); i++) {
-            dataList.add(new AdapterItem(-1, null));
+            dataList.add(list);
         }
     }
 
     class AdapterItem {
         public int category_code;
-        public Cursor dataCursor;
+        public int book_id;
+        public String img_large;
 
-        public AdapterItem(int category_code, Cursor dataCursor) {
+        public AdapterItem(int category_code, int book_id, String img_large) {
             this.category_code = category_code;
-            this.dataCursor = dataCursor;
+            this.book_id = book_id;
+            this.img_large = img_large;
         }
     }
 }
