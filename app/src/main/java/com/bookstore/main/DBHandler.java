@@ -12,6 +12,7 @@ import com.bookstore.booklist.BookListGridListViewAdapter;
 import com.bookstore.booklist.BookListLoader;
 import com.bookstore.bookparser.BookCategory;
 import com.bookstore.provider.BookProvider;
+import com.bookstore.provider.BookSQLiteOpenHelper;
 import com.bookstore.provider.DB_Column;
 import com.bookstore.provider.Projection;
 
@@ -45,6 +46,37 @@ public class DBHandler {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                }
+            }
+        }).start();
+    }
+
+    public static void addSearchHistory(final Activity activity, final String book_name) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String projection[] = {DB_Column.SearchHistory.BOOK_NAME};
+                String selection = DB_Column.SearchHistory.BOOK_NAME + "='" + book_name + "'";
+                Cursor result_cursor = activity.getContentResolver().query(BookProvider.SEARCH_HISTORY_URI, projection, selection, null, null);
+                //If exist history, delete and insert again
+                if (result_cursor != null && result_cursor.getCount() != 0) {
+                    activity.getContentResolver().delete(BookProvider.SEARCH_HISTORY_URI, selection, null);
+                }
+                result_cursor.close();
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(DB_Column.SearchHistory.BOOK_NAME, book_name);
+                contentValues.put(DB_Column.SearchHistory.TIMESTAMP, System.currentTimeMillis() + "");
+                try {
+                    activity.getContentResolver().insert(BookProvider.SEARCH_HISTORY_URI, contentValues);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                Cursor cursor = activity.getContentResolver().query(BookProvider.SEARCH_HISTORY_URI, projection, null, null, null);
+                //most search history count is 15
+                if (cursor != null && cursor.getCount() > 15) {
+                    String deleteSelection = DB_Column.SearchHistory.ID + "=" + "(select min(" + DB_Column.SearchHistory.ID + ") from " + BookSQLiteOpenHelper.SEARCH_HISTORY_TABLE_NAME + ")";
+                    activity.getContentResolver().delete(BookProvider.SEARCH_HISTORY_URI, deleteSelection, null);
                 }
             }
         }).start();

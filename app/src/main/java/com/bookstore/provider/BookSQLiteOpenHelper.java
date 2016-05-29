@@ -16,10 +16,13 @@ public class BookSQLiteOpenHelper extends SQLiteOpenHelper {
     //version 5: add BookCategory table
     //version 6: add BookCategory table CODE column
     //version 7: add BookInfo table CATEGORY_CODE column
-    public static final int DATABASE_VERSION = 7;
+    //version 8: add SearchHistory table
+    //version 9/10: update SearchHistory table column name
+    public static final int DATABASE_VERSION = 10;
     public static final String DATABASE_NAME = "BookProvider.db";
     public static final String BOOKINFO_TABLE_NAME = "BookInfo";
     public static final String BOOKCATEGORY_TABLE_NAME = "BookCategory";
+    public static final String SEARCH_HISTORY_TABLE_NAME = "SearchHistory";
     private static BookSQLiteOpenHelper singleton;
     private Context mContext;
 
@@ -42,7 +45,7 @@ public class BookSQLiteOpenHelper extends SQLiteOpenHelper {
         Log.d("BookStore", "create database table");
         createBookInfoTable(db);
         createBookCategoryTable(db);
-
+        createSearchHistoryTable(db);
     }
 
     public void createBookInfoTable(SQLiteDatabase db) {
@@ -88,6 +91,19 @@ public class BookSQLiteOpenHelper extends SQLiteOpenHelper {
         }
     }
 
+    public void createSearchHistoryTable(SQLiteDatabase db) {
+        String create_database = "create table " + SEARCH_HISTORY_TABLE_NAME + " ("
+                + DB_Column.SearchHistory.ID + " integer primary key autoincrement, "
+                + DB_Column.SearchHistory.BOOK_NAME + " text not null, "
+                + DB_Column.SearchHistory.TIMESTAMP + " text" + ");";
+        try {
+            db.execSQL(create_database);
+            Log.i("BookDatabase", create_database);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     //when database version code change, it will call onUpgrade
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -95,6 +111,7 @@ public class BookSQLiteOpenHelper extends SQLiteOpenHelper {
         try {
             db.execSQL("DROP TABLE IF EXISTS " + BOOKINFO_TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + BOOKCATEGORY_TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + SEARCH_HISTORY_TABLE_NAME);
         } catch (Exception e) {
             e.printStackTrace();
         }

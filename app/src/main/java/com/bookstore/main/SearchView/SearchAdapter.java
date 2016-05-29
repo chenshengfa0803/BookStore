@@ -34,8 +34,10 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultView
     private final List<Integer> mStartList = new ArrayList<>();
     private Context mContext;
     private OnItemClickListener mItemClickListener;
+    private TagGroupListener mTagGroupListener;
     private List<SearchItem> mDataList = new ArrayList<>();
     private List<SearchItem> mSearchList = new ArrayList<>();
+    private List<String> mTagList = new ArrayList<>();
     private int mKeyLength = 0;
 
     public SearchAdapter(Context mContext) {
@@ -63,12 +65,16 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultView
             holder.search_history_text.setVisibility(View.VISIBLE);
 
             TagGroup tagGroup = new TagGroup(mContext);
-            List<String> tagList = new ArrayList<>();
-            for (int i = 0; i < 20; i++) {
-                tagList.add("item" + i);
-            }
-            tagGroup.setTags(tagList);
+            tagGroup.setTags(mTagList);
             tagGroup.setTag("history");
+            tagGroup.setOnTagClickListener(new TagGroup.OnTagClickListener() {
+                @Override
+                public void onTagClick(String tag) {
+                    if (mTagGroupListener != null) {
+                        mTagGroupListener.onTagClick(tag);
+                    }
+                }
+            });
             container.addView(tagGroup);
             return;
         }
@@ -90,7 +96,10 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultView
 
         int key_start = mStartList.get(position);
         int key_end = key_start + mKeyLength;
-        String text = item.getBook_title() + " 【" + item.getAuthor() + "】";
+        String text = item.getBook_title();
+        if (item.getAuthor() != null) {
+            text = text + " 【" + item.getAuthor() + "】";
+        }
         holder.book_title.setText(text, TextView.BufferType.SPANNABLE);
         Spannable spannable = (Spannable) holder.book_title.getText();
         spannable.setSpan(new ForegroundColorSpan(mContext.getResources().getColor(R.color.search_light_text_highlight)), key_start, key_end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -119,11 +128,13 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultView
                     String key = constraint.toString().toLowerCase(Locale.getDefault());
                     for (SearchItem item : mDataList) {
                         String title = item.getBook_title().toLowerCase(Locale.getDefault());
-                        String author = item.getAuthor().toLowerCase(Locale.getDefault());
-                        String all = (title + " 【" + author + "】").toLowerCase(Locale.getDefault());
-                        if (all.contains(key)) {
+                        if (item.getAuthor() != null) {
+                            String author = item.getAuthor().toLowerCase(Locale.getDefault());
+                            title = (title + " 【" + author + "】").toLowerCase(Locale.getDefault());
+                        }
+                        if (title.contains(key)) {
                             searchData.add(item);
-                            mStartList.add(all.indexOf(key));
+                            mStartList.add(title.indexOf(key));
                             mKeyLength = key.length();
                         }
                     }
@@ -154,26 +165,49 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultView
             return;
         }
         mDataList.clear();
+        if (dataCursor.moveToFirst()) {
+            do {
+                int id = dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.ID));
+                String img = dataCursor.getString(dataCursor.getColumnIndex(DB_Column.BookInfo.IMG_SMALL));
+                String title = dataCursor.getString(dataCursor.getColumnIndex(DB_Column.BookInfo.TITLE));
+                String author = dataCursor.getString(dataCursor.getColumnIndex(DB_Column.BookInfo.AUTHOR));
+                int category_code = dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.CATEGORY_CODE));
+                SearchItem item = new SearchItem(id, img, title, author, category_code);
+                mDataList.add(item);
+            } while (dataCursor.moveToNext());
+        }
+        dataCursor.close();
+    }
+
+    public void registerHistoryData(Cursor dataCursor) {
+        if (dataCursor == null) {
+            return;
+        }
+        mTagList.clear();
         dataCursor.moveToFirst();
         do {
-            int id = dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.ID));
-            String img = dataCursor.getString(dataCursor.getColumnIndex(DB_Column.BookInfo.IMG_SMALL));
-            String title = dataCursor.getString(dataCursor.getColumnIndex(DB_Column.BookInfo.TITLE));
-            String author = dataCursor.getString(dataCursor.getColumnIndex(DB_Column.BookInfo.AUTHOR));
-            int category_code = dataCursor.getInt(dataCursor.getColumnIndex(DB_Column.BookInfo.CATEGORY_CODE));
-            SearchItem item = new SearchItem(id, img, title, author, category_code);
-            mDataList.add(item);
+            String book_name = dataCursor.getString(dataCursor.getColumnIndex(DB_Column.SearchHistory.BOOK_NAME));
+            mTagList.add(book_name);
         } while (dataCursor.moveToNext());
 
         dataCursor.close();
+        notifyDataSetChanged();
     }
 
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
         this.mItemClickListener = mItemClickListener;
     }
 
+    public void setTagGroupListener(final TagGroupListener listener) {
+        this.mTagGroupListener = listener;
+    }
+
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
+    }
+
+    public interface TagGroupListener {
+        void onTagClick(String tag);
     }
 
     public class ResultViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

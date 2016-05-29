@@ -203,6 +203,7 @@ public class MainBookListFragment extends Fragment {
                 if (mListener != null) {
                     mListener.onBookClick(book_cover, book_id, category_code);
                 }
+                DBHandler.addSearchHistory(mActivity, item.getBook_title());
             }
         });
         mSearchView.setAdapter(adapter);

@@ -160,6 +160,7 @@ public class SearchView extends FrameLayout implements View.OnClickListener, Fil
         }
 
         getBookList();
+        getHistory();
     }
 
     public void hide() {
@@ -241,6 +242,12 @@ public class SearchView extends FrameLayout implements View.OnClickListener, Fil
 
     public void setAdapter(SearchAdapter adapter) {
         mSearchAdapter = adapter;
+        mSearchAdapter.setTagGroupListener(new SearchAdapter.TagGroupListener() {
+            @Override
+            public void onTagClick(String tag) {
+                mEditText.setText(tag);
+            }
+        });
         mRecyclerView.setAdapter(adapter);
         startFilter(mEditText.getText());
     }
@@ -251,6 +258,13 @@ public class SearchView extends FrameLayout implements View.OnClickListener, Fil
         BookListLoadListener mLoadListener = new BookListLoadListener();
         mlistLoader.registerListener(0, mLoadListener);
         mlistLoader.startLoading();
+    }
+
+    public void getHistory() {
+        BookListLoader historyLoader = new BookListLoader(mContext, BookProvider.SEARCH_HISTORY_URI, null, null, null, DB_Column.SearchHistory.TIMESTAMP + " DESC");
+        HistoryLoaderListener loaderListener = new HistoryLoaderListener();
+        historyLoader.registerListener(0, loaderListener);
+        historyLoader.startLoading();
     }
 
     public interface SearchViewListener {
@@ -266,6 +280,16 @@ public class SearchView extends FrameLayout implements View.OnClickListener, Fil
         @Override
         public void onLoadComplete(Loader<Cursor> loader, Cursor data) {
             mSearchAdapter.registerDataCursor(data);
+        }
+    }
+
+    private class HistoryLoaderListener implements Loader.OnLoadCompleteListener<Cursor> {
+        public HistoryLoaderListener() {
+        }
+
+        @Override
+        public void onLoadComplete(Loader<Cursor> loader, Cursor data) {
+            mSearchAdapter.registerHistoryData(data);
         }
     }
 }

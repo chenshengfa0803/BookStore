@@ -20,11 +20,16 @@ public class BookProvider extends ContentProvider {
     public static final String AUTHORITY = "com.bookstore.provider.BookProvider";
     public static final Uri BOOKINFO_URI = Uri.parse("content://" + AUTHORITY + "/" + BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME);
     public static final Uri BOOKCATEGORY_URI = Uri.parse("content://" + AUTHORITY + "/" + BookSQLiteOpenHelper.BOOKCATEGORY_TABLE_NAME);
+    public static final Uri SEARCH_HISTORY_URI = Uri.parse("content://" + AUTHORITY + "/" + BookSQLiteOpenHelper.SEARCH_HISTORY_TABLE_NAME);
     private static final int URI_MATCHER_CODE_BOOKINFO = 0x1000;
     private static final int URI_MATCHER_CODE_BOOKINFO_ID = URI_MATCHER_CODE_BOOKINFO + 1;
 
     private static final int URI_MATCHER_CODE_BOOKCATEGORY = URI_MATCHER_CODE_BOOKINFO + 0x1000;
     private static final int URI_MATCHER_CODE_BOOKCATEGORY_ID = URI_MATCHER_CODE_BOOKCATEGORY + 1;
+
+    private static final int URI_MATCHER_CODE_SEARCH_HISTORY = URI_MATCHER_CODE_BOOKCATEGORY + 0x1000;
+    private static final int URI_MATCHER_CODE_SEARCH_HISTORY_ID = URI_MATCHER_CODE_SEARCH_HISTORY + 1;
+
     private static final UriMatcher sURIMatcher;
 
     static {
@@ -33,6 +38,8 @@ public class BookProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, "BookInfo/#", URI_MATCHER_CODE_BOOKINFO_ID);
         sURIMatcher.addURI(AUTHORITY, "BookCategory", URI_MATCHER_CODE_BOOKCATEGORY);
         sURIMatcher.addURI(AUTHORITY, "BookCategory/#", URI_MATCHER_CODE_BOOKCATEGORY_ID);
+        sURIMatcher.addURI(AUTHORITY, "SearchHistory", URI_MATCHER_CODE_SEARCH_HISTORY);
+        sURIMatcher.addURI(AUTHORITY, "SearchHistory/#", URI_MATCHER_CODE_SEARCH_HISTORY_ID);
     }
 
     private BookSQLiteOpenHelper dbHelper;
@@ -94,6 +101,16 @@ public class BookProvider extends ContentProvider {
                     String query_str4 = SQLiteQueryBuilder.buildQueryString(false, BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME, projection, category_select, null, null, sortOrder, null);
                     result_cursor = database.rawQuery(query_str4, selectionArgs);
                     break;
+                case URI_MATCHER_CODE_SEARCH_HISTORY:
+                    String query_str5 = SQLiteQueryBuilder.buildQueryString(false, BookSQLiteOpenHelper.SEARCH_HISTORY_TABLE_NAME, projection, selection, null, null, sortOrder, null);
+                    result_cursor = database.rawQuery(query_str5, selectionArgs);
+                    break;
+                case URI_MATCHER_CODE_SEARCH_HISTORY_ID:
+                    String history_id = uri.getPathSegments().get(1);
+                    String history_select = DB_Column.SearchHistory.ID + "=" + history_id + (TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ")");
+                    String query_str6 = SQLiteQueryBuilder.buildQueryString(false, BookSQLiteOpenHelper.SEARCH_HISTORY_TABLE_NAME, projection, history_select, null, null, sortOrder, null);
+                    result_cursor = database.rawQuery(query_str6, selectionArgs);
+                    break;
             }
         } catch (SQLiteException e) {
             throw e;
@@ -127,6 +144,11 @@ public class BookProvider extends ContentProvider {
                     resultUri = ContentUris.withAppendedId(uri, category_id);
                     getContext().getContentResolver().notifyChange(resultUri, null);
                     break;
+                case URI_MATCHER_CODE_SEARCH_HISTORY:
+                    long history_id = database.insert("SearchHistory", null, values);
+                    resultUri = ContentUris.withAppendedId(uri, history_id);
+                    getContext().getContentResolver().notifyChange(resultUri, null);
+                    break;
             }
         } catch (SQLiteException e) {
             throw e;
@@ -157,6 +179,14 @@ public class BookProvider extends ContentProvider {
                     String category_id = uri.getPathSegments().get(1);
                     String category_select = DB_Column.BookCategory.ID + "=" + category_id + (TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ")");
                     result_count = database.delete(BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME, category_select, selectionArgs);
+                    break;
+                case URI_MATCHER_CODE_SEARCH_HISTORY:
+                    result_count = database.delete(BookSQLiteOpenHelper.SEARCH_HISTORY_TABLE_NAME, selection, selectionArgs);
+                    break;
+                case URI_MATCHER_CODE_SEARCH_HISTORY_ID:
+                    String history_id = uri.getPathSegments().get(1);
+                    String history_select = DB_Column.SearchHistory.ID + "=" + history_id + (TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ")");
+                    result_count = database.delete(BookSQLiteOpenHelper.SEARCH_HISTORY_TABLE_NAME, history_select, selectionArgs);
                     break;
             }
         } catch (SQLiteException e) {
@@ -190,6 +220,14 @@ public class BookProvider extends ContentProvider {
                     String category_id = uri.getPathSegments().get(1);
                     String category_select = DB_Column.BookCategory.ID + "=" + category_id + (TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ")");
                     result_count = database.update(BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME, values, category_select, selectionArgs);
+                    break;
+                case URI_MATCHER_CODE_SEARCH_HISTORY:
+                    result_count = database.update(BookSQLiteOpenHelper.SEARCH_HISTORY_TABLE_NAME, values, selection, selectionArgs);
+                    break;
+                case URI_MATCHER_CODE_SEARCH_HISTORY_ID:
+                    String history_id = uri.getPathSegments().get(1);
+                    String history_select = DB_Column.SearchHistory.ID + "=" + history_id + (TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ")");
+                    result_count = database.update(BookSQLiteOpenHelper.SEARCH_HISTORY_TABLE_NAME, values, history_select, selectionArgs);
                     break;
             }
         } catch (SQLiteException e) {

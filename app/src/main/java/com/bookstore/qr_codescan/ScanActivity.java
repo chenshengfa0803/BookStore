@@ -510,9 +510,11 @@ public class ScanActivity extends Activity implements Callback {
         String projection[] = {DB_Column.BookInfo.ISBN13};
         String selection = DB_Column.BookInfo.ISBN13 + "=" + isbn;
         Cursor cursor = getContentResolver().query(BookProvider.BOOKINFO_URI, projection, selection, null, null);
-        if (cursor.getCount() > 0) {
+        if (cursor != null && cursor.getCount() > 0) {
+            cursor.close();
             return true;
         }
+        cursor.close();
         for (BookData data : scanedBookList) {
             if (isbn.equals(data.isbn13)) {
                 return true;

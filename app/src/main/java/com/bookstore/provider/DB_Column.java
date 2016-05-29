@@ -31,6 +31,12 @@ public abstract class DB_Column {
         public static final String Code = "category_code";
     }
 
+    public class SearchHistory {
+        public static final String ID = "_id";
+        public static final String BOOK_NAME = "book_name";
+        public static final String TIMESTAMP = "time_stamp";
+    }
+
 
 
 
