@@ -3,6 +3,8 @@ package com.bookstore;
 import android.app.Application;
 import android.content.Context;
 
+import com.avos.avoscloud.AVOSCloud;
+import com.avos.avoscloud.AVObject;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -28,5 +30,11 @@ public class UIApplication extends Application {
         super.onCreate();
 
         initImageLoader(getApplicationContext());
+        AVOSCloud.initialize(this, "XabzuOyp41S5IqFHeqYaSVGz-gzGzoHsz", "GLIqjYDRngajLO0sPW6WyfK0");
+
+        //Test leanCloud, data will be save to leanCloud
+        AVObject testObject = new AVObject("TestObject");
+        testObject.put("foo", "bar");
+        testObject.saveInBackground();
     }
 }
