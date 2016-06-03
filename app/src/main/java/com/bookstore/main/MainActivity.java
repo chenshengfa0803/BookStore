@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        StartLoginActivity();
         super.onCreate(savedInstanceState);
 
         //沉浸式状态栏 Immersive ActionBar
@@ -210,6 +211,13 @@ public class MainActivity extends AppCompatActivity {
 
     public ResideMenu getResideMenu() {
         return resideMenu;
+    }
+
+    public void StartLoginActivity() {
+        Intent intent = new Intent();
+        intent.setClass(this, LoginActivity.class);
+        startActivity(intent);
+        this.finish();
     }
 
 

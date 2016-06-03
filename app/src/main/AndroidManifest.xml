@@ -21,6 +21,9 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".LoginActivity"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
+        <activity
             android:name="com.bookstore.qr_codescan.ScanActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait"

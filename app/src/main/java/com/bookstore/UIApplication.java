@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 
 import com.avos.avoscloud.AVOSCloud;
-import com.avos.avoscloud.AVObject;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -33,8 +32,24 @@ public class UIApplication extends Application {
         AVOSCloud.initialize(this, "XabzuOyp41S5IqFHeqYaSVGz-gzGzoHsz", "GLIqjYDRngajLO0sPW6WyfK0");
 
         //Test leanCloud, data will be save to leanCloud
-        AVObject testObject = new AVObject("TestObject");
-        testObject.put("foo", "bar");
-        testObject.saveInBackground();
+        //AVObject testObject = new AVObject("TestObject");
+        //testObject.put("foo", "bar");
+        //testObject.saveInBackground();
+
+/*
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    AVOSCloud.requestSMSCode("18922219783", "我的书架", "注册", 10);
+                } catch (AVException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }.execute();
+*/
+
+
     }
 }
