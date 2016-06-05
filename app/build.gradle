@@ -32,13 +32,13 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile files('src/main/libs/zxing.jar')
+    compile files('/libs/zxing.jar')
     compile 'com.android.support:support-v4:22.2.0'
-    compile files('src/main/libs/universal-image-loader-1.9.5.jar')
+    compile files('libs/universal-image-loader-1.9.5.jar')
     compile 'com.android.support:appcompat-v7:22.+'
     compile 'com.android.support:palette-v7:22.+'
     compile 'me.gujun.android.taggroup:library:1.4@aar'
-    compile files('src/main/libs/nineoldandroids-library-2.4.0.jar')
+    compile files('/libs/nineoldandroids-library-2.4.0.jar')
     compile 'com.android.support:cardview-v7:22.2.1'
     compile 'com.android.support:recyclerview-v7:22.2.1'
     compile files('libs/avoscloud-sdk-v3.13.12.jar')
@@ -46,4 +46,6 @@ dependencies {
     compile files('libs/httpmime-4.2.4.jar')
     compile files('libs/okhttp-2.6.0-leancloud.jar')
     compile files('libs/okio-1.6.0-leancloud.jar')
+    compile files('libs/weibosdkcore_release.jar')
+    compile files('libs/nineoldandroids-library-2.4.0.jar')
 }
