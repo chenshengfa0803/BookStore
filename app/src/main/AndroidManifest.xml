@@ -24,6 +24,11 @@
             android:name=".LoginActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
         <activity
+            android:name="com.sina.weibo.sdk.component.WeiboSdkBrowser"
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"></activity>
+        <activity
             android:name="com.bookstore.qr_codescan.ScanActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait"
