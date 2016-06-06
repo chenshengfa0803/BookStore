@@ -29,6 +29,7 @@ public class UIApplication extends Application {
         super.onCreate();
 
         initImageLoader(getApplicationContext());
+        AVOSCloud.useAVCloudCN();
         AVOSCloud.initialize(this, "XabzuOyp41S5IqFHeqYaSVGz-gzGzoHsz", "GLIqjYDRngajLO0sPW6WyfK0");
 
         //Test leanCloud, data will be save to leanCloud

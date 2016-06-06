@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import com.avos.avoscloud.AVUser;
 import com.bookstore.main.animation.ViewBlur;
 import com.bookstore.main.residemenu.ResideMenu;
 import com.bookstore.main.residemenu.ResideMenuItem;
@@ -36,7 +37,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        StartLoginActivity();
+        String userId = null;
+        //add logOut for testing
+        //AVUser.logOut();
+        AVUser currentUser = AVUser.getCurrentUser();
+        if (currentUser != null) {
+            userId = currentUser.getObjectId();
+        } else {
+            StartLoginActivity();
+        }
         super.onCreate(savedInstanceState);
 
         //沉浸式状态栏 Immersive ActionBar
@@ -197,6 +206,12 @@ public class MainActivity extends AppCompatActivity {
 
         // create menu items;
         itemProfile = new ResideMenuItem(this, R.drawable.icon_profile, "账号");
+        itemProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AVUser.logOut();
+            }
+        });
         itemHome = new ResideMenuItem(this, R.drawable.icon_home, "图书世界");
         itemCalendar = new ResideMenuItem(this, R.drawable.icon_calendar, "深度好文");
         itemSettings = new ResideMenuItem(this, R.drawable.icon_settings, "设置");

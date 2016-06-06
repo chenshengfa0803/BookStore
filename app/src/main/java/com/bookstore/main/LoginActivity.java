@@ -43,12 +43,16 @@ public class LoginActivity extends Activity {
                         mAccessToken = Oauth2AccessToken.parseAccessToken(bundle);
                         String accessToken = mAccessToken.getToken();
                         String expiredAt = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date(mAccessToken.getExpiresTime()));
-                        AVUser.AVThirdPartyUserAuth userAuth = new AVUser.AVThirdPartyUserAuth(accessToken, expiredAt, "sina", "chenshengfa");
+                        AVUser.AVThirdPartyUserAuth userAuth = new AVUser.AVThirdPartyUserAuth(accessToken, expiredAt, "sina", mAccessToken.getUid());
                         AVUser.loginWithAuthData(userAuth, new LogInCallback<AVUser>() {
                             @Override
                             public void done(AVUser avUser, AVException e) {
                                 if (e == null) {
                                     Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+                                    StarMainActivity();
+                                } else {
+                                    e.printStackTrace();
+                                    Toast.makeText(LoginActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -74,5 +78,12 @@ public class LoginActivity extends Activity {
         if (mSsoHandler != null) {
             mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
         }
+    }
+
+    public void StarMainActivity() {
+        Intent intent = new Intent();
+        intent.setClass(this, MainActivity.class);
+        startActivity(intent);
+        this.finish();
     }
 }
