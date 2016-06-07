@@ -28,6 +28,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.SaveCallback;
 import com.bookstore.bookparser.BookCategory;
 import com.bookstore.bookparser.BookData;
 import com.bookstore.bookparser.BookInfoJsonParser;
@@ -37,6 +40,7 @@ import com.bookstore.connection.ChineseLibraryURL;
 import com.bookstore.connection.douban.DoubanBookInfoUrl;
 import com.bookstore.main.R;
 import com.bookstore.provider.BookProvider;
+import com.bookstore.provider.BookSQLiteOpenHelper;
 import com.bookstore.provider.DB_Column;
 import com.bookstore.qr_codescan.danmakuFlame.master.flame.danmaku.controller.IDanmakuView;
 import com.bookstore.qr_codescan.danmakuFlame.master.flame.danmaku.danmaku.model.BaseDanmaku;
@@ -314,6 +318,7 @@ public class ScanActivity extends Activity implements Callback {
         save_books_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                saveToLeanCloud();
                 insertBookDataToDB();
                 ScanActivity.this.setResult(RESULT_OK);
                 ScanActivity.this.finish();
@@ -504,6 +509,45 @@ public class ScanActivity extends Activity implements Callback {
                 }
             }
         }).start();
+    }
+
+    public void saveToLeanCloud() {
+        for (BookData bookData : scanedBookList) {
+            AVObject bookInfo = new AVObject(BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME);
+
+            bookInfo.put(DB_Column.BookInfo.TITLE, bookData.title);
+            if (bookData.authors.size() > 0) {
+                bookInfo.put(DB_Column.BookInfo.AUTHOR, bookData.authors.get(0));
+            }
+            if (bookData.translator.size() > 0) {
+                bookInfo.put(DB_Column.BookInfo.TRANSLATOR, bookData.translator.get(0));
+            }
+            bookInfo.put(DB_Column.BookInfo.PUB_DATE, bookData.pub_date);
+            bookInfo.put(DB_Column.BookInfo.PUBLISHER, bookData.publisher);
+            bookInfo.put(DB_Column.BookInfo.PRICE, bookData.price);
+            bookInfo.put(DB_Column.BookInfo.PAGES, bookData.pages);
+            bookInfo.put(DB_Column.BookInfo.BINGDING, bookData.binding);
+            bookInfo.put(DB_Column.BookInfo.IMG_SMALL, bookData.images_small);
+            bookInfo.put(DB_Column.BookInfo.IMG_MEDIUM, bookData.images_medium);
+            bookInfo.put(DB_Column.BookInfo.IMG_LARGE, bookData.images_large);
+            bookInfo.put(DB_Column.BookInfo.ISBN10, bookData.isbn10);
+            bookInfo.put(DB_Column.BookInfo.ISBN13, bookData.isbn13);
+            SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String date = sDateFormat.format(new Date());
+            bookInfo.put(DB_Column.BookInfo.ADD_DATE, date);
+            bookInfo.put(DB_Column.BookInfo.CATEGORY_CODE, bookData.category_code);
+            bookInfo.put(DB_Column.BookInfo.CLC_NUMBER, bookData.clc_number);
+            bookInfo.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(AVException e) {
+                    if (e == null) {
+                        Toast.makeText(ScanActivity.this, "已保存到服务器", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(ScanActivity.this, "保存到服务器失败", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
     }
 
     public boolean checkIfExist(String isbn) {
