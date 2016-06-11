@@ -38,6 +38,7 @@ import com.bookstore.connection.BookInfoRequestBase;
 import com.bookstore.connection.BookInfoUrlBase;
 import com.bookstore.connection.ChineseLibraryURL;
 import com.bookstore.connection.douban.DoubanBookInfoUrl;
+import com.bookstore.main.MainActivity;
 import com.bookstore.main.R;
 import com.bookstore.provider.BookProvider;
 import com.bookstore.provider.BookSQLiteOpenHelper;
@@ -515,6 +516,7 @@ public class ScanActivity extends Activity implements Callback {
         for (BookData bookData : scanedBookList) {
             AVObject bookInfo = new AVObject(BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME);
 
+            bookInfo.put("userId", MainActivity.getCurrentUserId());
             bookInfo.put(DB_Column.BookInfo.TITLE, bookData.title);
             if (bookData.authors.size() > 0) {
                 bookInfo.put(DB_Column.BookInfo.AUTHOR, bookData.authors.get(0));

@@ -24,20 +24,22 @@ public class MainActivity extends AppCompatActivity {
     public static final String PREFERENCE_FILE_NAME = "config_preference";
     public static final int MSG_GET_BOOK_CATEGORY = 100;
     private final static int SCANNING_REQUEST_CODE = 1;
+    private static String userId = null;
     public FloatButton mainFloatButton;
-
     View blurFromView = null;
     ImageView blurToView = null;
-
     private ResideMenu resideMenu;
     private ResideMenuItem itemHome;
     private ResideMenuItem itemProfile;
     private ResideMenuItem itemCalendar;
     private ResideMenuItem itemSettings;
 
+    static public String getCurrentUserId() {
+        return userId;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        String userId = null;
         //add logOut for testing
         //AVUser.logOut();
         AVUser currentUser = AVUser.getCurrentUser();
@@ -117,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
         MainBookListFragment fragment = (MainBookListFragment) getSupportFragmentManager().findFragmentByTag(MainBookListFragment.class.getSimpleName());
         fragment.hideSearchView();
     }
+
     @Override
     public void onBackPressed() {
         if (resideMenu.isOpened()) {

@@ -26,6 +26,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.FindCallback;
 import com.bookstore.bookdetail.BookDetailFragment;
 import com.bookstore.booklist.BookListGridListView;
 import com.bookstore.booklist.BookListGridListViewAdapter;
@@ -38,6 +42,7 @@ import com.bookstore.main.SearchView.SearchView;
 import com.bookstore.main.animation.BookDetailTransition;
 import com.bookstore.main.residemenu.ResideMenu;
 import com.bookstore.provider.BookProvider;
+import com.bookstore.provider.BookSQLiteOpenHelper;
 import com.bookstore.provider.DB_Column;
 import com.bookstore.qr_codescan.ScanActivity;
 import com.bookstore.util.BitmapUtil;
@@ -273,6 +278,7 @@ public class MainBookListFragment extends Fragment {
             main_toolbar.setTitle("");
         }
         refreshBookList();
+        loadBookListFromCloud();
     }
 
     @Override
@@ -338,6 +344,26 @@ public class MainBookListFragment extends Fragment {
             String[] projection = {DB_Column.BookInfo.ID, DB_Column.BookInfo.IMG_LARGE, DB_Column.BookInfo.CATEGORY_CODE};
             dbHandler.loadBookList(mActivity, BookProvider.BOOKINFO_URI, projection, selection, null, DB_Column.BookInfo.ID + " DESC LIMIT 3");
         }
+    }
+
+    public void loadBookListFromCloud() {
+        AVQuery<AVObject> query = new AVQuery<AVObject>(BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME);
+        query.whereEqualTo("userId", MainActivity.getCurrentUserId());
+        query.orderByDescending("objectId");
+        query.findInBackground(new FindCallback<AVObject>() {
+            @Override
+            public void done(List<AVObject> list, AVException e) {
+                if (e == null) {
+                    for (AVObject item : list) {
+                        String objectId = item.getObjectId();
+                        String title = item.getString(DB_Column.BookInfo.TITLE);
+                        String isbn13 = item.getString(DB_Column.BookInfo.ISBN13);
+                        String pages = item.getString(DB_Column.BookInfo.PAGES);
+                        String author = item.getString(DB_Column.BookInfo.AUTHOR);
+                    }
+                }
+            }
+        });
     }
 
     public void setListViewVerticalScrollBarEnable(boolean enable) {
