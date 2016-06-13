@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.avos.avoscloud.AVObject;
 import com.bookstore.main.R;
 import com.bookstore.provider.DB_Column;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -36,7 +37,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultView
     private OnItemClickListener mItemClickListener;
     private TagGroupListener mTagGroupListener;
     private List<SearchItem> mDataList = new ArrayList<>();
-    private List<SearchItem> mSearchList = new ArrayList<>();
+    private List<SearchCloudItem> mCloudDataList = new ArrayList<>();
+    private List<SearchCloudItem> mSearchList = new ArrayList<>();
     private List<String> mTagList = new ArrayList<>();
     private int mKeyLength = 0;
 
@@ -87,7 +89,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultView
         holder.book_title.setVisibility(View.VISIBLE);
         holder.book_cover.setVisibility(View.VISIBLE);
         holder.search_history_text.setVisibility(View.GONE);
-        SearchItem item = mSearchList.get(position);
+        SearchCloudItem item = mSearchList.get(position);
         DisplayImageOptions options = new DisplayImageOptions.Builder()
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
@@ -111,7 +113,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultView
         return mSearchList.size() + 1;
     }
 
-    public List<SearchItem> getSearchList() {
+    public List<SearchCloudItem> getSearchList() {
         return mSearchList;
     }
 
@@ -122,11 +124,11 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultView
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults filterResults = new FilterResults();
                 if (!TextUtils.isEmpty(constraint)) {
-                    List<SearchItem> searchData = new ArrayList<>();
+                    List<SearchCloudItem> searchData = new ArrayList<>();
 
                     mStartList.clear();
                     String key = constraint.toString().toLowerCase(Locale.getDefault());
-                    for (SearchItem item : mDataList) {
+                    for (SearchCloudItem item : mCloudDataList) {
                         String title = item.getBook_title().toLowerCase(Locale.getDefault());
                         if (item.getAuthor() != null) {
                             String author = item.getAuthor().toLowerCase(Locale.getDefault());
@@ -150,8 +152,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultView
                 if (results.values != null) {
                     List<?> result = (List<?>) results.values;
                     for (Object object : result) {
-                        if (object instanceof SearchItem) {
-                            mSearchList.add((SearchItem) object);
+                        if (object instanceof SearchCloudItem) {
+                            mSearchList.add((SearchCloudItem) object);
                         }
                     }
                 }
@@ -177,6 +179,19 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ResultView
             } while (dataCursor.moveToNext());
         }
         dataCursor.close();
+    }
+
+    public void registerCloudData(List<AVObject> list) {
+        mCloudDataList.clear();
+        for (AVObject item : list) {
+            String objectId = item.getObjectId();
+            String img = item.getString(DB_Column.BookInfo.IMG_SMALL);
+            String title = item.getString(DB_Column.BookInfo.TITLE);
+            String author = item.getString(DB_Column.BookInfo.AUTHOR);
+            int category_code = item.getInt(DB_Column.BookInfo.CATEGORY_CODE);
+            SearchCloudItem searchItem = new SearchCloudItem(objectId, img, title, author, category_code);
+            mCloudDataList.add(searchItem);
+        }
     }
 
     public void registerHistoryData(Cursor dataCursor) {

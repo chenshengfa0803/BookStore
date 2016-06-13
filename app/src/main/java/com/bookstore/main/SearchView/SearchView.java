@@ -24,10 +24,19 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.FindCallback;
 import com.bookstore.booklist.BookListLoader;
+import com.bookstore.main.MainActivity;
 import com.bookstore.main.R;
 import com.bookstore.provider.BookProvider;
+import com.bookstore.provider.BookSQLiteOpenHelper;
 import com.bookstore.provider.DB_Column;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Administrator on 2016/5/16.
@@ -159,7 +168,8 @@ public class SearchView extends FrameLayout implements View.OnClickListener, Fil
             mSearchViewListener.onSearchViewShown();
         }
 
-        getBookList();
+        //getBookList();
+        getBookListFromCloud();
         getHistory();
     }
 
@@ -258,6 +268,23 @@ public class SearchView extends FrameLayout implements View.OnClickListener, Fil
         BookListLoadListener mLoadListener = new BookListLoadListener();
         mlistLoader.registerListener(0, mLoadListener);
         mlistLoader.startLoading();
+    }
+
+    public void getBookListFromCloud() {
+        AVQuery<AVObject> query = new AVQuery<>(BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME);
+        query.whereEqualTo("userId", MainActivity.getCurrentUserId());
+        query.limit(1000);
+        query.selectKeys(Arrays.asList("objectId", DB_Column.BookInfo.IMG_SMALL, DB_Column.BookInfo.TITLE, DB_Column.BookInfo.AUTHOR, DB_Column.BookInfo.CATEGORY_CODE));
+        query.findInBackground(new FindCallback<AVObject>() {
+            @Override
+            public void done(List<AVObject> list, AVException e) {
+                if (e == null) {
+                    mSearchAdapter.registerCloudData(list);
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     public void getHistory() {

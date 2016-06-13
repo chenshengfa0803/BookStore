@@ -37,7 +37,7 @@ import com.bookstore.booklist.BookListViewPagerAdapter;
 import com.bookstore.booklist.ListViewListener;
 import com.bookstore.bookparser.BookCategory;
 import com.bookstore.main.SearchView.SearchAdapter;
-import com.bookstore.main.SearchView.SearchItem;
+import com.bookstore.main.SearchView.SearchCloudItem;
 import com.bookstore.main.SearchView.SearchView;
 import com.bookstore.main.animation.BookDetailTransition;
 import com.bookstore.main.residemenu.ResideMenu;
@@ -199,16 +199,16 @@ public class MainBookListFragment extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
                 mSearchView.hide();
-                List<SearchItem> list = adapter.getSearchList();
-                SearchItem item = list.get(position);
+                List<SearchCloudItem> list = adapter.getSearchList();
+                SearchCloudItem item = list.get(position);
                 ImageView book_cover = (ImageView) view.findViewById(R.id.search_item_bookcover);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     book_cover.setTransitionName("item" + position + "small_cover");
                 }
-                int book_id = item.getBook_id();
+                String objectId = item.getObjectId();
                 int category_code = item.getCategory_code();
                 if (mListener != null) {
-                    //mListener.onBookClick(book_cover, book_id, category_code);
+                    mListener.onBookClick(book_cover, objectId, category_code);
                 }
                 DBHandler.addSearchHistory(mActivity, item.getBook_title());
             }
@@ -307,7 +307,8 @@ public class MainBookListFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        stopRefreshBookList();
+        //stopRefreshBookList();
+        stopLoadBookListFromCloud();
     }
 
     @Override
@@ -363,8 +364,8 @@ public class MainBookListFragment extends Fragment {
         AVQuery<AVObject> query = new AVQuery<>(BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME);
         query.whereEqualTo("userId", MainActivity.getCurrentUserId());
         query.limit(3);
-        query.selectKeys(Arrays.asList("objectId", DB_Column.BookInfo.ID, DB_Column.BookInfo.IMG_LARGE, DB_Column.BookInfo.CATEGORY_CODE));
-        query.orderByDescending("objectId");
+        query.selectKeys(Arrays.asList("objectId", DB_Column.BookInfo.IMG_LARGE, DB_Column.BookInfo.CATEGORY_CODE));
+        query.orderByDescending("updatedAt");
         query.findInBackground(new FindCallback<AVObject>() {
             @Override
             public void done(List<AVObject> list, AVException e) {
@@ -390,7 +391,7 @@ public class MainBookListFragment extends Fragment {
 
                 query.limit(3);
                 query.selectKeys(Arrays.asList("objectId", DB_Column.BookInfo.ID, DB_Column.BookInfo.IMG_LARGE, DB_Column.BookInfo.CATEGORY_CODE));
-                query.orderByDescending("objectId");
+                query.orderByDescending("updatedAt");
 
                 query.findInBackground(new FindCallback<AVObject>() {
                     @Override

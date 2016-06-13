@@ -333,7 +333,7 @@ public class CategoryBookListFragment extends Fragment {
         }
         query.limit(1000);
         //query.selectKeys(Arrays.asList("objectId", DB_Column.BookInfo.IMG_LARGE, DB_Column.BookInfo.TITLE, DB_Column.BookInfo.CATEGORY_CODE));
-        query.orderByDescending("objectId");
+        query.orderByDescending("updatedAt");
 
         query.findInBackground(new FindCallback<AVObject>() {
             @Override
