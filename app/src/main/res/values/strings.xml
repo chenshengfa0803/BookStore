@@ -12,7 +12,7 @@
     <string name="detail_bookinfo">图书详情</string>
     <string name="repeat_scan">图书已存在</string>
     <string name="load_detail_error">加载失败</string>
-    <string name="category_error">由于未找到合适的图书分类方法，获取图书分类失败，请点击刷新</string>
+    <string name="category_error">由于未找到合适的图书分类方法，获取图书分类失败，请点击刷新，刷新也不一定能成功，该死的服务器</string>
     <string name="authors">作者</string>
     <string name="translators">译者</string>
     <string name="category">分类</string>
@@ -24,4 +24,5 @@
     <string name="delete_selected_alert_title">删除选择的图书？</string>
     <string name="deleted_books_toast">已删除 %d 本图书</string>
     <string name="deleted_books_fail">删除【%s】图书失败</string>
+    <string name="save_books_fail">【%s】保存到服务器失败</string>
 </resources>

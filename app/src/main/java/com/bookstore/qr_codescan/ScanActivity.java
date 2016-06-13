@@ -30,6 +30,8 @@ import android.widget.Toast;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.CountCallback;
 import com.avos.avoscloud.SaveCallback;
 import com.bookstore.bookparser.BookCategory;
 import com.bookstore.bookparser.BookData;
@@ -226,11 +228,8 @@ public class ScanActivity extends Activity implements Callback {
 //        }
         //ScanActivity.this.finish();
         //mDanmu.addDanmuText(false, resultString);
-        if (checkIfExist(resultString)) {
-            mDanmu.addDanmuText(BaseDanmaku.TYPE_FIX_BOTTOM, false, getResources().getString(R.string.repeat_scan));
-        } else {
-            getBookData(resultString);
-        }
+        checkIfCloudExist(resultString);
+
         Handler restartHandler = new Handler();
         restartHandler.postDelayed(new Runnable() {
             @Override
@@ -513,7 +512,7 @@ public class ScanActivity extends Activity implements Callback {
     }
 
     public void saveToLeanCloud() {
-        for (BookData bookData : scanedBookList) {
+        for (final BookData bookData : scanedBookList) {
             AVObject bookInfo = new AVObject(BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME);
 
             bookInfo.put("userId", MainActivity.getCurrentUserId());
@@ -543,9 +542,10 @@ public class ScanActivity extends Activity implements Callback {
                 @Override
                 public void done(AVException e) {
                     if (e == null) {
-                        Toast.makeText(ScanActivity.this, "已保存到服务器", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(ScanActivity.this, "已保存到服务器", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(ScanActivity.this, "保存到服务器失败", Toast.LENGTH_SHORT).show();
+                        String saveFail = getResources().getString(R.string.save_books_fail, bookData.title);
+                        Toast.makeText(ScanActivity.this, saveFail, Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -567,5 +567,30 @@ public class ScanActivity extends Activity implements Callback {
             }
         }
         return false;
+    }
+
+    public void checkIfCloudExist(final String isbn) {
+        for (BookData data : scanedBookList) {
+            if (isbn.equals(data.isbn13)) {
+                mDanmu.addDanmuText(BaseDanmaku.TYPE_FIX_BOTTOM, false, getResources().getString(R.string.repeat_scan));
+                return;
+            }
+        }
+        AVQuery<AVObject> query = new AVQuery<>(BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME);
+        query.whereEqualTo(DB_Column.BookInfo.ISBN13, isbn);
+        query.countInBackground(new CountCallback() {
+            @Override
+            public void done(int i, AVException e) {
+                if (e == null) {
+                    if (i > 0) {
+                        mDanmu.addDanmuText(BaseDanmaku.TYPE_FIX_BOTTOM, false, getResources().getString(R.string.repeat_scan));
+                    } else {
+                        getBookData(isbn);
+                    }
+                } else {
+
+                }
+            }
+        });
     }
 }
