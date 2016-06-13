@@ -5,7 +5,6 @@ import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
@@ -13,7 +12,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -43,7 +41,9 @@ import android.widget.Toast;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.DeleteCallback;
 import com.avos.avoscloud.FindCallback;
+import com.avos.avoscloud.GetCallback;
 import com.bookstore.bookdetail.BookDetailFragment;
 import com.bookstore.bookparser.BookCategory;
 import com.bookstore.connection.BookInfoConnection;
@@ -74,6 +74,7 @@ import java.util.List;
 public class CategoryBookListFragment extends Fragment {
     public static final String ARGS_CATEGORY_CODE = "category_code";
     private final static int SCANNING_REQUEST_CODE = 1;
+    static int deleteCount = 0;
     GridView mGridView;
     private Activity mActivity;
     private int mCategoryCode = 0;
@@ -331,7 +332,7 @@ public class CategoryBookListFragment extends Fragment {
             query = AVQuery.and(Arrays.asList(userQuery, categoryQuery));
         }
         query.limit(1000);
-        query.selectKeys(Arrays.asList("objectId", DB_Column.BookInfo.IMG_LARGE, DB_Column.BookInfo.TITLE, DB_Column.BookInfo.CATEGORY_CODE));
+        //query.selectKeys(Arrays.asList("objectId", DB_Column.BookInfo.IMG_LARGE, DB_Column.BookInfo.TITLE, DB_Column.BookInfo.CATEGORY_CODE));
         query.orderByDescending("objectId");
 
         query.findInBackground(new FindCallback<AVObject>() {
@@ -360,7 +361,8 @@ public class CategoryBookListFragment extends Fragment {
                 tintManager.setStatusBarTintEnabled(true);
                 tintManager.setTintColor(getResources().getColor(android.R.color.darker_gray));
             }
-            refreshList();
+            //refreshList();
+            loadListFromCloud();
             updateFloatButton();
         }
     }
@@ -473,7 +475,7 @@ public class CategoryBookListFragment extends Fragment {
             }
         }
         updateTask = new UpdateBookCategoryTask();
-        //updateTask.execute(gridViewAdapter.getDataList());
+        updateTask.execute();
     }
 
     public boolean isSelectionMode() {
@@ -516,7 +518,7 @@ public class CategoryBookListFragment extends Fragment {
         }
     }
 
-    private class UpdateBookCategoryTask extends AsyncTask<ArrayList<CategoryBookGridViewAdapter.Item>, Integer, Void> {
+    private class UpdateBookCategoryTask extends AsyncTask<Void, Integer, Void> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -531,18 +533,13 @@ public class CategoryBookListFragment extends Fragment {
         }
 
         @Override
-        protected Void doInBackground(ArrayList<CategoryBookGridViewAdapter.Item>... params) {
-            ArrayList<CategoryBookGridViewAdapter.Item> dataList = params[0];
-            for (int pos = 0; pos < dataList.size(); pos++) {
-                CategoryBookGridViewAdapter.Item item = dataList.get(pos);
-                Uri uri = Uri.parse("content://" + BookProvider.AUTHORITY + "/" + BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME + "/" + item.book_id);
-                String[] projection = {DB_Column.BookInfo.ISBN13};
-                Cursor cursor = mActivity.getContentResolver().query(uri, projection, null, null, null);
-                cursor.moveToFirst();
-                String isbn13 = cursor.getString(0);
-                cursor.close();
+        protected Void doInBackground(Void... params) {
+            ArrayList<CategoryBookGridViewAdapter.CloudItem> dataList = gridViewAdapter.getDataList();
+            int size = 0;
+            for (int pos = 0; pos < (size = dataList.size()); pos++) {
+                CategoryBookGridViewAdapter.CloudItem item = dataList.get(pos);
 
-                ChineseLibraryURL clc_url = new ChineseLibraryURL(isbn13);
+                ChineseLibraryURL clc_url = new ChineseLibraryURL(item.isbn13);
                 String url = clc_url.getRequestUrl(BookInfoUrlBase.REQ_CATEGORY);
                 BookInfoConnection connection = new BookInfoConnection();
                 try {
@@ -552,11 +549,16 @@ public class CategoryBookListFragment extends Fragment {
                     int category_code = BookCategory.getCategoryByClcNum(clcNum);
 
                     if (category_code != mCategoryCode) {
-                        ContentValues contentValues = new ContentValues();
-                        contentValues.put(DB_Column.BookInfo.CATEGORY_CODE, category_code);
-                        contentValues.put(DB_Column.BookInfo.CLC_NUMBER, clcNum);
-                        mActivity.getContentResolver().update(uri, contentValues, null, null);
+                        //ContentValues contentValues = new ContentValues();
+                        //contentValues.put(DB_Column.BookInfo.CATEGORY_CODE, category_code);
+                        //contentValues.put(DB_Column.BookInfo.CLC_NUMBER, clcNum);
+                        //mActivity.getContentResolver().update(uri, contentValues, null, null);
+                        AVObject bookItem = AVObject.createWithoutData(BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME, item.objectId);
+                        bookItem.put(DB_Column.BookInfo.CATEGORY_CODE, category_code);
+                        bookItem.put(DB_Column.BookInfo.CLC_NUMBER, clcNum);
+                        bookItem.saveInBackground();
                         publishProgress(pos);
+                        pos--;
                     }
 
                 } catch (Exception e) {
@@ -592,26 +594,48 @@ public class CategoryBookListFragment extends Fragment {
         @Override
         protected Integer doInBackground(Void... params) {
             HashSet<Long> selectItems = gridViewAdapter.getSelectedItems();
-            int count = gridViewAdapter.getSelectedCount();
+            deleteCount = 0;
+            final int SeletedCount = gridViewAdapter.getSelectedCount();
             Iterator<Long> iterator = selectItems.iterator();
             while (iterator.hasNext()) {
                 long itemPos = iterator.next();
-                //ArrayList<CategoryBookGridViewAdapter.Item> list = gridViewAdapter.getDataList();
-                //CategoryBookGridViewAdapter.Item item = list.get((int) itemPos);
+                ArrayList<CategoryBookGridViewAdapter.CloudItem> list = gridViewAdapter.getDataList();
+                final CategoryBookGridViewAdapter.CloudItem item = list.get((int) itemPos);
                 //Uri uri = Uri.parse("content://" + BookProvider.AUTHORITY + "/" + BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME + "/" + item.book_id);
                 //mActivity.getContentResolver().delete(uri, null, null);
+                AVQuery<AVObject> query = new AVQuery<>(BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME);
+                query.getInBackground(item.objectId, new GetCallback<AVObject>() {
+                    @Override
+                    public void done(AVObject avObject, AVException e) {
+                        avObject.deleteInBackground(new DeleteCallback() {
+                            @Override
+                            public void done(AVException e) {
+                                if (e == null) {
+                                    deleteCount++;
+                                    if (deleteCount == SeletedCount) {
+                                        loadListFromCloud();
+                                    }
+                                } else {
+                                    e.printStackTrace();
+                                    String deleteFail = getResources().getString(R.string.deleted_books_fail, item.title);
+                                    Toast.makeText(mActivity, deleteFail, Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
+                });
             }
-            return count;
+            return SeletedCount;
         }
 
         @Override
         protected void onPostExecute(Integer deletedCount) {
             super.onPostExecute(deletedCount);
-            String deletedInfo = getResources().getString(R.string.deleted_books_toast, gridViewAdapter.getSelectedCount());
+            String deletedInfo = getResources().getString(R.string.deleted_books_toast, deletedCount);
             Toast.makeText(mActivity, deletedInfo, Toast.LENGTH_SHORT).show();
             gridViewAdapter.clearSelectedItems();
             actionMode.finish();
-            refreshList();
+            //refreshList();
         }
     }
 }

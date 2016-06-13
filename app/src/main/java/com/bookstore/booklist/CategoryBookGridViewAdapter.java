@@ -49,7 +49,7 @@ public class CategoryBookGridViewAdapter extends BaseAdapter {
     }
 
     public void removeData(int pos) {
-        mDataList.remove(pos);
+        mCloudDataList.remove(pos);
     }
 
     @Override
@@ -129,7 +129,8 @@ public class CategoryBookGridViewAdapter extends BaseAdapter {
             String img = item.getString(DB_Column.BookInfo.IMG_LARGE);
             String title = item.getString(DB_Column.BookInfo.TITLE);
             int category_code = item.getInt(DB_Column.BookInfo.CATEGORY_CODE);
-            CloudItem cloudItem = new CloudItem(objectId, img, title, category_code);
+            String isbn13 = item.getString(DB_Column.BookInfo.ISBN13);
+            CloudItem cloudItem = new CloudItem(objectId, img, title, category_code, isbn13);
             mCloudDataList.add(cloudItem);
         }
     }
@@ -187,12 +188,14 @@ public class CategoryBookGridViewAdapter extends BaseAdapter {
         String img_larg;
         String title;
         int category_code;
+        String isbn13;
 
-        public CloudItem(String objectId, String img_larg, String title, int category_code) {
+        public CloudItem(String objectId, String img_larg, String title, int category_code, String isbn13) {
             this.objectId = objectId;
             this.img_larg = img_larg;
             this.title = title;
             this.category_code = category_code;
+            this.isbn13 = isbn13;
         }
     }
 }

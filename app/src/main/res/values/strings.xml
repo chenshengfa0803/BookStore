@@ -23,4 +23,5 @@
     <string name="delete_alert_title">删除图书？</string>
     <string name="delete_selected_alert_title">删除选择的图书？</string>
     <string name="deleted_books_toast">已删除 %d 本图书</string>
+    <string name="deleted_books_fail">删除【%s】图书失败</string>
 </resources>

@@ -320,7 +320,7 @@ public class ScanActivity extends Activity implements Callback {
             @Override
             public void onClick(View v) {
                 saveToLeanCloud();
-                insertBookDataToDB();
+                //insertBookDataToDB();
                 ScanActivity.this.setResult(RESULT_OK);
                 ScanActivity.this.finish();
             }

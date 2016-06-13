@@ -34,6 +34,7 @@ import android.widget.TextView;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.DeleteCallback;
 import com.avos.avoscloud.GetCallback;
 import com.bookstore.booklist.BookListLoader;
 import com.bookstore.bookparser.BookCategory;
@@ -321,6 +322,7 @@ public class BookDetailFragment extends Fragment {
             }
         });
     }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -505,9 +507,22 @@ public class BookDetailFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        Uri uri = Uri.parse("content://" + BookProvider.AUTHORITY + "/" + BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME + "/" + mBook_id);
-                        mActivity.getContentResolver().delete(uri, null, null);
-                        getActivity().getSupportFragmentManager().popBackStack();
+                        //Uri uri = Uri.parse("content://" + BookProvider.AUTHORITY + "/" + BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME + "/" + mBook_id);
+                        //mActivity.getContentResolver().delete(uri, null, null);
+                        AVQuery<AVObject> query = new AVQuery<>(BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME);
+                        query.getInBackground(mBook_id, new GetCallback<AVObject>() {
+                            @Override
+                            public void done(AVObject avObject, AVException e) {
+                                avObject.deleteInBackground(new DeleteCallback() {
+                                    @Override
+                                    public void done(AVException e) {
+                                        if (e == null) {
+                                            getActivity().getSupportFragmentManager().popBackStack();
+                                        }
+                                    }
+                                });
+                            }
+                        });
                     }
                 });
                 builder.setNegativeButton(R.string.negative_cancel, new DialogInterface.OnClickListener() {
