@@ -88,7 +88,7 @@ public class CategoryBookListFragment extends Fragment {
 
     private BookOnClickListener mListener = new BookOnClickListener() {
         @Override
-        public void onBookClick(View clickedImageView, int book_id, int category_code) {
+        public void onBookClick(View clickedImageView, String book_id, int category_code) {
             Bitmap bitmap = null;
             int paletteColor = getResources().getColor(android.R.color.darker_gray);
             BitmapDrawable bd = (BitmapDrawable) ((ImageView) clickedImageView).getDrawable();
@@ -277,8 +277,8 @@ public class CategoryBookListFragment extends Fragment {
                     return;
                 }
                 final ImageView book_cover = (ImageView) view.findViewById(R.id.book_cover);
-                ArrayList<CategoryBookGridViewAdapter.Item> list = gridViewAdapter.getDataList();
-                mListener.onBookClick(book_cover, list.get(position).book_id, list.get(position).category_code);
+                ArrayList<CategoryBookGridViewAdapter.CloudItem> list = gridViewAdapter.getDataList();
+                mListener.onBookClick(book_cover, list.get(position).objectId, list.get(position).category_code);
             }
         });
         updateFloatButton();
@@ -473,7 +473,7 @@ public class CategoryBookListFragment extends Fragment {
             }
         }
         updateTask = new UpdateBookCategoryTask();
-        updateTask.execute(gridViewAdapter.getDataList());
+        //updateTask.execute(gridViewAdapter.getDataList());
     }
 
     public boolean isSelectionMode() {
@@ -596,10 +596,10 @@ public class CategoryBookListFragment extends Fragment {
             Iterator<Long> iterator = selectItems.iterator();
             while (iterator.hasNext()) {
                 long itemPos = iterator.next();
-                ArrayList<CategoryBookGridViewAdapter.Item> list = gridViewAdapter.getDataList();
-                CategoryBookGridViewAdapter.Item item = list.get((int) itemPos);
-                Uri uri = Uri.parse("content://" + BookProvider.AUTHORITY + "/" + BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME + "/" + item.book_id);
-                mActivity.getContentResolver().delete(uri, null, null);
+                //ArrayList<CategoryBookGridViewAdapter.Item> list = gridViewAdapter.getDataList();
+                //CategoryBookGridViewAdapter.Item item = list.get((int) itemPos);
+                //Uri uri = Uri.parse("content://" + BookProvider.AUTHORITY + "/" + BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME + "/" + item.book_id);
+                //mActivity.getContentResolver().delete(uri, null, null);
             }
             return count;
         }

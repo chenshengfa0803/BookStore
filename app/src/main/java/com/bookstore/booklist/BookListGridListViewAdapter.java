@@ -120,7 +120,7 @@ public class BookListGridListViewAdapter extends BaseAdapter {
             cover1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //mListener.onBookClick(cover1, item1.book_id, item1.category_code);
+                    mListener.onBookClick(cover1, item1.objectId, item1.category_code);
                 }
             });
         } else {
@@ -142,7 +142,7 @@ public class BookListGridListViewAdapter extends BaseAdapter {
             cover2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //mListener.onBookClick(cover2, item2.book_id, item2.category_code);
+                    mListener.onBookClick(cover2, item2.objectId, item2.category_code);
                 }
             });
         } else {
@@ -164,7 +164,7 @@ public class BookListGridListViewAdapter extends BaseAdapter {
             cover3.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //mListener.onBookClick(cover3, item3.book_id, item3.category_code);
+                    mListener.onBookClick(cover3, item3.objectId, item3.category_code);
                 }
             });
         } else {

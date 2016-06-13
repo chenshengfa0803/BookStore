@@ -31,6 +31,10 @@ import android.widget.RatingBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.GetCallback;
 import com.bookstore.booklist.BookListLoader;
 import com.bookstore.bookparser.BookCategory;
 import com.bookstore.bookparser.BookData;
@@ -63,7 +67,7 @@ public class BookDetailFragment extends Fragment {
     public static final String ARGS_PALETTE_COLOR = "palette_color";
     ScrollView detail_scroll = null;
     ObjectAnimator loadAnimator = null;
-    private int mBook_id;
+    private String mBook_id;
     private int mCategory_code;
     private int mPalette_color;
     private Activity mActivity;
@@ -87,10 +91,10 @@ public class BookDetailFragment extends Fragment {
     private View item3;
     private TagGroup tagGroup = null;
 
-    public static BookDetailFragment newInstance(int book_id, int category_code, int paletteColor) {
+    public static BookDetailFragment newInstance(String objectId, int category_code, int paletteColor) {
         BookDetailFragment fragment = new BookDetailFragment();
         Bundle args = new Bundle();
-        args.putInt(ARGS_BOOK_ID, book_id);
+        args.putString(ARGS_BOOK_ID, objectId);
         args.putInt(ARGS_CATEGORY_CODE, category_code);
         args.putInt(ARGS_PALETTE_COLOR, paletteColor);
         fragment.setArguments(args);
@@ -102,7 +106,7 @@ public class BookDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActivity = getActivity();
-        mBook_id = getArguments().getInt(ARGS_BOOK_ID, 0);
+        mBook_id = getArguments().getString(ARGS_BOOK_ID);
         mCategory_code = getArguments().getInt(ARGS_CATEGORY_CODE, 0);
         mPalette_color = getArguments().getInt(ARGS_PALETTE_COLOR, getResources().getColor(android.R.color.darker_gray));
         mCollapsedStatus = new SparseBooleanArray();
@@ -281,7 +285,8 @@ public class BookDetailFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        loadBookDetail();
+        //loadBookDetail();
+        loadCloudBookDetail();
     }
 
     private void loadBookDetail() {
@@ -291,6 +296,30 @@ public class BookDetailFragment extends Fragment {
         mLoadListener = new BookListLoadListener();
         mlistLoader.registerListener(0, mLoadListener);
         mlistLoader.startLoading();
+    }
+
+    private void loadCloudBookDetail() {
+        AVQuery<AVObject> query = new AVQuery<>(BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME);
+        query.getInBackground(mBook_id, new GetCallback<AVObject>() {
+            @Override
+            public void done(AVObject avObject, AVException e) {
+                if (e == null) {
+                    String cover = avObject.getString(DB_Column.BookInfo.IMG_LARGE);
+                    ImageView image = (ImageView) mActivity.findViewById(R.id.detail_book_cover);
+
+                    DisplayImageOptions options = new DisplayImageOptions.Builder()
+                            .cacheInMemory(true)
+                            .cacheOnDisk(true)
+                            .build();
+
+                    ImageLoader.getInstance().displayImage(cover, image, options);
+                    String isbn = avObject.getString(DB_Column.BookInfo.ISBN13);
+                    getBookDetailInfo(isbn);
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
     @Override
     public void onPause() {

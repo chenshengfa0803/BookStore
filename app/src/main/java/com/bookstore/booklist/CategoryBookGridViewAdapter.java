@@ -44,8 +44,8 @@ public class CategoryBookGridViewAdapter extends BaseAdapter {
         }
     }
 
-    public ArrayList<Item> getDataList() {
-        return mDataList;
+    public ArrayList<CloudItem> getDataList() {
+        return mCloudDataList;
     }
 
     public void removeData(int pos) {

@@ -72,7 +72,7 @@ public class MainBookListFragment extends Fragment {
 
     private BookOnClickListener mListener = new BookOnClickListener() {
         @Override
-        public void onBookClick(View clickedImageView, int book_id, int category_code) {
+        public void onBookClick(View clickedImageView, String objectId, int category_code) {
             Bitmap bitmap = null;
             int paletteColor = getResources().getColor(android.R.color.darker_gray);
             BitmapDrawable bd = (BitmapDrawable) ((ImageView) clickedImageView).getDrawable();
@@ -80,7 +80,7 @@ public class MainBookListFragment extends Fragment {
                 bitmap = bd.getBitmap();
                 paletteColor = BitmapUtil.getPaletteColor(bitmap);
             }
-            BookDetailFragment detailFragment = BookDetailFragment.newInstance(book_id, category_code, paletteColor);
+            BookDetailFragment detailFragment = BookDetailFragment.newInstance(objectId, category_code, paletteColor);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 detailFragment.setSharedElementEnterTransition(new BookDetailTransition());
@@ -208,7 +208,7 @@ public class MainBookListFragment extends Fragment {
                 int book_id = item.getBook_id();
                 int category_code = item.getCategory_code();
                 if (mListener != null) {
-                    mListener.onBookClick(book_cover, book_id, category_code);
+                    //mListener.onBookClick(book_cover, book_id, category_code);
                 }
                 DBHandler.addSearchHistory(mActivity, item.getBook_title());
             }
