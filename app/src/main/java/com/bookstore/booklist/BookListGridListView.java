@@ -50,7 +50,7 @@ public class BookListGridListView extends ListView implements AbsListView.OnScro
     }
 
     private void updateHeaderViewHeight(int height) {
-/*        if (mHeaderView.getCurrentState() == ListViewHeader.STATE.NORMAL_STATE && height >= mHeaderView.getStretchHeight()) {
+        if (mHeaderView.getCurrentState() == ListViewHeader.STATE.NORMAL_STATE && height >= mHeaderView.getStretchHeight()) {
             mHeaderView.updateState(ListViewHeader.STATE.STRETCH_STATE);
         } else if (mHeaderView.getCurrentState() == ListViewHeader.STATE.STRETCH_STATE && height >= mHeaderView.getReadyHeight()) {
             mHeaderView.updateState(ListViewHeader.STATE.READY_STATE);
@@ -58,7 +58,7 @@ public class BookListGridListView extends ListView implements AbsListView.OnScro
             mHeaderView.updateState(ListViewHeader.STATE.NORMAL_STATE);
         } else if (mHeaderView.getCurrentState() == ListViewHeader.STATE.END_STATE && height < 2) {
             mHeaderView.updateState(ListViewHeader.STATE.NORMAL_STATE);
-        }*/
+        }
         mHeaderView.setVisibleHeight(height);
     }
 

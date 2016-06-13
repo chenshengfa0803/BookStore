@@ -282,7 +282,8 @@ public class CategoryBookListFragment extends Fragment {
                 mListener.onBookClick(book_cover, list.get(position).objectId, list.get(position).category_code);
             }
         });
-        updateFloatButton();
+        //updateFloatButton();
+        floatButtonLoadAnimation();
         return category_fragment;
     }
 
@@ -343,6 +344,7 @@ public class CategoryBookListFragment extends Fragment {
                         getActivity().getSupportFragmentManager().popBackStack();
                         return;
                     }
+                    updateFloatButton();
                     gridViewAdapter.registerCloudData(list);
                     gridViewAdapter.notifyDataSetChanged();
                 } else {
@@ -362,8 +364,8 @@ public class CategoryBookListFragment extends Fragment {
                 tintManager.setTintColor(getResources().getColor(android.R.color.darker_gray));
             }
             //refreshList();
+            floatButtonLoadAnimation();
             loadListFromCloud();
-            updateFloatButton();
         }
     }
 
@@ -388,6 +390,28 @@ public class CategoryBookListFragment extends Fragment {
         if (updateTask != null && updateTask.getStatus() == AsyncTask.Status.RUNNING) {
             updateTask.cancel(true);
         }
+    }
+
+    private void floatButtonLoadAnimation() {
+        final FloatButton mainFloatButton = ((MainActivity) mActivity).getFloatButton();
+        ImageView imageView = new ImageView(mActivity);
+        imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_autorenew_black));
+        mainFloatButton.setFloatButtonIcon(imageView);
+        mainFloatButton.registerClickListener(new FloatButton.FloatButtonClickListener() {
+            @Override
+            public void onFloatButtonClick(View floatButton) {
+
+            }
+        });
+        mainFloatButton.setEnabled(false);
+
+        mainFloatButton.getContentView().setRotation(0);
+        PropertyValuesHolder rotation = PropertyValuesHolder.ofFloat(View.ROTATION, 360);
+        ObjectAnimator loadAnimator = ObjectAnimator.ofPropertyValuesHolder(mainFloatButton.getContentView(), rotation);
+        loadAnimator.setRepeatMode(ValueAnimator.RESTART);
+        loadAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        loadAnimator.setDuration(1000);
+        loadAnimator.start();
     }
 
     public void updateFloatButton() {
