@@ -49,6 +49,7 @@ import com.bookstore.util.BitmapUtil;
 import com.bookstore.util.SystemBarTintManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -56,6 +57,7 @@ import java.util.List;
  */
 public class MainBookListFragment extends Fragment {
     private final static int SCANNING_REQUEST_CODE = 1;
+    public static int queryCompleteTimes = 0;
 
     public DBHandler dbHandler = null;
     public BookCategory mBookCategory = null;
@@ -277,7 +279,7 @@ public class MainBookListFragment extends Fragment {
         if (main_toolbar != null) {
             main_toolbar.setTitle("");
         }
-        refreshBookList();
+        //refreshBookList();
         loadBookListFromCloud();
     }
 
@@ -330,6 +332,10 @@ public class MainBookListFragment extends Fragment {
         mGridListViewAdapter.reset();
     }
 
+    synchronized public void stopLoadBookListFromCloud() {
+        mGridListViewAdapter.reset();
+    }
+
     public void refreshBookList() {
         String selection = null;
         stopRefreshBookList();
@@ -347,23 +353,65 @@ public class MainBookListFragment extends Fragment {
     }
 
     public void loadBookListFromCloud() {
-        AVQuery<AVObject> query = new AVQuery<AVObject>(BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME);
+        stopLoadBookListFromCloud();
+        loadAllFromCloud();
+        loadEachCategoryFromCloud();
+    }
+
+    public void loadAllFromCloud() {
+        AVQuery<AVObject> query = new AVQuery<>(BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME);
         query.whereEqualTo("userId", MainActivity.getCurrentUserId());
+        query.limit(3);
+        query.selectKeys(Arrays.asList("objectId", DB_Column.BookInfo.ID, DB_Column.BookInfo.IMG_LARGE, DB_Column.BookInfo.CATEGORY_CODE));
         query.orderByDescending("objectId");
         query.findInBackground(new FindCallback<AVObject>() {
             @Override
             public void done(List<AVObject> list, AVException e) {
                 if (e == null) {
-                    for (AVObject item : list) {
-                        String objectId = item.getObjectId();
-                        String title = item.getString(DB_Column.BookInfo.TITLE);
-                        String isbn13 = item.getString(DB_Column.BookInfo.ISBN13);
-                        String pages = item.getString(DB_Column.BookInfo.PAGES);
-                        String author = item.getString(DB_Column.BookInfo.AUTHOR);
-                    }
+                    mGridListViewAdapter.registerCloudData('a', list);
+                } else {
+                    e.printStackTrace();
                 }
             }
         });
+    }
+
+    public void loadEachCategoryFromCloud() {
+        final ArrayList<BookCategory.CategoryItem> categoryList = mBookCategory.getDefault_category_list();
+        for (BookCategory.CategoryItem item : categoryList) {
+            if (item.category_code != 'a') {
+                AVQuery<AVObject> userQuery = new AVQuery<>(BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME);
+                userQuery.whereEqualTo("userId", MainActivity.getCurrentUserId());
+
+                AVQuery<AVObject> categoryQuery = new AVQuery<>(BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME);
+                categoryQuery.whereEqualTo(DB_Column.BookInfo.CATEGORY_CODE, item.category_code);
+                AVQuery<AVObject> query = AVQuery.and(Arrays.asList(userQuery, categoryQuery));
+
+                query.limit(3);
+                query.selectKeys(Arrays.asList("objectId", DB_Column.BookInfo.ID, DB_Column.BookInfo.IMG_LARGE, DB_Column.BookInfo.CATEGORY_CODE));
+                query.orderByDescending("objectId");
+
+                query.findInBackground(new FindCallback<AVObject>() {
+                    @Override
+                    public void done(List<AVObject> list, AVException e) {
+                        queryCompleteTimes++;
+                        if (e == null) {
+                            if (list.size() > 0) {
+                                int category_code = list.get(0).getInt(DB_Column.BookInfo.CATEGORY_CODE);
+                                mGridListViewAdapter.registerCloudData(category_code, list);
+                            }
+                        } else {
+                            e.printStackTrace();
+                        }
+                        if (queryCompleteTimes == categoryList.size() - 1) {
+                            mGridListViewAdapter.buildAdapterList();
+                            mGridListViewAdapter.notifyDataSetChanged();
+                            queryCompleteTimes = 0;
+                        }
+                    }
+                });
+            }
+        }
     }
 
     public void setListViewVerticalScrollBarEnable(boolean enable) {
