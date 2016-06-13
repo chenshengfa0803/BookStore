@@ -60,6 +60,7 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Vector;
 
@@ -576,8 +577,13 @@ public class ScanActivity extends Activity implements Callback {
                 return;
             }
         }
-        AVQuery<AVObject> query = new AVQuery<>(BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME);
-        query.whereEqualTo(DB_Column.BookInfo.ISBN13, isbn);
+        AVQuery<AVObject> userQuery = new AVQuery<>(BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME);
+        userQuery.whereEqualTo("userId", MainActivity.getCurrentUserId());
+
+        AVQuery<AVObject> isbnQuery = new AVQuery<>(BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME);
+        isbnQuery.whereEqualTo(DB_Column.BookInfo.ISBN13, isbn);
+
+        AVQuery<AVObject> query = AVQuery.and(Arrays.asList(userQuery, isbnQuery));
         query.countInBackground(new CountCallback() {
             @Override
             public void done(int i, AVException e) {

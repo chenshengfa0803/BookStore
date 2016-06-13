@@ -15,6 +15,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.avos.avoscloud.AVUser;
+import com.bookstore.login.LoginActivity;
 import com.bookstore.main.animation.ViewBlur;
 import com.bookstore.main.residemenu.ResideMenu;
 import com.bookstore.main.residemenu.ResideMenuItem;

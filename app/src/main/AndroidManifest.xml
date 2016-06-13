@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name="com.bookstore.login.LoginActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
         <activity
             android:name="com.sina.weibo.sdk.component.WeiboSdkBrowser"
