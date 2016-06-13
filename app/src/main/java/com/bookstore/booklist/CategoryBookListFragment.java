@@ -40,6 +40,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.FindCallback;
 import com.bookstore.bookdetail.BookDetailFragment;
 import com.bookstore.bookparser.BookCategory;
 import com.bookstore.connection.BookInfoConnection;
@@ -59,8 +63,10 @@ import com.bookstore.util.BitmapUtil;
 import com.bookstore.util.SystemBarTintManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by Administrator on 2016/4/6.
@@ -292,7 +298,8 @@ public class CategoryBookListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        refreshList();
+        //refreshList();
+        loadListFromCloud();
     }
 
     private void refreshList() {
@@ -308,6 +315,40 @@ public class CategoryBookListFragment extends Fragment {
         mLoadListener = new BookListLoadListener();
         mlistLoader.registerListener(0, mLoadListener);
         mlistLoader.startLoading();
+    }
+
+    private void loadListFromCloud() {
+        AVQuery<AVObject> query;
+        AVQuery<AVObject> userQuery = new AVQuery<>(BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME);
+        userQuery.whereEqualTo("userId", MainActivity.getCurrentUserId());
+
+        AVQuery<AVObject> categoryQuery = new AVQuery<>(BookSQLiteOpenHelper.BOOKINFO_TABLE_NAME);
+        categoryQuery.whereEqualTo(DB_Column.BookInfo.CATEGORY_CODE, mCategoryCode);
+
+        if (mCategoryCode == 'a') {
+            query = userQuery;
+        } else {
+            query = AVQuery.and(Arrays.asList(userQuery, categoryQuery));
+        }
+        query.limit(1000);
+        query.selectKeys(Arrays.asList("objectId", DB_Column.BookInfo.IMG_LARGE, DB_Column.BookInfo.TITLE, DB_Column.BookInfo.CATEGORY_CODE));
+        query.orderByDescending("objectId");
+
+        query.findInBackground(new FindCallback<AVObject>() {
+            @Override
+            public void done(List<AVObject> list, AVException e) {
+                if (e == null) {
+                    if (list.size() == 0) {
+                        getActivity().getSupportFragmentManager().popBackStack();
+                        return;
+                    }
+                    gridViewAdapter.registerCloudData(list);
+                    gridViewAdapter.notifyDataSetChanged();
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override

@@ -11,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.avos.avoscloud.AVObject;
 import com.bookstore.main.R;
 import com.bookstore.provider.DB_Column;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -18,6 +19,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Created by Administrator on 2016/4/6.
@@ -25,6 +27,7 @@ import java.util.HashSet;
 public class CategoryBookGridViewAdapter extends BaseAdapter {
     private Context mContext;
     private ArrayList<Item> mDataList = null;
+    private ArrayList<CloudItem> mCloudDataList = null;
     private boolean mIsSelectionMode = false;
     private HashSet<Long> mSelectedItems = new HashSet<Long>();
 
@@ -34,10 +37,10 @@ public class CategoryBookGridViewAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        if (mDataList == null) {
+        if (mCloudDataList == null) {
             return 0;
         } else {
-            return mDataList.size();
+            return mCloudDataList.size();
         }
     }
 
@@ -92,8 +95,8 @@ public class CategoryBookGridViewAdapter extends BaseAdapter {
             cb.setVisibility(View.GONE);
         }
 
-        String coverUrl = mDataList.get(position).img_larg;
-        String book_name = mDataList.get(position).title;
+        String coverUrl = mCloudDataList.get(position).img_larg;
+        String book_name = mCloudDataList.get(position).title;
         ImageLoader.getInstance().displayImage(coverUrl, book_cover, options);
         book_title.setText(book_name);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -117,6 +120,18 @@ public class CategoryBookGridViewAdapter extends BaseAdapter {
         } while (dataCursor.moveToNext());
 
         dataCursor.close();
+    }
+
+    public void registerCloudData(List<AVObject> list) {
+        mCloudDataList = new ArrayList<>();
+        for (AVObject item : list) {
+            String objectId = item.getObjectId();
+            String img = item.getString(DB_Column.BookInfo.IMG_LARGE);
+            String title = item.getString(DB_Column.BookInfo.TITLE);
+            int category_code = item.getInt(DB_Column.BookInfo.CATEGORY_CODE);
+            CloudItem cloudItem = new CloudItem(objectId, img, title, category_code);
+            mCloudDataList.add(cloudItem);
+        }
     }
 
     public void setSelectionMode(boolean isSelectionMode) {
@@ -161,6 +176,20 @@ public class CategoryBookGridViewAdapter extends BaseAdapter {
 
         public Item(int book_id, String img_larg, String title, int category_code) {
             this.book_id = book_id;
+            this.img_larg = img_larg;
+            this.title = title;
+            this.category_code = category_code;
+        }
+    }
+
+    public class CloudItem {
+        String objectId;
+        String img_larg;
+        String title;
+        int category_code;
+
+        public CloudItem(String objectId, String img_larg, String title, int category_code) {
+            this.objectId = objectId;
             this.img_larg = img_larg;
             this.title = title;
             this.category_code = category_code;

@@ -294,7 +294,8 @@ public class MainBookListFragment extends Fragment {
                 tintManager.setTintColor(getResources().getColor(android.R.color.darker_gray));
             }
             updateFloatButton();
-            refreshBookList();
+            //refreshBookList();
+            loadBookListFromCloud();
         }
     }
 
