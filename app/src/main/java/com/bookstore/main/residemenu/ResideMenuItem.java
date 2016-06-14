@@ -7,6 +7,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bookstore.main.R;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 /**
  * User: special
@@ -58,6 +60,14 @@ public class ResideMenuItem extends LinearLayout {
      */
     public void setIcon(int icon) {
         iv_icon.setImageResource(icon);
+    }
+
+    public void setIcon(String url) {
+        DisplayImageOptions options = new DisplayImageOptions.Builder()
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .build();
+        ImageLoader.getInstance().displayImage(url, iv_icon, options);
     }
 
     /**

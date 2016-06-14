@@ -21,6 +21,8 @@ import com.bookstore.main.residemenu.ResideMenu;
 import com.bookstore.main.residemenu.ResideMenuItem;
 import com.bookstore.util.SystemBarTintManager;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
     public static final String PREFERENCE_FILE_NAME = "config_preference";
     public static final int MSG_GET_BOOK_CATEGORY = 100;
@@ -34,6 +36,22 @@ public class MainActivity extends AppCompatActivity {
     private ResideMenuItem itemProfile;
     private ResideMenuItem itemCalendar;
     private ResideMenuItem itemSettings;
+    private AVUser currentUser;
+    private ResideMenu.OnMenuListener menuListener = new ResideMenu.OnMenuListener() {
+        @Override
+        public void openMenu() {
+            String img_url = currentUser.getString("profileImageUrl");
+            String user_name = currentUser.getUsername();
+            List<ResideMenuItem> list = resideMenu.getMenuItems(ResideMenu.DIRECTION_LEFT);
+            list.get(0).setIcon(img_url);
+            list.get(0).setTitle(user_name);
+        }
+
+        @Override
+        public void closeMenu() {
+
+        }
+    };
 
     static public String getCurrentUserId() {
         return userId;
@@ -43,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         //add logOut for testing
         //AVUser.logOut();
-        AVUser currentUser = AVUser.getCurrentUser();
+        currentUser = AVUser.getCurrentUser();
         if (currentUser != null) {
             userId = currentUser.getObjectId();
         } else {
@@ -207,6 +225,7 @@ public class MainActivity extends AppCompatActivity {
         resideMenu.setBackground(R.drawable.menu_background);
         resideMenu.attachToActivity(this);
         resideMenu.setScaleValue(0.8f);
+        resideMenu.setMenuListener(menuListener);
 
         // create menu items;
         itemProfile = new ResideMenuItem(this, R.drawable.icon_profile, "账号");
