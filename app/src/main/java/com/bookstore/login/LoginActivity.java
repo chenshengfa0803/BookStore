@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.LogInCallback;
+import com.avos.avoscloud.RequestPasswordResetCallback;
 import com.avos.avoscloud.SignUpCallback;
 import com.bookstore.main.MainActivity;
 import com.bookstore.main.R;
@@ -47,7 +48,7 @@ public class LoginActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                AVUser user = new AVUser();
+                final AVUser user = new AVUser();
 
                 user.setUsername(userName_text.getText().toString().trim());
                 user.setPassword(pwd_text.getText().toString().trim());
@@ -56,6 +57,7 @@ public class LoginActivity extends Activity {
                     @Override
                     public void done(AVException e) {
                         if (e == null) {
+                            AVUser.logOut();
                             Toast.makeText(LoginActivity.this, "注册成功，请登录邮箱进行验证", Toast.LENGTH_SHORT).show();
                         } else {
                             int error_code = e.getCode();
@@ -66,7 +68,7 @@ public class LoginActivity extends Activity {
                             } else if (218 == error_code) {
                                 Toast.makeText(LoginActivity.this, "密码无效，不允许空白密码", Toast.LENGTH_SHORT).show();
                             } else {
-                                Toast.makeText(LoginActivity.this, "注册失败", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, "注册失败 " + e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                             e.printStackTrace();
                         }
@@ -99,7 +101,7 @@ public class LoginActivity extends Activity {
                             } else if (error_code == 210) {
                                 Toast.makeText(LoginActivity.this, "密码错误", Toast.LENGTH_SHORT).show();
                             } else {
-                                Toast.makeText(LoginActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, "登录失败 " + e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                             e.printStackTrace();
 
@@ -141,6 +143,30 @@ public class LoginActivity extends Activity {
                     @Override
                     public void onCancel() {
 
+                    }
+                });
+            }
+        });
+
+        findViewById(R.id.reset_pwd).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String email_addr = userName_text.getText().toString().trim();
+                AVUser.requestPasswordResetInBackground(email_addr, new RequestPasswordResetCallback() {
+                    @Override
+                    public void done(AVException e) {
+                        if (e == null) {
+                            Toast.makeText(LoginActivity.this, "已发送邮件，请登录邮箱重设密码", Toast.LENGTH_SHORT).show();
+                        } else {
+                            int error_code = e.getCode();
+                            if (error_code == 204) {
+                                Toast.makeText(LoginActivity.this, "请输入邮箱地址", Toast.LENGTH_SHORT).show();
+                            } else if (error_code == 205) {
+                                Toast.makeText(LoginActivity.this, "该邮箱未注册", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(LoginActivity.this, "重设失败 " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
                     }
                 });
             }
