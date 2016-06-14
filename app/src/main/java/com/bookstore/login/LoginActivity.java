@@ -3,6 +3,7 @@ package com.bookstore.login;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -20,6 +21,9 @@ import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WeiboAuthListener;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import com.sina.weibo.sdk.exception.WeiboException;
+import com.sina.weibo.sdk.net.RequestListener;
+import com.sina.weibo.sdk.openapi.UsersAPI;
+import com.sina.weibo.sdk.openapi.models.User;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,6 +35,7 @@ public class LoginActivity extends Activity {
     private AuthInfo mAuthInfo;
     private SsoHandler mSsoHandler;
     private Oauth2AccessToken mAccessToken;
+    private UsersAPI mUsersAPI;
     private EditText userName_text;
     private EditText pwd_text;
     @Override
@@ -118,21 +123,47 @@ public class LoginActivity extends Activity {
                     @Override
                     public void onComplete(Bundle bundle) {
                         mAccessToken = Oauth2AccessToken.parseAccessToken(bundle);
-                        String accessToken = mAccessToken.getToken();
-                        String expiredAt = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date(mAccessToken.getExpiresTime()));
-                        AVUser.AVThirdPartyUserAuth userAuth = new AVUser.AVThirdPartyUserAuth(accessToken, expiredAt, "sina", mAccessToken.getUid());
-                        AVUser.loginWithAuthData(userAuth, new LogInCallback<AVUser>() {
+                        mUsersAPI = new UsersAPI(LoginActivity.this, Constants.APP_KEY, mAccessToken);
+                        long uid = Long.parseLong(mAccessToken.getUid());
+                        mUsersAPI.show(uid, new RequestListener() {
                             @Override
-                            public void done(AVUser avUser, AVException e) {
-                                if (e == null) {
-                                    Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
-                                    StarMainActivity();
-                                } else {
-                                    e.printStackTrace();
-                                    Toast.makeText(LoginActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
+                            public void onComplete(String s) {
+                                if (!TextUtils.isEmpty(s)) {
+                                    User sinaUser = User.parse(s);
+                                    if (sinaUser != null) {
+                                        final String sinaUserName = sinaUser.screen_name;
+                                        final String profileImageUrl = sinaUser.profile_image_url;
+
+                                        String accessToken = mAccessToken.getToken();
+                                        String expiredAt = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date(mAccessToken.getExpiresTime()));
+                                        AVUser.AVThirdPartyUserAuth userAuth = new AVUser.AVThirdPartyUserAuth(accessToken, expiredAt, "sina", mAccessToken.getUid());
+                                        AVUser.loginWithAuthData(userAuth, new LogInCallback<AVUser>() {
+                                            @Override
+                                            public void done(AVUser avUser, AVException e) {
+                                                if (e == null) {
+                                                    avUser.put("username", sinaUserName);
+                                                    avUser.put("profileImageUrl", profileImageUrl);
+                                                    avUser.saveInBackground();
+                                                    Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+                                                    StarMainActivity();
+                                                } else {
+                                                    e.printStackTrace();
+                                                    Toast.makeText(LoginActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
+                                    } else {
+                                        Toast.makeText(LoginActivity.this, s, Toast.LENGTH_LONG).show();
+                                    }
                                 }
                             }
+
+                            @Override
+                            public void onWeiboException(WeiboException e) {
+
+                            }
                         });
+
                     }
 
                     @Override

@@ -46,7 +46,7 @@ dependencies {
     compile files('libs/httpmime-4.2.4.jar')
     compile files('libs/okhttp-2.6.0-leancloud.jar')
     compile files('libs/okio-1.6.0-leancloud.jar')
-    compile files('libs/weibosdkcore_release.jar')
     compile files('libs/nineoldandroids-library-2.4.0.jar')
     compile files('libs/avoscloud-sns-v3.13.12.jar')
+    compile 'com.infstory:weibo-android-sdk:3.1.4'
 }
