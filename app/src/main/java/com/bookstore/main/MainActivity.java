@@ -16,6 +16,7 @@ import android.widget.ImageView;
 
 import com.avos.avoscloud.AVUser;
 import com.bookstore.login.LoginActivity;
+import com.bookstore.main.UserInfo.UserActivity;
 import com.bookstore.main.animation.ViewBlur;
 import com.bookstore.main.residemenu.ResideMenu;
 import com.bookstore.main.residemenu.ResideMenuItem;
@@ -26,7 +27,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     public static final String PREFERENCE_FILE_NAME = "config_preference";
     public static final int MSG_GET_BOOK_CATEGORY = 100;
-    private final static int SCANNING_REQUEST_CODE = 1;
+    private static final int SCANNING_REQUEST_CODE = 1;
+    private static final int USERINFO_REQUEST_CODE = 2;
     private static String userId = null;
     public FloatButton mainFloatButton;
     View blurFromView = null;
@@ -43,7 +45,9 @@ public class MainActivity extends AppCompatActivity {
             String img_url = currentUser.getString("profileImageUrl");
             String user_name = currentUser.getUsername();
             List<ResideMenuItem> list = resideMenu.getMenuItems(ResideMenu.DIRECTION_LEFT);
-            list.get(0).setIcon(img_url);
+            if (img_url != null) {
+                list.get(0).setIcon(img_url);
+            }
             list.get(0).setTitle(user_name);
         }
 
@@ -65,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         if (currentUser != null) {
             userId = currentUser.getObjectId();
         } else {
-            StartLoginActivity();
+            startLoginActivity();
         }
         super.onCreate(savedInstanceState);
 
@@ -174,6 +178,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             break;
+
+            case USERINFO_REQUEST_CODE: {
+                if (resultCode == RESULT_OK) {
+                    startLoginActivity();
+                }
+            }
+            break;
         }
     }
 
@@ -232,7 +243,8 @@ public class MainActivity extends AppCompatActivity {
         itemProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AVUser.logOut();
+                resideMenu.closeMenu();
+                startUserInfoActivity();
             }
         });
         itemHome = new ResideMenuItem(this, R.drawable.icon_home, "图书世界");
@@ -251,11 +263,17 @@ public class MainActivity extends AppCompatActivity {
         return resideMenu;
     }
 
-    public void StartLoginActivity() {
+    public void startLoginActivity() {
         Intent intent = new Intent();
         intent.setClass(this, LoginActivity.class);
         startActivity(intent);
         this.finish();
+    }
+
+    public void startUserInfoActivity() {
+        Intent intent = new Intent();
+        intent.setClass(this, UserActivity.class);
+        startActivityForResult(intent, USERINFO_REQUEST_CODE);
     }
 
 

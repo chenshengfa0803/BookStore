@@ -23,6 +23,7 @@ import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import com.sina.weibo.sdk.exception.WeiboException;
 import com.sina.weibo.sdk.net.RequestListener;
 import com.sina.weibo.sdk.openapi.UsersAPI;
+import com.sina.weibo.sdk.openapi.models.ErrorInfo;
 import com.sina.weibo.sdk.openapi.models.User;
 
 import java.text.SimpleDateFormat;
@@ -85,7 +86,7 @@ public class LoginActivity extends Activity {
         findViewById(R.id.login).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String user_name = userName_text.getText().toString().trim();
+                final String user_name = userName_text.getText().toString().trim();
                 String pwd = pwd_text.getText().toString().trim();
                 if (user_name.isEmpty()) {
                     Toast.makeText(LoginActivity.this, "邮箱地址无效", Toast.LENGTH_SHORT).show();
@@ -95,6 +96,8 @@ public class LoginActivity extends Activity {
                     @Override
                     public void done(AVUser avUser, AVException e) {
                         if (e == null) {
+                            avUser.put("username", user_name);
+                            avUser.saveInBackground();
                             Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
                             StarMainActivity();
                         } else {
@@ -160,7 +163,8 @@ public class LoginActivity extends Activity {
 
                             @Override
                             public void onWeiboException(WeiboException e) {
-
+                                ErrorInfo info = ErrorInfo.parse(e.getMessage());
+                                Toast.makeText(LoginActivity.this, info.toString(), Toast.LENGTH_LONG).show();
                             }
                         });
 

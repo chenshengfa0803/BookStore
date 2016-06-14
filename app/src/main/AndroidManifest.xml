@@ -23,6 +23,7 @@
         <activity
             android:name="com.bookstore.login.LoginActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
+        <activity android:name="com.bookstore.main.UserInfo.UserActivity"></activity>
         <activity
             android:name="com.sina.weibo.sdk.component.WeiboSdkBrowser"
             android:configChanges="keyboardHidden|orientation"
