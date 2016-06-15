@@ -14,7 +14,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.GetCallback;
 import com.bookstore.login.LoginActivity;
 import com.bookstore.main.UserInfo.UserActivity;
 import com.bookstore.main.animation.ViewBlur;
@@ -42,13 +45,21 @@ public class MainActivity extends AppCompatActivity {
     private ResideMenu.OnMenuListener menuListener = new ResideMenu.OnMenuListener() {
         @Override
         public void openMenu() {
-            String img_url = currentUser.getString("profileImageUrl");
-            String user_name = currentUser.getUsername();
-            List<ResideMenuItem> list = resideMenu.getMenuItems(ResideMenu.DIRECTION_LEFT);
-            if (img_url != null) {
-                list.get(0).setIcon(img_url);
-            }
-            list.get(0).setTitle(user_name);
+            AVObject user = AVObject.createWithoutData("_User", currentUser.getObjectId());
+            user.fetchInBackground(new GetCallback<AVObject>() {
+                @Override
+                public void done(AVObject avObject, AVException e) {
+                    if (e == null) {
+                        String img_url = avObject.getString("profileImageUrl");
+                        String user_name = avObject.getString("username");
+                        List<ResideMenuItem> list = resideMenu.getMenuItems(ResideMenu.DIRECTION_LEFT);
+                        if (img_url != null) {
+                            list.get(0).setIcon(img_url);
+                        }
+                        list.get(0).setTitle(user_name);
+                    }
+                }
+            });
         }
 
         @Override

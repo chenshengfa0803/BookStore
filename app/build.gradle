@@ -49,4 +49,5 @@ dependencies {
     compile files('libs/nineoldandroids-library-2.4.0.jar')
     compile files('libs/avoscloud-sns-v3.13.12.jar')
     compile 'com.infstory:weibo-android-sdk:3.1.4'
+    compile files('libs/open_sdk_r5756.jar')
 }
