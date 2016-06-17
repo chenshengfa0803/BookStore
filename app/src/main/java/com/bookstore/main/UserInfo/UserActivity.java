@@ -1,60 +1,36 @@
 package com.bookstore.main.UserInfo;
 
-import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.support.v7.app.AppCompatActivity;
+import android.view.WindowManager;
 
-import com.avos.avoscloud.AVException;
-import com.avos.avoscloud.AVObject;
-import com.avos.avoscloud.AVUser;
-import com.avos.avoscloud.GetCallback;
 import com.bookstore.main.R;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.bookstore.util.SystemBarTintManager;
 
 /**
  * Created by Administrator on 2016/6/15.
  */
-public class UserActivity extends Activity {
+public class UserActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+
+            //SystemBarTintManager is openSource repository from github (https://github.com/jgilfelt/SystemBarTint)
+            SystemBarTintManager tintManager = new SystemBarTintManager(this);
+            tintManager.setStatusBarTintEnabled(true);
+            //tintManager.setStatusBarTintColor(getResources().getColor(android.R.color.background_light));
+            tintManager.setTintColor(getResources().getColor(android.R.color.darker_gray));
+        }
         setContentView(R.layout.activity_userinfo);
-        AVUser currentUser = AVUser.getCurrentUser();
-        AVObject user = AVObject.createWithoutData("_User", currentUser.getObjectId());
-        user.fetchInBackground(new GetCallback<AVObject>() {
-            @Override
-            public void done(AVObject avObject, AVException e) {
-                if (e == null) {
-                    String img_url = avObject.getString("profileImageUrl");
-                    String account_name = avObject.getString("username");
 
-                    ImageView userImage = (ImageView) findViewById(R.id.account_userimage);
-                    DisplayImageOptions options = new DisplayImageOptions.Builder()
-                            .cacheInMemory(true)
-                            .cacheOnDisk(true)
-                            .build();
-                    if (img_url != null) {
-                        ImageLoader.getInstance().displayImage(img_url, userImage, options);
-                    }
+        UserInfoFragment userInfoFragment = UserInfoFragment.newInstance();
+        String tag = UserInfoFragment.class.getSimpleName();
+        getSupportFragmentManager().beginTransaction().add(R.id.userinfo_container, userInfoFragment, tag).commit();
 
-                    TextView user_name = (TextView) findViewById(R.id.account_username);
-                    user_name.setText(account_name);
-                }
-            }
-        });
 
-        Button logout_btn = (Button) findViewById(R.id.logout);
-        logout_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AVUser.logOut();
-                UserActivity.this.setResult(RESULT_OK);
-                UserActivity.this.finish();
-            }
-        });
     }
 }

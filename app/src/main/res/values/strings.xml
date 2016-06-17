@@ -25,4 +25,5 @@
     <string name="deleted_books_toast">已删除 %d 本图书</string>
     <string name="deleted_books_fail">删除【%s】图书失败</string>
     <string name="save_books_fail">【%s】保存到服务器失败</string>
+    <string name="personal_info">个人信息</string>
 </resources>
