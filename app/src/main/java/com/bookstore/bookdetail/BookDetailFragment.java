@@ -532,6 +532,7 @@ public class BookDetailFragment extends Fragment {
                     }
                 });
                 builder.show();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

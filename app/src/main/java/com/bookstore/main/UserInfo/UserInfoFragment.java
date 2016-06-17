@@ -63,6 +63,12 @@ public class UserInfoFragment extends Fragment {
             userinfo_toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
             userinfo_toolbar.setTitleTextColor(Color.WHITE);
             userinfo_toolbar.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+            userinfo_toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mActivity.onBackPressed();
+                }
+            });
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 SystemBarTintManager tintManager = new SystemBarTintManager(mActivity);
                 tintManager.setStatusBarTintEnabled(true);
@@ -79,6 +85,7 @@ public class UserInfoFragment extends Fragment {
                     }
                 }
             });
+
             setHasOptionsMenu(true);
         }
         userinfo_scroll = (ScrollView) userinfo_fragment.findViewById(R.id.scroll_detail);
