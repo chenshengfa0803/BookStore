@@ -139,6 +139,7 @@
                     android:background="#cecece" />
 
                 <RelativeLayout
+                    android:id="@+id/userlocation_container"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:orientation="vertical">

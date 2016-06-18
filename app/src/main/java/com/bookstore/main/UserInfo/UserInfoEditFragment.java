@@ -36,6 +36,7 @@ public class UserInfoEditFragment extends Fragment {
     private ImageView userImg = null;
     private View userNameContainer = null;
     private View userSignContainer = null;
+    private View userLocationContainer = null;
     private TextView userNameTextView = null;
     private TextView userSignTextView = null;
     private TextView userLocationTextView = null;
@@ -53,6 +54,11 @@ public class UserInfoEditFragment extends Fragment {
         @Override
         public void onSignChange(String sign) {
             userSignTextView.setText(sign);
+        }
+
+        @Override
+        public void onLocationChange(String location) {
+            userLocationTextView.setText(location);
         }
     };
 
@@ -164,6 +170,17 @@ public class UserInfoEditFragment extends Fragment {
         if (user_location != null) {
             userLocationTextView.setText(user_location);
         }
+        userLocationContainer = userinfo_edit_fragment.findViewById(R.id.userlocation_container);
+        userLocationContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle arg = new Bundle();
+                arg.putInt(MyDialogFragment.ARGS_DIALOG_TYPE, MyDialogFragment.DIALOG_TYPE_USERLOCATION);
+                MyDialogFragment locationDialog = MyDialogFragment.newInstance(arg);
+                locationDialog.registerUserInfoListener(userInfoListener);
+                locationDialog.show(mActivity.getFragmentManager(), "EditUserLocation");
+            }
+        });
 
 
         return userinfo_edit_fragment;
@@ -186,5 +203,7 @@ public class UserInfoEditFragment extends Fragment {
         void onNickNameChange(String nickName);
 
         void onSignChange(String sign);
+
+        void onLocationChange(String location);
     }
 }

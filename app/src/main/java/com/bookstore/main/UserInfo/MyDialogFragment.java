@@ -13,6 +13,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.amap.api.maps2d.AMap;
+import com.amap.api.maps2d.MapView;
 import com.avos.avoscloud.AVUser;
 import com.bookstore.main.R;
 
@@ -25,6 +27,7 @@ public class MyDialogFragment extends DialogFragment {
     public static final int DIALOG_TYPE_USERNAME = 1;
     public static final int DIALOG_TYPE_USERSIGN = 2;
     public static final int DIALOG_TYPE_USERLOCATION = 3;
+    public MapView mapView = null;
 
     private int mDialogType = -1;
     private View mDialogContainer = null;
@@ -44,6 +47,38 @@ public class MyDialogFragment extends DialogFragment {
         mDialogType = getArguments().getInt(ARGS_DIALOG_TYPE, 0);
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mapView != null) {
+            mapView.onPause();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mapView != null) {
+            mapView.onResume();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mapView != null) {
+            mapView.onDestroy();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mapView != null) {
+            mapView.onSaveInstanceState(outState);
+        }
+    }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -61,6 +96,9 @@ public class MyDialogFragment extends DialogFragment {
                 break;
             case DIALOG_TYPE_USERSIGN:
                 initEditSign();
+                break;
+            case DIALOG_TYPE_USERLOCATION:
+                setUserLocation(savedInstanceState);
                 break;
         }
 
@@ -141,6 +179,15 @@ public class MyDialogFragment extends DialogFragment {
                 MyDialogFragment.this.dismiss();
             }
         });
+    }
+
+    private void setUserLocation(Bundle savedInstanceState) {
+        View location_view = mDialogContainer.findViewById(R.id.user_location);
+        mapView = (MapView) location_view.findViewById(R.id.location_map);
+        mapView.onCreate(savedInstanceState);
+        AMap aMap = mapView.getMap();
+        aMap.getUiSettings().setMyLocationButtonEnabled(true);
+        location_view.setVisibility(View.VISIBLE);
     }
 
     public void registerUserInfoListener(UserInfoEditFragment.UserInfoListener listener) {
