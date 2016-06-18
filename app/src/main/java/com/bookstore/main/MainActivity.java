@@ -52,11 +52,16 @@ public class MainActivity extends AppCompatActivity {
                     if (e == null) {
                         String img_url = avObject.getString("profileImageUrl");
                         String user_name = avObject.getString("username");
+                        String nick_name = avObject.getString("nickName");
                         List<ResideMenuItem> list = resideMenu.getMenuItems(ResideMenu.DIRECTION_LEFT);
                         if (img_url != null) {
                             list.get(0).setIcon(img_url);
                         }
-                        list.get(0).setTitle(user_name);
+                        if (nick_name != null) {
+                            list.get(0).setTitle(nick_name);
+                        } else {
+                            list.get(0).setTitle(user_name);
+                        }
                     }
                 }
             });

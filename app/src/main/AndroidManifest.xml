@@ -29,6 +29,7 @@
 
         <activity
             android:name="com.bookstore.main.UserInfo.UserActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/AppTheme"></activity>
 
         <activity

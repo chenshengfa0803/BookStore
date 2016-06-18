@@ -329,7 +329,7 @@ public class LoginActivity extends Activity {
 
         @Override
         public void onCancel() {
-            Toast.makeText(LoginActivity.this, "cancle", Toast.LENGTH_LONG).show();
+            //Toast.makeText(LoginActivity.this, "cancle", Toast.LENGTH_LONG).show();
         }
     }
 }

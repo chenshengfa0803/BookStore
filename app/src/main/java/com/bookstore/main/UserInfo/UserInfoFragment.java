@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -35,6 +36,11 @@ public class UserInfoFragment extends Fragment {
     private View userinfo_fragment = null;
     private Toolbar userinfo_toolbar = null;
     private ScrollView userinfo_scroll = null;
+    private String account_img_url = null;
+    private String account_name = null;
+    private String account_nick_name = null;
+    private String account_location = null;
+    private String account_sign = null;
 
     public static UserInfoFragment newInstance() {
         UserInfoFragment fragment = new UserInfoFragment();
@@ -90,40 +96,6 @@ public class UserInfoFragment extends Fragment {
         }
         userinfo_scroll = (ScrollView) userinfo_fragment.findViewById(R.id.scroll_detail);
 
-        return userinfo_fragment;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (userinfo_toolbar != null) {
-            userinfo_toolbar.setTitle("");
-        }
-
-        AVUser currentUser = AVUser.getCurrentUser();
-        AVObject user = AVObject.createWithoutData("_User", currentUser.getObjectId());
-        user.fetchInBackground(new GetCallback<AVObject>() {
-            @Override
-            public void done(AVObject avObject, AVException e) {
-                if (e == null) {
-                    String img_url = avObject.getString("profileImageUrl");
-                    String account_name = avObject.getString("username");
-
-                    ImageView userImage = (ImageView) userinfo_fragment.findViewById(R.id.account_userimage);
-                    DisplayImageOptions options = new DisplayImageOptions.Builder()
-                            .cacheInMemory(true)
-                            .cacheOnDisk(true)
-                            .build();
-                    if (img_url != null) {
-                        ImageLoader.getInstance().displayImage(img_url, userImage, options);
-                    }
-
-                    TextView user_name = (TextView) userinfo_fragment.findViewById(R.id.account_username);
-                    user_name.setText(account_name);
-                }
-            }
-        });
-
         Button logout_btn = (Button) userinfo_fragment.findViewById(R.id.logout);
         logout_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,6 +105,17 @@ public class UserInfoFragment extends Fragment {
                 mActivity.finish();
             }
         });
+
+        return userinfo_fragment;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (userinfo_toolbar != null) {
+            userinfo_toolbar.setTitle("");
+        }
+        updateUserInfo();
     }
 
     @Override
@@ -144,5 +127,79 @@ public class UserInfoFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.userinfo_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_userinfo:
+                Bundle arg = new Bundle();
+                arg.putString(UserInfoEditFragment.ARG_IMG_URL, account_img_url);
+                if (account_nick_name != null) {
+                    arg.putString(UserInfoEditFragment.ARG_NICK_NAME, account_nick_name);
+                } else {
+                    arg.putString(UserInfoEditFragment.ARG_NICK_NAME, account_name);
+                }
+                arg.putString(UserInfoEditFragment.ARG_LOCATION, account_location);
+                arg.putString(UserInfoEditFragment.ARG_SIGN, account_sign);
+                UserInfoEditFragment fragment = UserInfoEditFragment.newInstance(arg);
+                String tag = UserInfoEditFragment.class.getSimpleName();
+                if (mActivity instanceof UserActivity) {
+                    ((UserActivity) mActivity).replaceFragment(fragment, tag);
+                }
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void updateUserInfo() {
+        AVUser currentUser = AVUser.getCurrentUser();
+        final AVObject user = AVObject.createWithoutData("_User", currentUser.getObjectId());
+        user.fetchInBackground(new GetCallback<AVObject>() {
+            @Override
+            public void done(AVObject avObject, AVException e) {
+                if (e == null) {
+                    account_img_url = avObject.getString("profileImageUrl");
+                    account_name = avObject.getString("username");
+                    account_nick_name = avObject.getString("nickName");
+                    account_location = avObject.getString("location");
+                    account_sign = avObject.getString("userSignature");
+
+                    ImageView userImage = (ImageView) userinfo_fragment.findViewById(R.id.account_userimage);
+                    DisplayImageOptions options = new DisplayImageOptions.Builder()
+                            .cacheInMemory(true)
+                            .cacheOnDisk(true)
+                            .build();
+                    if (account_img_url != null) {
+                        ImageLoader.getInstance().displayImage(account_img_url, userImage, options);
+                    }
+
+                    TextView user_name = (TextView) userinfo_fragment.findViewById(R.id.account_username);
+                    if (account_nick_name != null) {
+                        user_name.setText(account_nick_name);
+                    } else {
+                        user_name.setText(account_name);
+                    }
+
+                    TextView user_location = (TextView) userinfo_fragment.findViewById(R.id.account_location);
+                    if (account_location != null) {
+                        user_location.setText(account_location);
+                    }
+
+                    TextView user_signature = (TextView) userinfo_fragment.findViewById(R.id.account_sign);
+                    if (account_sign != null) {
+                        user_signature.setText(account_sign);
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            updateUserInfo();
+        }
     }
 }

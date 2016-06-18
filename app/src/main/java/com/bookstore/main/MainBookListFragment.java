@@ -407,6 +407,11 @@ public class MainBookListFragment extends Fragment {
                             e.printStackTrace();
                         }
                         if (queryCompleteTimes == categoryList.size() - 1) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                if (mActivity.isDestroyed()) {
+                                    return;
+                                }
+                            }
                             updateFloatButton();
                             mGridListViewAdapter.buildAdapterList();
                             mGridListViewAdapter.notifyDataSetChanged();

@@ -2,6 +2,8 @@ package com.bookstore.main.UserInfo;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 
@@ -38,5 +40,15 @@ public class UserActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+    }
+
+    public void replaceFragment(Fragment fragment, String tag) {
+        FragmentManager manager = getSupportFragmentManager();
+        manager.beginTransaction()
+                .setCustomAnimations(R.anim.category_fragment_right_in, R.anim.category_fragment_left_out, R.anim.category_fragment_left_in, R.anim.category_fragment_right_out)
+                .hide(getSupportFragmentManager().findFragmentByTag(UserInfoFragment.class.getSimpleName()))
+                .addToBackStack(null)
+                .add(R.id.userinfo_container, fragment, tag)
+                .commit();
     }
 }
