@@ -38,7 +38,9 @@ import com.amap.api.maps2d.overlay.PoiOverlay;
 import com.amap.api.services.core.PoiItem;
 import com.amap.api.services.poisearch.PoiResult;
 import com.amap.api.services.poisearch.PoiSearch;
+import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.SaveCallback;
 import com.bookstore.main.R;
 
 import java.util.List;
@@ -264,9 +266,18 @@ public class MyDialogFragment extends DialogFragment implements LocationSource, 
                 AVUser avUser = AVUser.getCurrentUser();
                 String locationAddress = locationText.getText().toString().trim();
                 avUser.put("locationAddress", locationAddress);
-                avUser.put("locationLongitude", userLocation.getLongitude());
-                avUser.put("locationLatitude", userLocation.getLatitude());
-                avUser.saveInBackground();
+                avUser.put("locationLongitude", userLocation.getLongitude() + "");
+                avUser.put("locationLatitude", userLocation.getLatitude() + "");
+                avUser.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(AVException e) {
+                        if (e == null) {
+
+                        } else {
+                            Toast.makeText(getActivity(), "保存失败", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
                 if (mListener != null) {
                     mListener.onLocationChange(locationAddress);
                 }

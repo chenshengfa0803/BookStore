@@ -33,6 +33,11 @@
             android:theme="@style/AppTheme"></activity>
 
         <activity
+            android:name="com.bookstore.main.BookWorld.BookWorldActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
+
+        <activity
             android:name="com.sina.weibo.sdk.component.WeiboSdkBrowser"
             android:configChanges="keyboardHidden|orientation"
             android:exported="false"

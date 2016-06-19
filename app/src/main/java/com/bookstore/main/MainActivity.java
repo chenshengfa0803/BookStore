@@ -19,6 +19,7 @@ import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.GetCallback;
 import com.bookstore.login.LoginActivity;
+import com.bookstore.main.BookWorld.BookWorldActivity;
 import com.bookstore.main.UserInfo.UserActivity;
 import com.bookstore.main.animation.ViewBlur;
 import com.bookstore.main.residemenu.ResideMenu;
@@ -32,14 +33,16 @@ public class MainActivity extends AppCompatActivity {
     public static final int MSG_GET_BOOK_CATEGORY = 100;
     private static final int SCANNING_REQUEST_CODE = 1;
     private static final int USERINFO_REQUEST_CODE = 2;
+    private static final int BOOKWORLD_REQUEST_CODE = 3;
     private static String userId = null;
     public FloatButton mainFloatButton;
     View blurFromView = null;
     ImageView blurToView = null;
     private ResideMenu resideMenu;
-    private ResideMenuItem itemHome;
     private ResideMenuItem itemProfile;
-    private ResideMenuItem itemCalendar;
+    private ResideMenuItem itemWorld;
+    private ResideMenuItem itemDeep;
+    private ResideMenuItem itemLibrary;
     private ResideMenuItem itemSettings;
     private AVUser currentUser;
     private ResideMenu.OnMenuListener menuListener = new ResideMenu.OnMenuListener() {
@@ -263,14 +266,21 @@ public class MainActivity extends AppCompatActivity {
                 startUserInfoActivity();
             }
         });
-        itemHome = new ResideMenuItem(this, R.drawable.icon_home, "图书世界");
-        itemCalendar = new ResideMenuItem(this, R.drawable.icon_calendar, "深度好文");
-        itemSettings = new ResideMenuItem(this, R.drawable.icon_settings, "设置");
+        itemWorld = new ResideMenuItem(this, R.drawable.icon_world, "图书世界");
+        itemWorld.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resideMenu.closeMenu();
+                startBookWorldActivity();
+            }
+        });
+        itemDeep = new ResideMenuItem(this, R.drawable.icon_deep, "深度好文");
+        itemLibrary = new ResideMenuItem(this, R.drawable.icon_library, "流动图书馆");
 
         resideMenu.addMenuItem(itemProfile, ResideMenu.DIRECTION_LEFT);
-        resideMenu.addMenuItem(itemHome, ResideMenu.DIRECTION_LEFT);
-        resideMenu.addMenuItem(itemCalendar, ResideMenu.DIRECTION_LEFT);
-        resideMenu.addMenuItem(itemSettings, ResideMenu.DIRECTION_LEFT);
+        resideMenu.addMenuItem(itemWorld, ResideMenu.DIRECTION_LEFT);
+        resideMenu.addMenuItem(itemDeep, ResideMenu.DIRECTION_LEFT);
+        resideMenu.addMenuItem(itemLibrary, ResideMenu.DIRECTION_LEFT);
 
         resideMenu.setSwipeDirectionDisable(ResideMenu.DIRECTION_RIGHT);
     }
@@ -290,6 +300,12 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent();
         intent.setClass(this, UserActivity.class);
         startActivityForResult(intent, USERINFO_REQUEST_CODE);
+    }
+
+    public void startBookWorldActivity() {
+        Intent intent = new Intent();
+        intent.setClass(this, BookWorldActivity.class);
+        startActivityForResult(intent, BOOKWORLD_REQUEST_CODE);
     }
 
 
