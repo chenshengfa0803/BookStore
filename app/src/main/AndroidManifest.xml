@@ -73,6 +73,7 @@
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="2ec4dff847c2f26011aa9f4989b2177c"></meta-data>
+        <service android:name="com.amap.api.location.APSService"></service>
     </application>
 
     <uses-permission android:name="android.permission.VIBRATE" />

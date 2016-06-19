@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bookstore.main.R;
 import com.bookstore.util.SystemBarTintManager;
@@ -34,6 +35,7 @@ public class UserInfoEditFragment extends Fragment {
     private Toolbar userinfo_edit_toolbar = null;
     private ScrollView userinfo_edit_scroll = null;
     private ImageView userImg = null;
+    private View userImgContainer = null;
     private View userNameContainer = null;
     private View userSignContainer = null;
     private View userLocationContainer = null;
@@ -121,6 +123,13 @@ public class UserInfoEditFragment extends Fragment {
         }
         userinfo_edit_scroll = (ScrollView) userinfo_edit_fragment.findViewById(R.id.scroll_detail);
 
+        userImgContainer = userinfo_edit_fragment.findViewById(R.id.userimg_container);
+        userImgContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mActivity, "暂不支持修改头像", Toast.LENGTH_SHORT).show();
+            }
+        });
         userImg = (ImageView) userinfo_edit_fragment.findViewById(R.id.userimg_image);
         if (user_img_url != null) {
             DisplayImageOptions options = new DisplayImageOptions.Builder()

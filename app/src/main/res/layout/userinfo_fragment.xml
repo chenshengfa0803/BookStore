@@ -55,7 +55,10 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
                     android:text="Ta来自火星"
+                    android:textAlignment="center"
                     android:textSize="14sp" />
 
                 <TextView
@@ -67,6 +70,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
                     android:text="书中自有黄金屋，书中自有颜如玉"
+                    android:textAlignment="center"
                     android:textColor="@android:color/holo_blue_light"
                     android:textSize="14sp" />
 

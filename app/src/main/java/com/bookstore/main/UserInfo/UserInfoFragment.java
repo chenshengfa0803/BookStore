@@ -162,7 +162,7 @@ public class UserInfoFragment extends Fragment {
                     account_img_url = avObject.getString("profileImageUrl");
                     account_name = avObject.getString("username");
                     account_nick_name = avObject.getString("nickName");
-                    account_location = avObject.getString("location");
+                    account_location = avObject.getString("locationAddress");
                     account_sign = avObject.getString("userSignature");
 
                     ImageView userImage = (ImageView) userinfo_fragment.findViewById(R.id.account_userimage);

@@ -127,7 +127,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#fafafa"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -139,33 +140,71 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/search_ic_clear_black_24dp" />
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/search_ic_clear_black_24dp"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/cancel_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:text="取消" />
 
             <Button
                 android:id="@+id/set_location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:text="确定" />
+                android:layout_centerVertical="true"
+                android:text="保存" />
 
             <EditText
                 android:id="@+id/search_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_toLeftOf="@id/set_location"
-                android:layout_toRightOf="@id/navigation_up" />
+                android:layout_toRightOf="@id/cancel_location"
+                android:hint="关键字"
+                android:maxLength="64" />
         </RelativeLayout>
 
-        <com.amap.api.maps2d.MapView
-            android:id="@+id/location_map"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"></com.amap.api.maps2d.MapView>
+            android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:text="ccc"></TextView>
+            <com.amap.api.maps2d.MapView
+                android:id="@+id/location_map"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"></com.amap.api.maps2d.MapView>
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true">
+
+                <TextView
+                    android:id="@+id/user_location_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="60dp"
+                    android:layout_marginRight="60dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/my_location_shape"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="您的位置"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/holo_red_light"
+                    android:textStyle="bold" />
+            </FrameLayout>
+
+        </RelativeLayout>
+
 
     </LinearLayout>
 </FrameLayout>
