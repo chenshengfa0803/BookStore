@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
@@ -219,11 +220,36 @@ public class BookDetailFragment extends Fragment {
         SubFloatButton subFab_sina = new SubFloatButton(mActivity, getResources().getDrawable(R.drawable.share_sina_selector), params);
         SubFloatButton subFab_qzone = new SubFloatButton(mActivity, getResources().getDrawable(R.drawable.share_qzone_selector), params);
         SubFloatButton subFab_qq = new SubFloatButton(mActivity, getResources().getDrawable(R.drawable.share_qq_selector), params);
-        subFab_wechat.setClickable(true);
-        subFab_friend.setClickable(true);
-        subFab_sina.setClickable(true);
-        subFab_qzone.setClickable(true);
-        subFab_qq.setClickable(true);
+        subFab_wechat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mActivity, "暂未实现该功能", Toast.LENGTH_SHORT).show();
+            }
+        });
+        subFab_friend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mActivity, "暂未实现该功能", Toast.LENGTH_SHORT).show();
+            }
+        });
+        subFab_sina.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mActivity, "暂未实现该功能", Toast.LENGTH_SHORT).show();
+            }
+        });
+        subFab_qzone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mActivity, "暂未实现该功能", Toast.LENGTH_SHORT).show();
+            }
+        });
+        subFab_qq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mActivity, "暂未实现该功能", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         int startAngle = 260;//270 degree
         int endAngle = 370;//360 degree

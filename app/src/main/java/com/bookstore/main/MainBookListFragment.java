@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
@@ -471,6 +472,18 @@ public class MainBookListFragment extends Fragment {
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivityForResult(intent, SCANNING_REQUEST_CODE);
                 mainFloatButton.closeMenu();
+            }
+        });
+        subFab_chat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mActivity, "暂未实现该功能", Toast.LENGTH_SHORT).show();
+            }
+        });
+        subFab_location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mActivity, "暂未实现该功能", Toast.LENGTH_SHORT).show();
             }
         });
         int startAngle = 270;//270 degree

@@ -96,7 +96,7 @@ public class BookWorldActivity extends Activity implements AMap.OnMarkerClickLis
                         latitude = Double.valueOf(latitude_str);
                         markerOption.position(new LatLng(latitude, longitude));
                     } else {
-                        markerOption.position(new LatLng(123.475139, 25.742234));//没有填地址的都放到钓鱼岛
+                        markerOption.position(new LatLng(25.742234, 123.475139));//没有填地址的都发配钓鱼岛
                     }
                     markerOption.title(name);
                     markerOption.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));

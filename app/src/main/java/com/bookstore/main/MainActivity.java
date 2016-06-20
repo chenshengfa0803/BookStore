@@ -13,6 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
@@ -275,7 +276,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         itemDeep = new ResideMenuItem(this, R.drawable.icon_deep, "深度好文");
+        itemDeep.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "暂未实现该功能", Toast.LENGTH_SHORT).show();
+            }
+        });
         itemLibrary = new ResideMenuItem(this, R.drawable.icon_library, "流动图书馆");
+        itemLibrary.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "暂未实现该功能", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         resideMenu.addMenuItem(itemProfile, ResideMenu.DIRECTION_LEFT);
         resideMenu.addMenuItem(itemWorld, ResideMenu.DIRECTION_LEFT);
