@@ -122,6 +122,12 @@ public class BookWorldActivity extends Activity implements AMap.OnMarkerClickLis
     protected void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
+        mLocationListener = null;
+        if (mlocationClient != null) {
+            mlocationClient.stopLocation();
+            mlocationClient.onDestroy();
+        }
+        mlocationClient = null;
     }
 
     @Override
