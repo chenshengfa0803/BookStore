@@ -189,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
+            /*
             case SCANNING_REQUEST_CODE: {
                 if (resultCode == RESULT_OK) {
                     //Bundle bundle = data.getExtras();
@@ -198,6 +199,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             break;
+            */
 
             case USERINFO_REQUEST_CODE: {
                 if (resultCode == RESULT_OK) {
@@ -320,6 +322,4 @@ public class MainActivity extends AppCompatActivity {
         intent.setClass(this, BookWorldActivity.class);
         startActivityForResult(intent, BOOKWORLD_REQUEST_CODE);
     }
-
-
 }
